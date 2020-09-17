@@ -1,0 +1,133 @@
+<!-- ko if: isEditing -->
+<div class="panel panel-table" data-bind="with: apiClientEditor">
+    <div class="row">
+        <div class="col-md-3">Client Id</div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientId"
+                name="clientId" autocomplete="client-id" data-bind="textInput: clientId, enable: id === 0" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"><label for="clientSecret1">Client Secret 1</label></div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret1"
+                name="clientSecret1" autocomplete="client-secret-1" data-bind="textInput: clientSecret1" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"><label for="clientSecret2">Client Secret 2</label></div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret2"
+                name="clientSecret2" autocomplete="client-secret-2" data-bind="textInput: clientSecret2" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"><label for="grantTypes">Grant Types</label></div>
+        <div class="col-md-9">
+            <select class="form-control" aria-required="true" autofocus="autofocus" id="grantTypes" name="grantTypes"
+                data-bind="options: allGrantTypes, selectedOptions: grantTypes" multiple="true">
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"><label for="scopes">Scopes</label></div>
+        <div class="col-md-9">
+            <select class="form-control" aria-required="true" autofocus="autofocus" id="scopes" name="scopes"
+                data-bind="options: allScopes, selectedOptions: scopes" multiple="true">
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-9">
+            <label for="enabled">
+                <div class="switch">
+                    <input type="checkbox" id="enabled" name="enabled" data-bind="checked: enabled">
+                    <span class="slider round"></span>
+                </div>
+                Enabled
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <!-- ko if: isLoading -->
+        <spinner class="fit"></spinner>
+        <!-- /ko -->
+        <!-- ko ifnot: isLoading -->
+        <div class="col-md-12">
+            <button type="button" class="button button-default"
+                data-bind="click: clickSave, enabled: canSave">Save</button>
+            <button type="button" class="button button-default" data-bind="click: clickCancel">Cancel</button>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+<!-- /ko -->
+
+<!-- ko ifnot: isEditing -->
+<div class="panel panel-table">
+    <div class="row">
+        <div class="col-9">
+            <div class="input-group">
+                <button type="button" class="button" aria-label="Create API Client"
+                    data-bind="click: clickCreateApiClient">
+                    Create API Client
+                </button>
+            </div>
+        </div>
+        <div class="col-3">
+            <label for="isProductionView">
+                <div class="switch">
+                    <input id="isProductionView" type="checkbox" data-bind="checked: isProductionView">
+                    <span class="slider round"></span>
+                </div>
+                Production Environment
+            </label>
+        </div>
+    </div>
+</div>
+
+<div class="table" role="table" aria-label="API Clients">
+    <div class="table-head" role="rowgroup">
+        <div class="table-row" role="row">
+            <div tabindex="0" class="col-2" role="columnheader">Client Id</div>
+            <div tabindex="0" class="col-3" role="columnheader">Client Name</div>
+            <div tabindex="0" class="col-3" role="columnheader">Grant Types</div>
+            <div tabindex="0" class="col-4" role="columnheader">Scopes</div>
+        </div>
+    </div>
+
+    <!-- ko if: isLoading -->
+    <div class="table-body">
+        <spinner></spinner>
+    </div>
+    <!-- /ko -->
+
+    <!-- ko ifnot: isLoading -->
+    <div class="table-body animation-fade-in" role="presentation">
+        <!-- ko foreach: { data: apiClients, as: 'client' } -->
+        <div class="table-row" role="row">
+            <div class="col-2" role="cell">
+                <a href="#" data-bind="click: $component.clickEditApiClient, text: client.clientId"></a>
+            </div>
+            <div class="col-3" role="cell" data-bind="text: client.name"></div>
+            <div class="col-3" role="cell" data-bind="foreach: { data: client.grantTypes, as: 'grantType' }">
+                <span class="tag-item" data-bind="text: grantType"></span>
+            </div>
+            <div class="col-4" role="cell" data-bind="foreach: { data: client.scopes, as: 'scope' }">
+                <span class="tag-item" data-bind="text: scope"></span>
+            </div>
+        </div>
+        <!-- /ko -->
+
+        <!-- ko if: apiClients().length === 0 -->
+        <div class="table-row" role="row">
+            <div class="col-12">
+                No API clients found
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- /ko -->
+</div>
+<!-- /ko -->
