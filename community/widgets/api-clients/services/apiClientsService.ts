@@ -2,17 +2,21 @@ import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
 import { ApiClientEditContract } from "./apiClientEditContract";
 import { ApiClientEnvironment } from "./apiClientEnvironment";
 import { ApiClientsPageContract } from "./apiClientsPageContract";
+import { IAuthenticator } from "../../../../src/authentication";
 
 export class ApiClientsService {
-    constructor(private readonly httpClient: HttpClient) { }
+    constructor(
+        private readonly httpClient: HttpClient,
+        private readonly authenticator: IAuthenticator,
+    ) { }
 
     public async getApiClients(): Promise<ApiClientsPageContract> {
         const request: HttpRequest = {
             url: "/c/apiclients",
-            method: "GET"
+            method: "GET",
+            headers: []
         }
-        const response = await this.httpClient.send<ApiClientsPageContract>(request);
-        return response.toObject();
+        return await this.makeRequest(request);
     }
 
     public async editApiClient(
@@ -28,6 +32,32 @@ export class ApiClientsService {
             ],
             body: JSON.stringify(apiClient)
         }
-        const response = await this.httpClient.send(request);
+        await this.makeRequest(request);
+    }
+
+    private async makeRequest<T>(httpRequest: HttpRequest): Promise<T> {
+        const authToken = await this.authenticator.getAccessToken();
+        if (authToken) {
+            httpRequest.headers.push({ name: "ApimUserAccessToken", value: `${authToken}` });
+        }
+        try {
+            const response = await this.httpClient.send<T>(httpRequest);
+            let contentType = "";
+            if (response.headers) {
+                const contentTypeHeader = response.headers.find(h => h.name.toLowerCase() === "content-type");
+                contentType = contentTypeHeader ? contentTypeHeader.value.toLowerCase() : "";
+            }
+            if (response.statusCode >= 200 && response.statusCode < 300) {
+                return contentType.includes("json")
+                    ? response.toObject()
+                    : <any> response.toText();
+            }
+            else {
+                throw new Error(`${response.statusCode}`);
+            }
+        }
+        catch (error) {
+            throw new Error(`Unable to complete request. Try re-login. Error: ${error.message}`);
+        }
     }
 }
