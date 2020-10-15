@@ -21,11 +21,11 @@ export class ApiClientsService {
 
     public async editApiClient(
         environment: ApiClientEnvironment,
-        id: number,
+        clientId: string,
         apiClient: ApiClientEditContract
     ) {
         const request: HttpRequest = {
-            url: `/c/apiclients/${environment}/${id}`,
+            url: `/c/apiclients/${environment}/${clientId}`,
             method: "PUT",
             headers: [
                 { name: "Content-Type", value: "application/json" }

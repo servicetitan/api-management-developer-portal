@@ -3,37 +3,58 @@
     <div class="row">
         <div class="col-md-3">Client Id</div>
         <div class="col-md-9">
-            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientId"
-                name="clientId" autocomplete="client-id" data-bind="textInput: clientId, enable: id === 0" />
+            <span type="text" data-bind="text: clientId"></span><br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"><label for="clientName">Client Name</label></div>
+        <div class="col-md-9">
+            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientName"
+                name="clientName" autocomplete="client-name" data-bind="textInput: clientName" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-3"><label for="clientSecret1">Client Secret 1</label></div>
-        <div class="col-md-9">
+        <div class="col-md-7">
             <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret1"
-                name="clientSecret1" autocomplete="client-secret-1" data-bind="textInput: clientSecret1" />
+                name="clientSecret1" autocomplete="client-secret-1" data-bind="textInput: clientSecret1" disabled />
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="button" style="margin-top: 3px;" data-bind="click: clickResetSecret1">Reset</button>
         </div>
     </div>
     <div class="row">
         <div class="col-md-3"><label for="clientSecret2">Client Secret 2</label></div>
-        <div class="col-md-9">
+        <div class="col-md-7">
             <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret2"
-                name="clientSecret2" autocomplete="client-secret-2" data-bind="textInput: clientSecret2" />
+                name="clientSecret2" autocomplete="client-secret-2" data-bind="textInput: clientSecret2" disabled />
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="button" style="margin-top: 3px;" data-bind="click: clickResetSecret2">Reset</button>
         </div>
     </div>
+    <!--
     <div class="row">
-        <div class="col-md-3"><label for="grantTypes">Grant Types</label></div>
+        <div class="col-md-3"><label for="description">Description</label></div>
         <div class="col-md-9">
-            <select class="form-control" aria-required="true" autofocus="autofocus" id="grantTypes" name="grantTypes"
-                data-bind="options: allGrantTypes, selectedOptions: grantTypes" multiple="true">
+            <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="description"
+                name="description" autocomplete="description" data-bind="textInput: description" />
+        </div>
+    </div>
+    -->
+    <div class="row">
+        <div class="col-md-3"><label for="allowedScopes">Allowed Scopes</label></div>
+        <div class="col-md-9">
+            <select class="form-control" aria-required="true" autofocus="autofocus" id="allowedScopes" name="allowedScopes"
+                data-bind="options: availableApiScopes, selectedOptions: allowedScopes" multiple="true" size="7">
             </select>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"><label for="scopes">Scopes</label></div>
+        <div class="col-md-3"><label for="authClaimValues">Auth Claims</label></div>
         <div class="col-md-9">
-            <select class="form-control" aria-required="true" autofocus="autofocus" id="scopes" name="scopes"
-                data-bind="options: allScopes, selectedOptions: scopes" multiple="true">
+            <select class="form-control" aria-required="true" autofocus="autofocus" id="authClaimValues" name="authClaimValues"
+                data-bind="options: availableAuthClaims, selectedOptions: authClaimValues" multiple="true">
             </select>
         </div>
     </div>
@@ -76,6 +97,7 @@
             </div>
         </div>
         <div class="col-3">
+            <!-- ko if: isProductionAvailable -->
             <label for="isProductionView">
                 <div class="switch">
                     <input id="isProductionView" type="checkbox" data-bind="checked: isProductionView">
@@ -83,6 +105,10 @@
                 </div>
                 Production Environment
             </label>
+            <!-- /ko -->
+            <!-- ko ifnot: isProductionAvailable -->
+                <h3>Sandbox environment</h3>
+            <!-- /ko -->
         </div>
     </div>
 </div>
@@ -90,10 +116,10 @@
 <div class="table" role="table" aria-label="API Clients">
     <div class="table-head" role="rowgroup">
         <div class="table-row" role="row">
-            <div tabindex="0" class="col-2" role="columnheader">Client Id</div>
+            <div tabindex="0" class="col-3" role="columnheader">Client Id</div>
             <div tabindex="0" class="col-3" role="columnheader">Client Name</div>
-            <div tabindex="0" class="col-3" role="columnheader">Grant Types</div>
-            <div tabindex="0" class="col-4" role="columnheader">Scopes</div>
+            <div tabindex="0" class="col-3" role="columnheader">Scopes</div>
+            <div tabindex="0" class="col-3" role="columnheader">Auth Claims</div>
         </div>
     </div>
 
@@ -105,22 +131,22 @@
 
     <!-- ko ifnot: isLoading -->
     <div class="table-body animation-fade-in" role="presentation">
-        <!-- ko foreach: { data: apiClients, as: 'client' } -->
+        <!-- ko foreach: { data: currentEnvironment().apiClients, as: 'client' } -->
         <div class="table-row" role="row">
-            <div class="col-2" role="cell">
+            <div class="col-3" role="cell">
                 <a href="#" data-bind="click: $component.clickEditApiClient, text: client.clientId"></a>
             </div>
-            <div class="col-3" role="cell" data-bind="text: client.name"></div>
-            <div class="col-3" role="cell" data-bind="foreach: { data: client.grantTypes, as: 'grantType' }">
-                <span class="tag-item" data-bind="text: grantType"></span>
-            </div>
-            <div class="col-4" role="cell" data-bind="foreach: { data: client.scopes, as: 'scope' }">
+            <div class="col-3" role="cell" data-bind="text: client.clientName"></div>
+            <div class="col-3" role="cell" data-bind="foreach: { data: client.allowedScopes, as: 'scope' }">
                 <span class="tag-item" data-bind="text: scope"></span>
+            </div>
+            <div class="col-3" role="cell" data-bind="foreach: { data: client.authClaimValues, as: 'authClaim' }">
+                <span class="tag-item" data-bind="text: authClaim.type + ': ' + authClaim.value"></span>
             </div>
         </div>
         <!-- /ko -->
 
-        <!-- ko if: apiClients().length === 0 -->
+        <!-- ko if: currentEnvironment().apiClients.length === 0 -->
         <div class="table-row" role="row">
             <div class="col-12">
                 No API clients found
