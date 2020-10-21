@@ -1,8 +1,12 @@
+import { AuthClaimValueContract } from "./authClaimValueContract";
+
 export interface ApiClientContract {
-    id: number;
     clientId: string;
-    name: string;
-    grantTypes: string[];
-    scopes: string[];
+    clientSecret1: string;
+    clientSecret2: string;
+    clientName: string;
+    description: string;
+    allowedScopes: Array<string>;
+    authClaimValues: Array<AuthClaimValueContract>;
     enabled: boolean;
 }

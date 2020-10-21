@@ -7,6 +7,9 @@ import { ApiClientsPageContract } from "../../services/apiClientsPageContract";
 import { ApiClientEnvironment } from "../../services/apiClientEnvironment";
 import { ApiClientEditorVm } from "./apiClientEditorVm"
 import { ApiClientContract } from "../../services/apiClientContract";
+import { ApiClientsEnvironmentContract } from "../../services/apiClientsEnvironmentContract";
+import { customAlphabet } from 'nanoid';
+
 
 @RuntimeComponent({
     selector: widgetRuntimeSelector
@@ -17,33 +20,36 @@ import { ApiClientContract } from "../../services/apiClientContract";
 })
 export class ApiClientsRuntime {
     public readonly isProductionView: ko.Observable<boolean>;
+    public readonly isProductionAvailable: ko.Observable<boolean>;
     public readonly isLoading: ko.Observable<boolean>;
     public readonly isEditing: ko.Observable<boolean>;
     public readonly searchPattern: ko.Observable<string>;
     public readonly apiClientEditor: ko.Observable<ApiClientEditorVm>;
-    public readonly apiClients: ko.PureComputed<Array<ApiClientContract>>;
+    public readonly currentEnvironment: ko.PureComputed<ApiClientsEnvironmentContract>;
 
     private pageContract: ApiClientsPageContract;
+    private getRandomString25: () => string;
 
     constructor(
         private readonly apiClientsService: ApiClientsService,
     ) {
         this.isProductionView = ko.observable(false);
+        this.isProductionAvailable = ko.observable();
         this.isLoading = ko.observable(false);
         this.isEditing = ko.observable(false);
         this.searchPattern = ko.observable("");
         this.apiClientEditor = ko.observable();
-        this.apiClients = ko.pureComputed(() => {
+        this.currentEnvironment = ko.pureComputed(() => {
             // first code block, we need to compute based on isProductionView observable
-            const isProductionView = this.isProductionView();
+            const isProductionAvailable = this.isProductionAvailable();
             if (this.pageContract == null) {
-                return [];
+                return null;
             }
-            return isProductionView
-                ? this.pageContract.productionApiClients
-                : this.pageContract.sandboxApiClients;
+            return isProductionAvailable && this.isProductionView()
+                ? this.pageContract.productionEnvironment
+                : this.pageContract.sandboxEnvironment;
         });
-
+        this.getRandomString25 = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 25);
     }
 
     @OnMounted()
@@ -51,16 +57,19 @@ export class ApiClientsRuntime {
         this.isLoading(true);
         const page = await this.apiClientsService.getApiClients();
         this.pageContract = page;
+        this.isProductionAvailable(page.isProductionAvailable);
         this.isLoading(false);
     }
 
     public clickCreateApiClient() {
         const emptyClient: ApiClientContract = {
-            id: 0,
-            clientId: "",
-            name: "",
-            grantTypes: [],
-            scopes: [],
+            clientId: "cid." + this.getRandomString25(),
+            clientSecret1: "cs1." + this.getRandomString25() + this.getRandomString25(),
+            clientSecret2: "cs2." + this.getRandomString25() + this.getRandomString25(),
+            clientName: "",
+            description: "",
+            allowedScopes: this.currentEnvironment().availableApiScopes.map(s => s.name),
+            authClaimValues: this.currentEnvironment().availableAuthClaims,
             enabled: true
         }
 
@@ -74,10 +83,10 @@ export class ApiClientsRuntime {
         const editor = new ApiClientEditorVm(
             this.apiClientsService,
             environment,
-            this.pageContract.allGrantTypes,
-            this.pageContract.allScopes,
+            this.currentEnvironment().availableApiScopes,
+            this.currentEnvironment().availableAuthClaims,
             apiClient,
-            () => { this.isEditing(false); this.initialize(); }
+            async () => { this.isEditing(false); await this.initialize(); }
         );
 
         this.apiClientEditor(editor);
