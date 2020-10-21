@@ -82,7 +82,7 @@
     }
 
     &.selected {
-        @include selection();
+        font-weight: bold;
     }
 
     .list-item-handle {
@@ -106,11 +106,26 @@
         flex-basis: auto;
     }
 
+    &.list-item-icon {
+        float: left;
+        padding: 5px;
+        display: block;
+        text-align: center;
+        line-height: 1em;
+        width: 90px;
+        height: 90px;
+
+        .icon {
+            font-size: 18px;
+            padding: 20px;
+        }
+    }
+
     &.list-item-large {
         display: inline-block;
         width: 130px;
         text-align: center;
-        padding: 5px;
+        padding: 15px 5px;
         line-height: 1.5em;
         margin-bottom: 15px;
         flex-basis: auto;
@@ -125,6 +140,13 @@
             height: 1.5em;
         }
     }
+}
+
+.list-edge {
+    display: block;
+    flex-basis: 100%;
+    min-height: 10px;
+    min-width: 10px;
 }
 
 .list-checkboxes {

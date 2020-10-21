@@ -16,8 +16,8 @@ import { RouteHelper } from "./routing/routeHelper";
 import { IInjector, IInjectorModule } from "@paperbits/common/injection";
 import { DefaultEventManager } from "@paperbits/common/events";
 import { XmlHttpRequestClient } from "@paperbits/common/http";
-import { SettingsProvider } from "@paperbits/common/configuration";
-import { DefaultRouter } from "@paperbits/common/routing";
+import { DefaultSettingsProvider } from "@paperbits/common/configuration";
+import { DefaultRouter, LocationRouteHandler, HistoryRouteHandler } from "@paperbits/common/routing";
 import { ConsoleLogger } from "@paperbits/common/logging";
 import { KnockoutRegistrationLoaders } from "@paperbits/core/ko/knockout.loaders";
 import { ApiList, ApiListDropdown, ApiListTiles } from "./components/apis/list-of-apis/ko/runtime";
@@ -68,7 +68,7 @@ import { BalloonBindingHandler, ResizableBindingHandler } from "@paperbits/core/
 import { TagInput } from "./components/tag-input/tag-input";
 import { ViewStack } from "@paperbits/core/ko/ui/viewStack";
 import { OAuthService } from "./services/oauthService";
-import { DefaultSessionManager } from "./authentication/sessionManager";
+import { DefaultSessionManager } from "./authentication/defaultSessionManager";
 
 export class ApimRuntimeModule implements IInjectorModule {
     public register(injector: IInjector): void {
@@ -125,7 +125,7 @@ export class ApimRuntimeModule implements IInjectorModule {
         injector.bindSingleton("aadService", AadService);
         injector.bindSingleton("mapiClient", MapiClient);
         injector.bindSingleton("httpClient", XmlHttpRequestClient);
-        injector.bindSingleton("settingsProvider", SettingsProvider);
+        injector.bindSingleton("settingsProvider", DefaultSettingsProvider);
         injector.bindSingleton("authenticator", DefaultAuthenticator);
         injector.bindSingleton("routeHelper", RouteHelper);
         injector.bindSingleton("userService", StaticUserService);
@@ -134,5 +134,8 @@ export class ApimRuntimeModule implements IInjectorModule {
         injector.bindSingleton("viewStack", ViewStack);
         injector.bindSingleton("sessionManager", DefaultSessionManager);
         injector.bind("tagInput", TagInput);
+        injector.bindToCollection("autostart", location.href.includes("designtime=true")
+            ? HistoryRouteHandler
+            : LocationRouteHandler);
     }
 }

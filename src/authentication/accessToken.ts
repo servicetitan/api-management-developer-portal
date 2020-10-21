@@ -24,7 +24,7 @@ export class AccessToken {
         public readonly userId?: string) {
     }
 
-    private static parseHeaderValue(value: string): AccessToken {
+    private static parseExtendedSharedAccessSignature(value: string): AccessToken {
         const regex = /token=\"(.*==)\"/gm;
         const match = regex.exec(value);
 
@@ -54,9 +54,7 @@ export class AccessToken {
 
     private static parseBearerToken(value: string): AccessToken {
         const decodedToken = Utils.parseJwt(value);
-        const exp = moment(decodedToken.exp).toDate();
-
-        return new AccessToken("Bearer", value, exp);
+        return new AccessToken("Bearer", value, decodedToken.exp);
     }
 
     public static parse(token: string): AccessToken {
@@ -69,11 +67,24 @@ export class AccessToken {
         }
 
         if (token.startsWith("SharedAccessSignature ")) {
-            return AccessToken.parseSharedAccessSignature(token.replace("SharedAccessSignature ", ""));
+            const value = token.replace("SharedAccessSignature ", "");
+
+            if (value.startsWith("token=")) {
+                return AccessToken.parseExtendedSharedAccessSignature(value);
+            }
+            else {
+                return AccessToken.parseSharedAccessSignature(value);
+            }
         }
 
         if (token.startsWith("token=")) {
-            return AccessToken.parseHeaderValue(token);
+            return AccessToken.parseExtendedSharedAccessSignature(token);
+        }
+
+        const result = AccessToken.parseSharedAccessSignature(token);
+
+        if (result) {
+            return result;
         }
 
         throw new Error(`Access token format is not valid. Please use "Bearer" or "SharedAccessSignature".`);
@@ -86,6 +97,6 @@ export class AccessToken {
     }
 
     public toString(): string {
-        return `${this.type} ${this.value}`;
+        return `${this.type} token="${this.value}",refresh="true"`;
     }
 }

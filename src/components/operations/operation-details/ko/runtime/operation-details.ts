@@ -83,6 +83,9 @@ export class OperationDetails {
     public enableConsole: boolean;
 
     @Param()
+    public enableScrollTo: boolean;
+
+    @Param()
     public authorizationServers: AuthorizationServer[];
 
     @Param()
@@ -95,6 +98,7 @@ export class OperationDetails {
 
         this.selectedApiName(apiName);
         this.selectedOperationName(operationName);
+        this.router.addRouteChangeListener(this.onRouteChange.bind(this));
 
         if (apiName) {
             await this.loadApi(apiName);
@@ -103,8 +107,6 @@ export class OperationDetails {
         if (operationName) {
             await this.loadOperation(apiName, operationName);
         }
-
-        this.router.addRouteChangeListener(this.onRouteChange.bind(this));
     }
 
     private async onRouteChange(): Promise<void> {
@@ -113,16 +115,22 @@ export class OperationDetails {
 
         if (apiName && apiName !== this.selectedApiName()) {
             this.selectedApiName(apiName);
-            this.loadApi(apiName);
+            await this.loadApi(apiName);
         }
 
-        if (apiName !== this.selectedApiName() || operationName !== this.selectedOperationName()) {
-            this.operation(null);
+        if (apiName === this.selectedApiName() && operationName === this.selectedOperationName()) {
+            return;
+        }
 
-            if (apiName && operationName) {
-                this.selectedOperationName(operationName);
-                await this.loadOperation(apiName, operationName);
-            }
+        if (!operationName) {    
+            this.selectedOperationName(null);                
+            this.operation(null);
+            return;
+        }
+
+        if (apiName && operationName) {
+            this.selectedOperationName(operationName);
+            await this.loadOperation(apiName, operationName);
         }
     }
 
@@ -173,6 +181,11 @@ export class OperationDetails {
         this.tags(operationTags.map(tag => tag.name));
 
         this.working(false);
+
+        if (this.enableScrollTo) {
+            const headerElement = document.querySelector(".operation-header");
+            headerElement && headerElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+        }
     }
 
     public async loadDefinitions(operation: Operation): Promise<void> {
@@ -233,8 +246,7 @@ export class OperationDetails {
 
             if ((definition.type instanceof TypeDefinitionPropertyTypeReference
                 || definition.type instanceof TypeDefinitionPropertyTypeArrayOfPrimitive
-                || definition.type instanceof TypeDefinitionPropertyTypeArrayOfReference)
-                && !skipNames.includes(definition.type.name)) {
+                || definition.type instanceof TypeDefinitionPropertyTypeArrayOfReference)) {
                 result.push(definition.type.name);
             }
 
@@ -243,7 +255,7 @@ export class OperationDetails {
             }
         });
 
-        return result;
+        return result.filter(x => !skipNames.includes(x));
     }
 
     public async loadGatewayInfo(apiName: string): Promise<void> {

@@ -63,20 +63,23 @@ export class ApiDetails {
             return;
         }
 
-        this.api(null);
         this.selectedApiName(apiName);
-        this.loadApi(apiName);
+        await this.loadApi(apiName);
     }
 
     public async loadApi(apiName: string): Promise<void> {
         if (!apiName) {
+            this.api(null);
+            return;
+        }
+
+        const api = await this.apiService.getApi(`apis/${apiName}`);
+        if (!api) {
+            this.api(null);
             return;
         }
 
         this.working(true);
-
-        const api = await this.apiService.getApi(`apis/${apiName}`);
-
         if (api.apiVersionSet && api.apiVersionSet.id) {
             const apis = await this.apiService.getApisInVersionSet(api.apiVersionSet.id);
             apis.forEach(x => x.apiVersion = x.apiVersion || "Original");
@@ -147,16 +150,19 @@ export class ApiDetails {
     }
 
     private onVersionChange(selectedApiName: string): void {
-        const apiUrl = this.routeHelper.getApiReferenceUrl(selectedApiName);
-        this.router.navigateTo(apiUrl);
+        const apiName = this.routeHelper.getApiName();
+        if (apiName !== selectedApiName) {
+            const apiUrl = this.routeHelper.getApiReferenceUrl(selectedApiName);
+            this.router.navigateTo(apiUrl);
+        }
     }
 
-    public getChanglogUrl() {
+    public getChangeLogUrl(): string {
         return this.routeHelper.getApiReferenceUrl(this.selectedApiName(), this.changeLogPageUrl());
     }
 
     @OnDestroyed()
     public dispose(): void {
-        this.router.removeRouteChangeListener(this.loadApi);
+        this.router.removeRouteChangeListener(this.onRouteChange);
     }
 }

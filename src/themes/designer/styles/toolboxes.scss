@@ -20,12 +20,14 @@ h1 {
 h2 {
     font-size: 1.1em;
     margin-top: 20px;
+    margin-bottom: 10px;
+    color: #000;
 }
 
 .toolbox {
     display: flex;
     flex-direction: column;
-    padding: 7px;
+    padding: $toolbox-padding;
     z-index: $z-index-base;
     max-height: calc(100% - 40px);
 
@@ -263,4 +265,11 @@ h2 {
 .photo {
     @include fit;
     background-size: cover;
+}
+
+.subtle {
+    font-size: .9em;
+    color: lighten($color-base, 10%);
+    font-family: monospace;
+    padding-top: 5px;
 }
