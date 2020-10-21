@@ -7,7 +7,7 @@
         "**/*.js": {
             "when": "$(basename).ts"
         },
-        "**/node_modules": true,
+		"**/node_modules/{[^@],?[^p],??[^a],???[^p]}*": true,
         "**/dist": true,
         "**/e2e/build": true,
         "src/app/environment.module.ts": true
@@ -20,7 +20,7 @@
         "**/*.js": {
             "when": "$(basename).ts"
         },
-        "**/node_modules": true,
+        "**/node_modules/{[^@],?[^p],??[^a],???[^p]}*": true,
         "**/dist": true,
         "**/e2e/build": true,
         "src/app/environment.module.ts": true
