@@ -10,7 +10,7 @@ import * as Constants from "../constants";
 import { Utils } from "../utils";
 import { SearchQuery } from "../contracts/searchQuery";
 import { SubscriptionSecrets } from "../contracts/subscriptionSecrets";
-import { SubscriptionsModel } from "../components/users/subscriptions/subscriptionsModel";
+import { ApiContract } from "../contracts/api";
 
 /**
  * A service for management operations with products.
@@ -119,15 +119,31 @@ export class ProductService {
 
         for (const subscription of subscriptions) {
             const subscriptionModel = new Subscription(subscription);
-            const productName = Utils.getResourceName("products", subscription.properties.scope);
 
-            const productPromise = this.mapiClient
-                .get<ProductContract>(`/products/${productName}`)
-                .then(product => {
-                    subscriptionModel.productName = product.name;
-                });
+            if (subscription.properties.scope.endsWith("/apis")) {
+                subscriptionModel.productName = "All APIs";
+            } else
+                if (subscription.properties.scope.includes("/apis/")) {
+                    const apiName = Utils.getResourceName("apis", subscription.properties.scope);
 
-            promises.push(productPromise);
+                    const apiPromise = this.mapiClient
+                        .get<ApiContract>(`/apis/${apiName}`)
+                        .then(api => {
+                            subscriptionModel.productName = `API: ${api.properties.displayName}`;
+                        });
+
+                    promises.push(apiPromise);
+                } else {
+                    const productName = Utils.getResourceName("products", subscription.properties.scope);
+
+                    const productPromise = this.mapiClient
+                        .get<ProductContract>(`/products/${productName}`)
+                        .then(product => {
+                            subscriptionModel.productName = product.properties.displayName;
+                        });
+
+                    promises.push(productPromise);
+                }
 
             const secretPromise = this.mapiClient
                 .post<SubscriptionSecrets>(`${userId}/subscriptions/${subscription.name}/listSecrets`)
@@ -283,7 +299,7 @@ export class ProductService {
                     appType: Constants.AppType
                 }
             };
-            await this.mapiClient.put(userId + subscriptionId, null, payload);
+            await this.mapiClient.put(userId + subscriptionId, [MapiClient.getPortalHeader("createSubscription")], payload);
         }
     }
 
@@ -302,7 +318,7 @@ export class ProductService {
             console.warn("Delegation enabled. Can't cancel subscription");
         }
         else {
-            const header: HttpHeader = { name: "If-Match", value: "*" };
+            const headers: HttpHeader[] = [{ name: "If-Match", value: "*" }, MapiClient.getPortalHeader("cancelSubscription")];
 
             const payload = {
                 properties: {
@@ -310,7 +326,7 @@ export class ProductService {
                 }
             };
 
-            await this.mapiClient.patch(`${subscriptionId}?appType=${Constants.AppType}`, [header], payload);
+            await this.mapiClient.patch(`${subscriptionId}?appType=${Constants.AppType}`, headers, payload);
         }
 
         return await this.getSubscription(subscriptionId);
@@ -330,7 +346,7 @@ export class ProductService {
             throw new Error(`Parameter "subscriptionName" not specified.`);
         }
 
-        const header: HttpHeader = { name: "If-Match", value: "*" };
+        const headers: HttpHeader[] = [{ name: "If-Match", value: "*" }, MapiClient.getPortalHeader("renameSubscription")];
 
         const payload = {
             properties: {
@@ -338,7 +354,7 @@ export class ProductService {
             }
         };
 
-        await this.mapiClient.patch(`${subscriptionId}?appType=${Constants.AppType}`, [header], payload);
+        await this.mapiClient.patch(`${subscriptionId}?appType=${Constants.AppType}`, headers, payload);
 
         return await this.getSubscription(subscriptionId);
     }

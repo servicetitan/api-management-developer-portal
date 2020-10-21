@@ -75,7 +75,7 @@ export class ApiService {
         const query = "/apis?$filter=isCurrent eq true";
         const apisPage = await this.mapiClient.get<Page<ApiContract>>(query);
         const result = apisPage.value
-            .filter(x => x.properties.apiVersionSetId && Utils.getResourceName("api-version-sets", x.properties.apiVersionSetId, "shortId") === versionSetId)
+            .filter(x => x.properties.apiVersionSetId && Utils.getResourceName("apiVersionSets", x.properties.apiVersionSetId, "shortId") === versionSetId)
             .map(x => new Api(x));
 
         return result;
@@ -205,6 +205,10 @@ export class ApiService {
         return page;
     }
 
+    /**
+     * Returns tags associated with specified operation.
+     * @param operationId {string} ARM-formatted operation identifier.
+     */
     public async getOperationTags(operationId: string): Promise<Tag[]> {
         if (!operationId) {
             throw new Error(`Parameter "operationId" not specified.`);
@@ -239,7 +243,7 @@ export class ApiService {
         }
 
         if (apiContract.properties.apiVersionSetId && !apiContract.properties.apiVersionSet) { // Filling the missing version set
-            const setId = Utils.getResourceName("api-version-sets", apiContract.properties.apiVersionSetId, "shortId");
+            const setId = Utils.getResourceName("apiVersionSets", apiContract.properties.apiVersionSetId, "shortId");
             const apiVersionSetContract = await this.getApiVersionSet(setId);
             apiContract.properties.apiVersionSet = apiVersionSetContract;
         }
@@ -363,7 +367,10 @@ export class ApiService {
         return page;
     }
 
-
+    /**
+     * Returns API schema with sepcified identifier.
+     * @param schemaId {string} ARM-formatted schema identifier.
+     */
     public async getApiSchema(schemaId: string): Promise<Schema> {
         const contract = await this.mapiClient.get<SchemaContract>(`${schemaId}`);
         const model = new Schema(contract);

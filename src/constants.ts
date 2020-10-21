@@ -87,7 +87,6 @@ export const AppType = "developerPortal";
 export enum SettingNames {
     backendUrl = "backendUrl",
     managementApiUrl = "managementApiUrl",
-    managementApiVersion = "managementApiVersion",
     managementApiAccessToken = "managementApiAccessToken"
 }
 
@@ -114,3 +113,15 @@ export enum GrantTypes {
      */
     clientCredentials = "clientCredentials"
 }
+
+export const managementApiVersion = "2019-12-01";
+
+/**
+ * Developer portal type (self-hosted or managed).
+ */
+export const developerPortalType = "self-hosted-portal";
+
+/**
+ * Header name to track developer portal type.
+ */
+export const portalHeaderName = "x-ms-apim-client";

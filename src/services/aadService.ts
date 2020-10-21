@@ -8,6 +8,7 @@ import { HttpClient } from "@paperbits/common/http";
 import { ISettingsProvider } from "@paperbits/common/configuration";
 import { RouteHelper } from "../routing/routeHelper";
 import { UsersService } from "./usersService";
+import { MapiClient } from "./mapiClient";
 
 /**
  * Service for operations with Azure Active Directory identity provider.
@@ -30,19 +31,25 @@ export class AadService {
     private async exchangeIdToken(idToken: string, provider: string): Promise<void> {
         let managementApiUrl = await this.settingsProvider.getSetting<string>(Constants.SettingNames.managementApiUrl);
         managementApiUrl = Utils.ensureUrlArmified(managementApiUrl);
-        const managementApiVersion = await this.settingsProvider.getSetting<string>(Constants.SettingNames.managementApiVersion);
 
         const request = {
-            url: `${managementApiUrl}/identity?api-version=${managementApiVersion}`,
+            url: `${managementApiUrl}/identity?api-version=${Constants.managementApiVersion}`,
             method: "GET",
-            headers: [{ name: "Authorization", value: `${provider} id_token="${idToken}"` }]
+            headers: [
+                { name: "Authorization", value: `${provider} id_token="${idToken}"` }, 
+                MapiClient.getPortalHeader()
+            ]
         };
 
         const response = await this.httpClient.send(request);
         const sasTokenHeader = response.headers.find(x => x.name.toLowerCase() === "ocp-apim-sas-token");
-        const returnUrl = this.routeHelper.getQueryParameter("returnUrl");
-                
-        if (!sasTokenHeader) { // User not registered with APIM.
+        const returnUrl = this.routeHelper.getQueryParameter("returnUrl") || Constants.pageUrlHome;
+
+        if (sasTokenHeader) {
+            const accessToken = AccessToken.parse(sasTokenHeader.value);
+            await this.authenticator.setAccessToken(accessToken);
+        }
+        else { // User not registered with APIM.
             const jwtToken = Utils.parseJwt(idToken);
             const firstName = jwtToken.given_name;
             const lastName = jwtToken.family_name;
@@ -50,20 +57,17 @@ export class AadService {
 
             if (firstName && lastName && email) {
                 await this.usersService.createUserWithOAuth(provider, idToken, firstName, lastName, email);
-                await this.router.navigateTo(returnUrl || Constants.pageUrlHome);
             }
             else {
                 const signupUrl = this.routeHelper.getIdTokenReferenceUrl(provider, idToken);
                 await this.router.navigateTo(signupUrl);
+                return;
             }
-
-            return;
         }
 
-        const accessToken = AccessToken.parse(sasTokenHeader.value);
-        await this.authenticator.setAccessToken(accessToken);
-        
-        await this.router.navigateTo(returnUrl || Constants.pageUrlHome);
+        this.router.getCurrentUrl() === returnUrl
+            ? location.reload()
+            : await this.router.navigateTo(returnUrl);
     }
 
     /**
@@ -130,13 +134,13 @@ export class AadService {
     }
 
     /**
-     * Initiates signing-in with Azure Active Directory identity provider.
+     * Runc Azure Active Directory B2C user flow.
      * @param clientId {string} Azure Active Directory B2C client ID.
      * @param tenant {string} Tenant, e.g. "contoso.b2clogin.com".
      * @param instance {string} Instance, e.g. "contoso.onmicrosoft.com".
-     * @param signInPolicy {string} Sign-in policy, e.g. "b2c_1_signinpolicy".
+     * @param userFlow {string} User flow, e.g. "B2C_1_signinsignup".
      */
-    public async signInWithAadB2C(clientId: string, tenant: string, instance: string, signInPolicy: string): Promise<void> {
+    public async runAadB2CUserFlow(clientId: string, tenant: string, instance: string, userFlow: string): Promise<void> {
         if (!clientId) {
             throw new Error(`Client ID not specified.`);
         }
@@ -145,7 +149,7 @@ export class AadService {
             throw new Error(`Authority not specified.`);
         }
 
-        const auth = `https://${tenant}/tfp/${instance}/${signInPolicy}`;
+        const auth = `https://${tenant}/tfp/${instance}/${userFlow}`;
 
         const msalConfig = {
             auth: {

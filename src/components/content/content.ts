@@ -2,17 +2,17 @@
 import { ViewManager, View } from "@paperbits/common/ui";
 import { Component } from "@paperbits/common/ko/decorators";
 import { HttpClient } from "@paperbits/common/http";
+import { ISettingsProvider } from "@paperbits/common/configuration";
 import { Logger } from "@paperbits/common/logging";
 import { IAuthenticator } from "../../authentication/IAuthenticator";
 import { AppError } from "./../../errors/appError";
 import { MapiError } from "../../errors/mapiError";
-import { ISettingsProvider } from "@paperbits/common/configuration";
+
 
 @Component({
     selector: "content-workshop",
     template: template
 })
-
 export class ContentWorkshop {
     constructor(
         private readonly viewManager: ViewManager,
@@ -20,10 +20,7 @@ export class ContentWorkshop {
         private readonly authenticator: IAuthenticator,
         private readonly settingsProvider: ISettingsProvider,
         private readonly logger: Logger
-    ) {
-		this.viewManager = viewManager;
-		alert("content constructor - OK")
-    }
+    ) { }
 
     public async publish(): Promise<void> {
         this.logger.trackEvent("Click: Publish website");
@@ -33,9 +30,10 @@ export class ContentWorkshop {
         }
 
         try {
-			const accessToken = await this.authenticator.getAccessToken();
+            const accessToken = await this.authenticator.getAccessToken();
 
-			const publishRootUrl = await this.settingsProvider.getSetting<string>("backendUrl"); 
+            const publishRootUrl = await this.settingsProvider.getSetting<string>("backendUrl") || "";
+
             const response = await this.httpClient.send({
                 url: publishRootUrl + "/publish",
                 method: "POST",

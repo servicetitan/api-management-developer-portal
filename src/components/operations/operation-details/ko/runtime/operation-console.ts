@@ -25,8 +25,8 @@ import { RouteHelper } from "../../../../../routing/routeHelper";
 import { TemplatingService } from "../../../../../services/templatingService";
 import { OAuthService } from "../../../../../services/oauthService";
 import { AuthorizationServer } from "../../../../../models/authorizationServer";
-import { SessionManager } from "./../../../../../authentication/defaultSessionManager";
-import { OAuthSession } from "./oauthSession";
+import { SessionManager } from "../../../../../authentication/sessionManager";
+import { OAuthSession, StoredCredentials } from "./oauthSession";
 
 const oauthSessionKey = "oauthSession";
 
@@ -55,7 +55,6 @@ export class OperationConsole {
     public readonly hostnameSelectionEnabled: ko.Observable<boolean>;
     public readonly wildcardSegment: ko.Observable<string>;
     public readonly selectedGrantType: ko.Observable<string>;
-    public masterKey: string;
     public isConsumptionMode: boolean;
     public templates: Object;
 
@@ -131,7 +130,6 @@ export class OperationConsole {
     @OnMounted()
     public async initialize(): Promise<void> {
         const skuName = await this.tenantService.getServiceSkuName();
-        this.masterKey = await this.tenantService.getServiceMasterKey();
         this.isConsumptionMode = skuName === ServiceSkuName.Consumption;
 
         await this.resetConsole();
@@ -255,12 +253,14 @@ export class OperationConsole {
                 }
 
                 keys.push({
-                    name: `Primary-${subscription.primaryKey.substr(0, 4)}`,
+                    name: `Primary: ${((subscription.name == null) || (subscription.name.trim()) ? subscription.name : subscription.primaryKey.substr(0, 4))}`,
+                    //name: `Primary-${subscription.primaryKey.substr(0, 4)}`,
                     value: subscription.primaryKey
                 });
 
                 keys.push({
-                    name: `Secondary-${subscription.secondaryKey.substr(0, 4)}`,
+                    name: `Secondary: ${((subscription.name == null) || (subscription.name.trim()) ? subscription.name : subscription.secondaryKey.substr(0, 4))}`,
+                    //name: `Secondary-${subscription.secondaryKey.substr(0, 4)}`,
                     value: subscription.secondaryKey
                 });
             });
@@ -385,14 +385,6 @@ export class OperationConsole {
 
         this.consoleOperation().request.headers.push(keyHeader);
         this.updateRequestSummary();
-    }
-
-    private setMasterSubsciptionKeyHeader(): void {
-        const subscriptionKey = this.selectedProduct
-            ? `${this.masterKey};product=${this.selectedProduct}`
-            : this.masterKey;
-
-        this.setSubscriptionKeyHeader(subscriptionKey);
     }
 
     private removeSubscriptionKeyHeader(): void {
@@ -531,29 +523,39 @@ export class OperationConsole {
 
         if (!authorizationServer) {
             this.selectedGrantType(null);
-            this.removeAuthorizationHeader();
             return;
         }
 
         const api = this.api();
         const scopeOverride = api.authenticationSettings?.oAuth2?.scope;
-        const recordKey = this.getSessionRecordKey(authorizationServer.name, scopeOverride);
-        const oauthSession = await this.sessionManager.getItem<OAuthSession>(oauthSessionKey);
-        const record = oauthSession?.[recordKey];
+        const storedCredentials = await this.getStoredCredentials(authorizationServer.name, scopeOverride);
 
-        if (record) {
-            this.selectedGrantType(record.grantType);
-            this.setAuthorizationHeader(record.accessToken);
+        if (storedCredentials) {
+            this.selectedGrantType(storedCredentials.grantType);
+            this.setAuthorizationHeader(storedCredentials.accessToken);
         }
     }
 
-    private async getStoredCredentials(serverName: string, scopeOverride: string): Promise<string> {
+    private async getStoredCredentials(serverName: string, scopeOverride: string): Promise<StoredCredentials> {
         const oauthSession = await this.sessionManager.getItem<OAuthSession>(oauthSessionKey);
         const recordKey = this.getSessionRecordKey(serverName, scopeOverride);
-        const record = oauthSession?.[recordKey];
-        const accessToken = record?.accessToken;
+        const storedCredentials = oauthSession?.[recordKey];
 
-        return accessToken;
+        try {
+            /* Trying to check if it's a JWT token and, if yes, whether it got expired. */
+            const jwtToken = Utils.parseJwt(storedCredentials.accessToken.replace(/^bearer /i, ""));
+            const now = Utils.getUtcDateTime();
+
+            if (now > jwtToken.exp) {
+                await this.clearStoredCredentials();
+                return null;
+            }
+        }
+        catch (error) {
+            // do nothing
+        }
+
+        return storedCredentials;
     }
 
     private async setStoredCredentials(serverName: string, scopeOverride: string, grantType: string, accessToken: string): Promise<void> {
@@ -568,12 +570,17 @@ export class OperationConsole {
         await this.sessionManager.setItem<object>(oauthSessionKey, oauthSession);
     }
 
+    private async clearStoredCredentials(): Promise<void> {
+        await this.sessionManager.removeItem(oauthSessionKey);
+        this.removeAuthorizationHeader();
+    }
+
     /**
      * Initiates specified authentication flow.
      * @param grantType OAuth grant type, e.g. "implicit" or "authorizationCode".
      */
     public async authenticateOAuth(grantType: string): Promise<void> {
-        this.removeAuthorizationHeader();
+        await this.clearStoredCredentials();
 
         if (!grantType) {
             return;
@@ -583,10 +590,10 @@ export class OperationConsole {
         const authorizationServer = this.authorizationServer();
         const scopeOverride = api.authenticationSettings?.oAuth2?.scope;
         const serverName = authorizationServer.name;
-        const storedAccessToken = await this.getStoredCredentials(serverName, scopeOverride);
+        const storedCredentials = await this.getStoredCredentials(serverName, scopeOverride);
 
-        if (storedAccessToken) {
-            this.setAuthorizationHeader(storedAccessToken);
+        if (storedCredentials) {
+            this.setAuthorizationHeader(storedCredentials.accessToken);
             return;
         }
 
