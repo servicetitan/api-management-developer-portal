@@ -47,7 +47,7 @@ export class ApiClientsRuntime {
             }
             return isProductionAvailable && this.isProductionView()
                 ? this.pageContract.productionEnvironment
-                : this.pageContract.sandboxEnvironment;
+                : this.pageContract.practiceEnvironment;
         });
         this.getRandomString25 = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 25);
     }
@@ -78,7 +78,7 @@ export class ApiClientsRuntime {
 
     public clickEditApiClient(apiClient: ApiClientContract) {
         const environment = this.isProductionView()
-            ? ApiClientEnvironment.Production : ApiClientEnvironment.Sandbox;
+            ? ApiClientEnvironment.Production : ApiClientEnvironment.Practice;
 
         const editor = new ApiClientEditorVm(
             this.apiClientsService,

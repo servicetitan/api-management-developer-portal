@@ -2,6 +2,6 @@ import { ApiClientsEnvironmentContract } from "./apiClientsEnvironmentContract";
 
 export interface ApiClientsPageContract {
     isProductionAvailable: boolean,
-    sandboxEnvironment: ApiClientsEnvironmentContract,
+    practiceEnvironment: ApiClientsEnvironmentContract,
     productionEnvironment: ApiClientsEnvironmentContract
 }
