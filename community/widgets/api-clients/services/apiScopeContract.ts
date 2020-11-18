@@ -2,6 +2,6 @@ export interface ApiScopeContract
 {
     name: string;
     displayName: string;
-    authClaims: string;
+    authClaims: Array<string>;
     accessGroup: string;
 }

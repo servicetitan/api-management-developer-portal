@@ -6,7 +6,7 @@ import { ApiClientsService } from "../../services/apiClientsService";
 import { ApiClientsPageContract } from "../../services/apiClientsPageContract";
 import { ApiClientEnvironment } from "../../services/apiClientEnvironment";
 import { ApiClientEditorVm } from "./apiClientEditorVm"
-import { ApiClientContract } from "../../services/apiClientContract";
+import { ServerOnlyClientContract } from "../../services/serverOnlyClientContract";
 import { ApiClientsEnvironmentContract } from "../../services/apiClientsEnvironmentContract";
 import { customAlphabet } from 'nanoid';
 
@@ -62,7 +62,7 @@ export class ApiClientsRuntime {
     }
 
     public clickCreateApiClient() {
-        const emptyClient: ApiClientContract = {
+        const emptyClient: ServerOnlyClientContract = {
             clientId: "cid." + this.getRandomString25(),
             clientSecret1: "cs1." + this.getRandomString25() + this.getRandomString25(),
             clientSecret2: "cs2." + this.getRandomString25() + this.getRandomString25(),
@@ -76,7 +76,7 @@ export class ApiClientsRuntime {
         this.clickEditApiClient(emptyClient);
     }
 
-    public clickEditApiClient(apiClient: ApiClientContract) {
+    public clickEditApiClient(apiClient: ServerOnlyClientContract) {
         const environment = this.isProductionView()
             ? ApiClientEnvironment.Production : ApiClientEnvironment.Practice;
 

@@ -1,6 +1,6 @@
 import { AuthClaimValueContract } from "./authClaimValueContract";
 
-export interface ApiClientContract {
+export interface ServerOnlyClientContract {
     clientId: string;
     clientSecret1: string;
     clientSecret2: string;

@@ -1,5 +1,5 @@
 import * as ko from "knockout";
-import { ApiClientContract } from "../../services/apiClientContract";
+import { ServerOnlyClientContract } from "../../services/serverOnlyClientContract";
 import { ApiClientsService } from "../../services/apiClientsService";
 import { ApiClientEditContract } from "../../services/apiClientEditContract";
 import { ApiClientEnvironment } from "../../services/apiClientEnvironment";
@@ -19,7 +19,7 @@ export class ApiClientEditorVm {
 
     private close: () => void;
     public isLoading: ko.Observable<boolean>;
-    private apiClientContract: ApiClientContract;
+    private apiClientContract: ServerOnlyClientContract;
     private getRandomSecretKey: () => string;
 
     public availableApiScopes: Array<string>;
@@ -30,7 +30,7 @@ export class ApiClientEditorVm {
         private apiClientEnvironment: ApiClientEnvironment,
         availableApiScopes: Array<ApiScopeContract>,
         availableAuthClaims: Array<AuthClaimValueContract>,
-        apiClient: ApiClientContract,
+        apiClient: ServerOnlyClientContract,
         close: () => void
     ) {
         this.clientId = apiClient.clientId;
