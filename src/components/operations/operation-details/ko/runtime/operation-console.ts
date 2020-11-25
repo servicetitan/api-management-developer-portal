@@ -219,8 +219,8 @@ export class OperationConsole {
                     .find(header => header.name().toLowerCase() === KnownHttpHeaders.ContentType.toLowerCase());
 
                 if (contentHeader) {
-                    const contentType = `${contentHeader.value};action="${consoleOperation.urlTemplate.split("=")[1]}"`;
-                    consoleOperation.setHeader(KnownHttpHeaders.ContentType, contentType);
+                    const contentType = `${contentHeader.value()};action="${consoleOperation.urlTemplate.split("=")[1]}"`;
+                    contentHeader.value(contentType);
                 }
             }
         }
@@ -253,14 +253,12 @@ export class OperationConsole {
                 }
 
                 keys.push({
-                    name: `Primary: ${((subscription.name == null) || (subscription.name.trim()) ? subscription.name : subscription.primaryKey.substr(0, 4))}`,
-                    //name: `Primary-${subscription.primaryKey.substr(0, 4)}`,
+                    name: `Primary: ${subscription.name?.trim() || subscription.primaryKey.substr(0, 4)}`,
                     value: subscription.primaryKey
                 });
 
                 keys.push({
-                    name: `Secondary: ${((subscription.name == null) || (subscription.name.trim()) ? subscription.name : subscription.secondaryKey.substr(0, 4))}`,
-                    //name: `Secondary-${subscription.secondaryKey.substr(0, 4)}`,
+                    name: `Secondary: ${subscription.name?.trim() || subscription.secondaryKey.substr(0, 4)}`,
                     value: subscription.secondaryKey
                 });
             });
