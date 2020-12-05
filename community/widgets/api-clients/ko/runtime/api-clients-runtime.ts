@@ -10,7 +10,6 @@ import { ServerOnlyClientContract } from "../../services/serverOnlyClientContrac
 import { ApiClientsEnvironmentContract } from "../../services/apiClientsEnvironmentContract";
 import { customAlphabet } from 'nanoid';
 
-
 @RuntimeComponent({
     selector: widgetRuntimeSelector
 })
@@ -40,7 +39,7 @@ export class ApiClientsRuntime {
         this.searchPattern = ko.observable("");
         this.apiClientEditor = ko.observable();
         this.currentEnvironment = ko.pureComputed(() => {
-            // first code block, we need to compute based on isProductionView observable
+            // first code block, we need to compute based on isProductionAvailable observable
             const isProductionAvailable = this.isProductionAvailable();
             if (this.pageContract == null) {
                 return null;
@@ -58,6 +57,7 @@ export class ApiClientsRuntime {
         const page = await this.apiClientsService.getApiClients();
         this.pageContract = page;
         this.isProductionAvailable(page.isProductionAvailable);
+        this.isProductionAvailable.valueHasMutated();
         this.isLoading(false);
     }
 
@@ -98,6 +98,4 @@ export class ApiClientsRuntime {
         console.log("ApiClientsRuntime.dispose (@OnDestroyed())");
         // Your cleanup widget logic
     }
-
-    public
 }

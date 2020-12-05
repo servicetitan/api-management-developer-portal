@@ -1,20 +1,20 @@
 <!-- ko if: isEditing -->
 <div class="panel panel-table" data-bind="with: apiClientEditor">
     <div class="row">
-        <div class="col-md-3">Client Id</div>
+        <div class="col-md-2"><label class="form-label">Client Id</label></div>
         <div class="col-md-9">
             <span type="text" data-bind="text: clientId"></span><br><br>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"><label for="clientName">Client Name</label></div>
+        <div class="col-md-2"><label class="form-label" for="clientName">Client Name</label></div>
         <div class="col-md-9">
             <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientName"
                 name="clientName" autocomplete="client-name" data-bind="textInput: clientName" />
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"><label for="clientSecret1">Client Secret 1</label></div>
+        <div class="col-md-2"><label class="form-label" for="clientSecret1">Client Secret 1</label></div>
         <div class="col-md-7">
             <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret1"
                 name="clientSecret1" autocomplete="client-secret-1" data-bind="textInput: clientSecret1" disabled />
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"><label for="clientSecret2">Client Secret 2</label></div>
+        <div class="col-md-2"><label class="form-label" for="clientSecret2">Client Secret 2</label></div>
         <div class="col-md-7">
             <input type="text" class="form-control" aria-required="true" autofocus="autofocus" id="clientSecret2"
                 name="clientSecret2" autocomplete="client-secret-2" data-bind="textInput: clientSecret2" disabled />
@@ -43,30 +43,39 @@
     </div>
     -->
     <div class="row">
-        <div class="col-md-3"><label for="allowedScopes">Allowed Scopes</label></div>
+        <div class="col-md-2"><label class="form-label" for="allowedScopes">Allowed Scopes</label></div>
         <div class="col-md-9">
-            <select class="form-control" aria-required="true" autofocus="autofocus" id="allowedScopes" name="allowedScopes"
-                data-bind="options: availableApiScopes, selectedOptions: allowedScopes" multiple="true" size="7">
-            </select>
+            <!-- ko foreach: availableApiScopes -->
+            <label for="enableScrollTo" data-bind="attr: { for: 'scope' + $index() }">
+                <input type="checkbox" data-bind="checked: $parent.allowedScopes, value: $data, attr: { id: 'scope' + $index() }" />
+                <span data-bind="text: $data"></span>
+            </label>
+            <br>
+            <!-- /ko -->
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"><label for="authClaimValues">Auth Claims</label></div>
+        <div class="col-md-2"><label class="form-label" for="authClaimValues">Allowed Resource Owner(s)</label></div>
         <div class="col-md-9">
-            <select class="form-control" aria-required="true" autofocus="autofocus" id="authClaimValues" name="authClaimValues"
-                data-bind="options: availableAuthClaims, selectedOptions: authClaimValues" multiple="true">
-            </select>
+            <!-- ko foreach: availableAuthClaims -->
+            <label for="enableScrollTo" data-bind="attr: { for: 'authclaim' + $index() }">
+                <input type="checkbox" data-bind="checked: $parent.authClaimValues, value: $data, attr: { id: 'authclaim' + $index() }" />
+                <span data-bind="text: $data"></span>
+            </label>
+            <br>
+            <!-- /ko -->
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"></div>
+        <div class="col-md-2">
+            <label for="enabled" class="form-label">Enabled</label>
+        </div>
         <div class="col-md-9">
             <label for="enabled">
-                <div class="switch">
+                <div class="switch" style="margin: 5px 0;">
                     <input type="checkbox" id="enabled" name="enabled" data-bind="checked: enabled">
                     <span class="slider round"></span>
                 </div>
-                Enabled
             </label>
         </div>
     </div>
@@ -98,7 +107,7 @@
         </div>
         <div class="col-3">
             <!-- ko if: isProductionAvailable -->
-            <label for="isProductionView">
+            <label for="isProductionView" class="form-label">
                 <div class="switch">
                     <input id="isProductionView" type="checkbox" data-bind="checked: isProductionView">
                     <span class="slider round"></span>
@@ -135,6 +144,9 @@
         <div class="table-row" role="row">
             <div class="col-3" role="cell">
                 <a href="#" data-bind="click: $component.clickEditApiClient, text: client.clientId"></a>
+                <!-- ko ifnot: client.enabled -->
+                <br><i style="color: gray;">disabled</i>
+                <!-- /ko -->
             </div>
             <div class="col-3" role="cell" data-bind="text: client.clientName"></div>
             <div class="col-3" role="cell" data-bind="foreach: { data: client.allowedScopes, as: 'scope' }">

@@ -63,7 +63,7 @@ export class ApiClientEditorVm {
         const apiClient: ApiClientEditContract = {
             clientSecret1: this.clientSecret1().length == 54 ? this.clientSecret1() : "",
             clientSecret2: this.clientSecret2().length == 54 ? this.clientSecret2() : "",
-            clientName: this.clientName(),
+            clientName: this.clientName() || this.clientId,
             description: this.description(),
             allowedScopes: this.allowedScopes(),
             authClaimValues: this.authClaimValues()
