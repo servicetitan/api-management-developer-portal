@@ -1,4 +1,5 @@
 import * as ClientOAuth2 from "client-oauth2";
+import * as Utils from "@paperbits/common";
 import { HttpClient } from "@paperbits/common/http";
 import { ISettingsProvider } from "@paperbits/common/configuration";
 import { GrantTypes } from "./../constants";
@@ -89,13 +90,22 @@ export class OAuthService {
      */
     public authenticateImplicit(backendUrl: string, authorizationServer: AuthorizationServer): Promise<string> {
         const redirectUri = `${backendUrl}/signin-oauth/implicit/callback`;
+        const query = {
+            state: Utils.guid()
+        };
+
+        if (authorizationServer.scopes.includes("openid")) {
+            query["nonce"] = Utils.guid();
+            query["response_type"] = "id_token";
+        }
 
         const oauthClient = new ClientOAuth2({
             clientId: authorizationServer.clientId,
             accessTokenUri: authorizationServer.tokenEndpoint,
             authorizationUri: authorizationServer.authorizationEndpoint,
             redirectUri: redirectUri,
-            scopes: authorizationServer.scopes
+            scopes: authorizationServer.scopes,
+            query: query
         });
 
         return new Promise((resolve, reject) => {
@@ -201,7 +211,7 @@ export class OAuthService {
         const server = new AuthorizationServer();
         server.authorizationEndpoint = metadata.authorization_endpoint;
         server.tokenEndpoint = metadata.token_endpoint;
-        server.scopes = metadata.scopes_supported || ["openid"];
+        server.scopes = ["openid"];
 
         // Leaving only "implicit" grant flow until backend gets deployed.
         const supportedGrantTypes = [GrantTypes.implicit.toString(), GrantTypes.authorizationCode.toString()];
