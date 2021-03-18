@@ -19,7 +19,7 @@ export class Operation {
     public displayUrlTemplate: string;
 
     public getMeaningfulResponses(): Response[] {
-        return this.responses.filter(x => x.isMeaningful());
+        return this.responses; //.filter(x => x.isMeaningful());
     }
 
     constructor(contract?: OperationContract) {
@@ -40,7 +40,7 @@ export class Operation {
         this.parameters = this.templateParameters.concat(this.request.queryParameters);
 
         this.responses = contract.properties.responses
-            ? contract.properties.responses.map(x => new Response(x))
+            ? contract.properties.responses.sort((a,b) => a.statusCode - b.statusCode).map(x => new Response(x))
             : [];
 
         let connector = this.urlTemplate.includes("?") ? "&" : "?";
