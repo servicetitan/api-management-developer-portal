@@ -46,9 +46,9 @@
         <div class="col-md-2"><label class="form-label" for="allowedScopes">Allowed Scopes</label></div>
         <div class="col-md-9">
             <!-- ko foreach: availableApiScopes -->
-            <label for="enableScrollTo" data-bind="attr: { for: 'scope' + $index() }">
+            <label data-bind="attr: { for: 'scope' + $index() }">
                 <input type="checkbox" data-bind="checked: $parent.allowedScopes, value: $data, attr: { id: 'scope' + $index() }" />
-                <span data-bind="text: $data"></span>
+                <b data-bind="text: $data"></b> - <span data-bind="text: $parent.apiScopeNames[$data]">
             </label>
             <br>
             <!-- /ko -->
@@ -58,7 +58,7 @@
         <div class="col-md-2"><label class="form-label" for="authClaimValues">Allowed Resource Owners</label></div>
         <div class="col-md-9">
             <!-- ko foreach: availableAuthClaims -->
-            <label for="enableScrollTo" data-bind="attr: { for: 'authclaim' + $index() }">
+            <label data-bind="attr: { for: 'authclaim' + $index() }">
                 <input type="checkbox" data-bind="checked: $parent.authClaimValues, value: $data, attr: { id: 'authclaim' + $index() }" />
                 <span data-bind="text: $data"></span>
             </label>

@@ -23,6 +23,7 @@ export class ApiClientEditorVm {
     private getRandomSecretKey: () => string;
 
     public availableApiScopes: Array<string>;
+    public apiScopeNames: Record<string, string>;
     public availableAuthClaims: Array<string>;
 
     constructor(
@@ -46,6 +47,13 @@ export class ApiClientEditorVm {
         this.isLoading = ko.observable(false);
 
         this.availableApiScopes = availableApiScopes.map(s => s.name);
+        this.apiScopeNames = availableApiScopes.reduce(
+            (record, item) => {
+                record[item.name] = item.displayName;
+                return record;
+            },
+            {} as Record<string, string>
+        );
         this.availableAuthClaims = availableAuthClaims.map(c => c.type + ": " + c.value);
 
         this.getRandomSecretKey = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 50);
