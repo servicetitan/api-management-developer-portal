@@ -68,7 +68,7 @@ export class ApiClientsRuntime {
             clientSecret2: "cs2." + this.getRandomString25() + this.getRandomString25(),
             clientName: "",
             description: "",
-            allowedScopes: this.currentEnvironment().availableApiScopes.map(s => s.name),
+            allowedScopes: [],
             allowedScopeNames: [],
             authClaimValues: this.currentEnvironment().availableAuthClaims,
             enabled: true
