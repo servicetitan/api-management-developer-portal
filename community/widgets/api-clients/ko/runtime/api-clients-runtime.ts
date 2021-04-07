@@ -69,6 +69,7 @@ export class ApiClientsRuntime {
             clientName: "",
             description: "",
             allowedScopes: this.currentEnvironment().availableApiScopes.map(s => s.name),
+            allowedScopeNames: [],
             authClaimValues: this.currentEnvironment().availableAuthClaims,
             enabled: true
         }

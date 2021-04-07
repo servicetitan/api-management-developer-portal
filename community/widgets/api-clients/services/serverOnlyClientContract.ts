@@ -7,6 +7,7 @@ export interface ServerOnlyClientContract {
     clientName: string;
     description: string;
     allowedScopes: Array<string>;
+    allowedScopeNames: Array<string>;
     authClaimValues: Array<AuthClaimValueContract>;
     enabled: boolean;
 }

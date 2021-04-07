@@ -48,22 +48,28 @@
             <!-- ko foreach: availableApiScopes -->
             <label data-bind="attr: { for: 'scope' + $index() }">
                 <input type="checkbox" data-bind="checked: $parent.allowedScopes, value: $data, attr: { id: 'scope' + $index() }" />
-                <b data-bind="text: $data"></b> - <span data-bind="text: $parent.apiScopeNames[$data]">
+                <span data-bind="text: $parent.apiScopeNames[$data]"></span>
             </label>
             <br>
             <!-- /ko -->
         </div>
     </div>
+    <!--
     <div class="row">
         <div class="col-md-2"><label class="form-label" for="authClaimValues">Allowed Resource Owners</label></div>
-        <div class="col-md-9">
-            <!-- ko foreach: availableAuthClaims -->
+        <div class="col-md-9" data-bind="foreach: availableAuthClaims">
             <label data-bind="attr: { for: 'authclaim' + $index() }">
                 <input type="checkbox" data-bind="checked: $parent.authClaimValues, value: $data, attr: { id: 'authclaim' + $index() }" />
                 <span data-bind="text: $data"></span>
             </label>
             <br>
-            <!-- /ko -->
+        </div>
+    </div>
+    -->
+    <div class="row">
+        <div class="col-md-2"><label class="form-label" for="authClaimValues">Allowed Resource Owners</label></div>
+        <div class="col-md-9" data-bind="foreach: authClaimValues">
+            <span class="tag-item" data-bind="text: $data"></span>
         </div>
     </div>
     <div class="row">
@@ -151,7 +157,7 @@
                 <!-- /ko -->
             </div>
             <div class="col-3" role="cell" style="overflow: hidden;" data-bind="text: client.clientName"></div>
-            <div class="col-3" role="cell" style="overflow: hidden;" data-bind="foreach: { data: client.allowedScopes, as: 'scope' }">
+            <div class="col-3" role="cell" style="overflow: hidden;" data-bind="foreach: { data: client.allowedScopeNames, as: 'scope' }">
                 <span class="tag-item" data-bind="text: scope"></span>
             </div>
             <div class="col-3" role="cell" style="overflow: hidden;" data-bind="foreach: { data: client.authClaimValues, as: 'authClaim' }">

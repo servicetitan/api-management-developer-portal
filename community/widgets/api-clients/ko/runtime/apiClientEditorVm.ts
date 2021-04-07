@@ -46,7 +46,9 @@ export class ApiClientEditorVm {
         this.apiClientContract = apiClient;
         this.isLoading = ko.observable(false);
 
-        this.availableApiScopes = availableApiScopes.map(s => s.name);
+        this.availableApiScopes = availableApiScopes
+            .filter(s => !s.name.startsWith("tenant") || apiClient.allowedScopes.find(a => a == s.name) != null)
+            .map(s => s.name);
         this.apiScopeNames = availableApiScopes.reduce(
             (record, item) => {
                 record[item.name] = item.displayName;
