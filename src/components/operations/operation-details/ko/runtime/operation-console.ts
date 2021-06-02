@@ -1,8 +1,9 @@
 import * as ko from "knockout";
 import * as validation from "knockout.validation";
-import * as _ from "lodash";
 import template from "./operation-console.html";
+import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
 import { Component, Param, OnMounted } from "@paperbits/common/ko/decorators";
+import { ISettingsProvider } from "@paperbits/common/configuration";
 import { Operation } from "../../../../../models/operation";
 import { ApiService } from "../../../../../services/apiService";
 import { ConsoleOperation } from "../../../../../models/console/consoleOperation";
@@ -16,7 +17,6 @@ import { ProductService } from "../../../../../services/productService";
 import { UsersService } from "../../../../../services/usersService";
 import { TenantService } from "../../../../../services/tenantService";
 import { ServiceSkuName, TypeOfApi } from "../../../../../constants";
-import { HttpClient, HttpRequest } from "@paperbits/common/http";
 import { Revision } from "../../../../../models/revision";
 import { templates } from "./templates/templates";
 import { ConsoleParameter } from "../../../../../models/console/consoleParameter";
@@ -27,6 +27,9 @@ import { OAuthService } from "../../../../../services/oauthService";
 import { AuthorizationServer } from "../../../../../models/authorizationServer";
 import { SessionManager } from "../../../../../authentication/sessionManager";
 import { OAuthSession, StoredCredentials } from "./oauthSession";
+import { UnauthorizedError } from "../../../../../errors/unauthorizedError";
+import { GrantTypes } from "./../../../../../constants";
+import { ResponsePackage } from "./responsePackage";
 
 const oauthSessionKey = "oauthSession";
 
@@ -55,8 +58,13 @@ export class OperationConsole {
     public readonly hostnameSelectionEnabled: ko.Observable<boolean>;
     public readonly wildcardSegment: ko.Observable<string>;
     public readonly selectedGrantType: ko.Observable<string>;
+    public readonly username: ko.Observable<string>;
+    public readonly password: ko.Observable<string>;
+    public readonly authorizationError: ko.Observable<string>;
+    public readonly authenticated: ko.Observable<boolean>;
     public isConsumptionMode: boolean;
     public templates: Object;
+    public backendUrl: string;
 
     constructor(
         private readonly apiService: ApiService,
@@ -66,7 +74,8 @@ export class OperationConsole {
         private readonly httpClient: HttpClient,
         private readonly routeHelper: RouteHelper,
         private readonly oauthService: OAuthService,
-        private readonly sessionManager: SessionManager
+        private readonly sessionManager: SessionManager,
+        private readonly settingsProvider: ISettingsProvider
     ) {
         this.templates = templates;
         this.products = ko.observable();
@@ -95,7 +104,12 @@ export class OperationConsole {
         this.isHostnameWildcarded = ko.computed(() => this.selectedHostname().includes("*"));
         this.selectedGrantType = ko.observable();
         this.authorizationServer = ko.observable();
+        this.username = ko.observable();
+        this.password = ko.observable();
+        this.authorizationError = ko.observable();
+        this.authenticated = ko.observable(false);
 
+        this.useCorsProxy = ko.observable(false);
         this.wildcardSegment = ko.observable();
 
         validation.rules["maxFileSize"] = {
@@ -127,10 +141,14 @@ export class OperationConsole {
     @Param()
     public authorizationServer: ko.Observable<AuthorizationServer>;
 
+    @Param()
+    public useCorsProxy: ko.Observable<boolean>;
+
     @OnMounted()
     public async initialize(): Promise<void> {
         const skuName = await this.tenantService.getServiceSkuName();
         this.isConsumptionMode = skuName === ServiceSkuName.Consumption;
+        this.backendUrl = await this.settingsProvider.getSetting<string>("backendUrl");
 
         await this.resetConsole();
 
@@ -146,7 +164,7 @@ export class OperationConsole {
         this.api.subscribe(this.resetConsole);
         this.operation.subscribe(this.resetConsole);
         this.selectedLanguage.subscribe(this.updateRequestSummary);
-        this.selectedGrantType.subscribe(this.authenticateOAuth);
+        this.selectedGrantType.subscribe(this.onGrantTypeChange);
     }
 
     private async resetConsole(): Promise<void> {
@@ -367,6 +385,7 @@ export class OperationConsole {
     private removeAuthorizationHeader(): void {
         const authorizationHeader = this.findHeader(KnownHttpHeaders.Authorization);
         this.removeHeader(authorizationHeader);
+        this.authenticated(false);
     }
 
     private setAuthorizationHeader(accessToken: string): void {
@@ -383,6 +402,7 @@ export class OperationConsole {
 
         this.consoleOperation().request.headers.push(keyHeader);
         this.updateRequestSummary();
+        this.authenticated(true);
     }
 
     private removeSubscriptionKeyHeader(): void {
@@ -418,6 +438,48 @@ export class OperationConsole {
         }
 
         this.sendRequest();
+    }
+
+    public async sendFromBrowser<T>(request: HttpRequest): Promise<HttpResponse<T>> {
+        const response = await this.httpClient.send<any>(request);
+        return response;
+    }
+
+    public async sendFromProxy<T>(request: HttpRequest): Promise<HttpResponse<T>> {
+        if (request.body) {
+            request.body = Buffer.from(request.body);
+        }
+
+        const formData = new FormData();
+        const requestPackage = new Blob([JSON.stringify(request)], { type: "application/json" });
+        formData.append("requestPackage", requestPackage);
+
+        const baseProxyUrl = this.backendUrl || "";
+        const apiName = this.api().name;
+
+        const proxiedRequest: HttpRequest = {
+            url: `${baseProxyUrl}/send`,
+            method: "POST",
+            headers: [{ name: "X-Ms-Api-Name", value: apiName }],
+            body: formData
+        };
+
+        const proxiedResponse = await this.httpClient.send<ResponsePackage>(proxiedRequest);
+        const responsePackage = proxiedResponse.toObject();
+
+        const responseBodyBuffer = responsePackage.body
+            ? Buffer.from(responsePackage.body.data)
+            : null;
+
+        const response: any = {
+            headers: responsePackage.headers,
+            statusCode: responsePackage.statusCode,
+            statusText: responsePackage.statusMessage,
+            body: responseBodyBuffer,
+            toText: () => responseBodyBuffer.toString("utf8")
+        };
+
+        return response;
     }
 
     private async sendRequest(): Promise<void> {
@@ -456,7 +518,10 @@ export class OperationConsole {
                 body: payload
             };
 
-            const response = await this.httpClient.send(request);
+            const response = this.useCorsProxy()
+                ? await this.sendFromProxy(request)
+                : await this.sendFromBrowser(request);
+
             this.responseHeadersString(response.headers.map(x => `${x.name}: ${x.value}`).join("\n"));
 
             const knownStatusCode = KnownStatusCodes.find(x => x.code === response.statusCode);
@@ -542,7 +607,7 @@ export class OperationConsole {
         try {
             /* Trying to check if it's a JWT token and, if yes, whether it got expired. */
             const jwtToken = Utils.parseJwt(storedCredentials.accessToken.replace(/^bearer /i, ""));
-            const now = Utils.getUtcDateTime();
+            const now = new Date();
 
             if (now > jwtToken.exp) {
                 await this.clearStoredCredentials();
@@ -573,27 +638,53 @@ export class OperationConsole {
         this.removeAuthorizationHeader();
     }
 
+    public async authenticateOAuthWithPassword(): Promise<void> {
+        try {
+            this.authorizationError(null);
+
+            const api = this.api();
+            const authorizationServer = this.authorizationServer();
+            const scopeOverride = api.authenticationSettings?.oAuth2?.scope;
+            const serverName = authorizationServer.name;
+
+            if (scopeOverride) {
+                authorizationServer.scopes = [scopeOverride];
+            }
+
+            const accessToken = await this.oauthService.authenticatePassword(this.username(), this.password(), authorizationServer);
+            await this.setStoredCredentials(serverName, scopeOverride, GrantTypes.password, accessToken);
+
+            this.setAuthorizationHeader(accessToken);
+        }
+        catch (error) {
+            if (error instanceof UnauthorizedError) {
+                this.authorizationError(error.message);
+                return;
+            }
+
+            this.authorizationError("Oops, something went wrong. Try again later.");
+        }
+    }
+
+    private async onGrantTypeChange(grantType: string): Promise<void> {
+        await this.clearStoredCredentials();
+
+        if (!grantType || grantType === GrantTypes.password) {
+            return;
+        }
+
+        await this.authenticateOAuth(grantType);
+    }
+
     /**
      * Initiates specified authentication flow.
      * @param grantType OAuth grant type, e.g. "implicit" or "authorization_code".
      */
     public async authenticateOAuth(grantType: string): Promise<void> {
-        await this.clearStoredCredentials();
-
-        if (!grantType) {
-            return;
-        }
-
         const api = this.api();
         const authorizationServer = this.authorizationServer();
         const scopeOverride = api.authenticationSettings?.oAuth2?.scope;
         const serverName = authorizationServer.name;
-        const storedCredentials = await this.getStoredCredentials(serverName, scopeOverride);
-
-        if (storedCredentials) {
-            this.setAuthorizationHeader(storedCredentials.accessToken);
-            return;
-        }
 
         if (scopeOverride) {
             authorizationServer.scopes = [scopeOverride];

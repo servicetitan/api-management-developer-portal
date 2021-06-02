@@ -5,17 +5,17 @@ const { execSync } = require("child_process");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const blobStorageContainer = "content";
 const mime = require("mime-types");
-const apiVersion = "2019-01-01"; // "2021-01-01-preview"; 
+const apiVersion = "2020-06-01-preview"; // "2021-01-01-preview"; 
 const managementApiEndpoint = "management.azure.com";
 
 
 class HttpClient {
-    constructor(subscriptionId, resourceGroupName, serviceName) {
+    constructor(subscriptionId, resourceGroupName, serviceName, tenantid, serviceprincipal, secret) {
         this.subscriptionId = subscriptionId;
         this.resourceGroupName = resourceGroupName;
         this.serviceName = serviceName;
         this.baseUrl = `https://${managementApiEndpoint}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.ApiManagement/service/${serviceName}`;
-        this.accessToken = this.getAccessToken();
+        this.accessToken = this.getAccessToken(tenantid, serviceprincipal, secret);
     }
 
     /**
@@ -74,6 +74,7 @@ class HttpClient {
                     switch (resp.statusCode) {
                         case 200:
                         case 201:
+                        case 202:
                             data.startsWith("{") ? resolve(JSON.parse(data)) : resolve(data);
                             break;
                         case 404:
@@ -103,14 +104,20 @@ class HttpClient {
         });
     }
 
-    getAccessToken() {
+    getAccessToken(tenantid, serviceprincipal, secret) {
+
+        if (tenantid != "" && tenantid != null)
+        {
+            execSync(`az login --service-principal --username ` + serviceprincipal + ` --password ` + secret + ` --tenant ` + tenantid);
+        }
+
         const accessToken = execSync(`az account get-access-token --resource-type arm --output tsv --query accessToken`).toString().trim();
         return `Bearer ${accessToken}`;
     }
 }
 class ImporterExporter {
-    constructor(subscriptionId, resourceGroupName, serviceName, snapshotFolder = "../dist/snapshot") {
-        this.httpClient = new HttpClient(subscriptionId, resourceGroupName, serviceName);
+    constructor(subscriptionId, resourceGroupName, serviceName, tenantid, serviceprincipal, secret, snapshotFolder = "../dist/snapshot") {
+        this.httpClient = new HttpClient(subscriptionId, resourceGroupName, serviceName, tenantid, serviceprincipal, secret);
         this.snapshotFolder = snapshotFolder
     }
 
@@ -396,8 +403,7 @@ class ImporterExporter {
             const revision = timeStamp.toISOString().replace(/[\-\:\T]/g, "").substr(0, 14);
             const url = `/portalRevisions/${revision}`;
             const body = {
-                description: `Migration ${revision}.`,
-                isCurrent: true
+                description: `Migration ${revision}.`
             }
 
             await this.httpClient.sendRequest("PUT", url, body);
