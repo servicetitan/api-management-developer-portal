@@ -18,7 +18,7 @@ const configuration = JSON.parse(fs.readFileSync(configFile, "utf8").toString())
 const settingsProvider = new StaticSettingsProvider(configuration);
 
 /* Storage where the website get published */
-const outputBlobStorage = new FileSystemBlobStorage("./dist/website");
+const outputBlobStorage = new FileSystemBlobStorage("../public-api-developer-portal/src/PublicApi.DeveloperPortal/wwwroot");
 
 /* Initializing dependency injection container */
 const injector = new InversifyInjector();
