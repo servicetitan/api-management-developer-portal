@@ -23,12 +23,13 @@ export class ApiClientsViewModelBinder implements ViewModelBinder<ApiClientsMode
         if (!viewModel) {
             viewModel = new ApiClientsViewModel();
 
-            const binding: IWidgetBinding<ApiClientsModel> = {
+            const binding: IWidgetBinding<ApiClientsModel, ApiClientsViewModel> = {
                 name: widgetName,
                 displayName: widgetDisplayName,
                 readonly: bindingContext ? bindingContext.readonly : false,
                 model: model,
                 editor: widgetEditorSelector,
+                flow: "block",
                 draggable: true,
                 applyChanges: async () => {
                     await this.updateViewModel(model, viewModel);
