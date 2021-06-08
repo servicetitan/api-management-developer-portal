@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-3" style="padding-top: 10px;">
+        <span style="font-size: 22px; font-weight: 400;">My Apps</span>&nbsp;&nbsp;
+        <span data-bind="text: ((pageContract() || {}).apps || []).length" style="color: #737475;"></span>
+    </div>
+    <div class="col-9" style="text-align: right;">
+        <button type="button" class="button" style="margin-top: 0;" data-bind="click: clickCreateApiApp">
+            + New App
+        </button>
+    </div>
+</div>
+<!-- ko if: isLoading -->
+<div class="table-body">
+    <spinner></spinner>
+</div>
+<!-- /ko -->
+<!-- ko ifnot: isLoading -->
+<div class="row" style="border-top: 1px solid #dfe0e1; margin-bottom: 25px; margin-top: 10px;">
+</div>
+<!-- ko foreach: pageContract().apps -->
+<div class="row" style="border: 1px solid #dfe0e1; border-radius: 3px; margin-bottom: 15px;">
+    <div class="col-3" style="display: flex; align-items: center; padding-top: 10px; padding-bottom: 10px;">
+        <div>
+            <span data-bind="text: name" style="font-weight: 600;"></span><br>
+            <span data-bind="text: organizationName" style="color: #737475;"></span>
+        </div>
+    </div>
+    <div class="col-6" style="color: #444445; display: flex; align-items: center; padding: 10px 0;">
+        <span
+            data-bind="text: 'Access to ' + authScopes.map(s => s.displayName).join(', ') + (authScopes.length > 1 ? ' scopes' : ' scope')"></span>
+    </div>
+    <div class="col-3" style="display: flex; align-items: center; justify-content: right;">
+        <button type="button" class="button" style="text-align: right;"
+            data-bind="click: $parent.clickEditApiApp">Edit</button>
+    </div>
+</div>
+<!-- /ko -->
+<!-- /ko -->

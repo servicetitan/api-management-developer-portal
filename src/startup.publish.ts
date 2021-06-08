@@ -10,6 +10,7 @@ import { StaticSettingsProvider } from "./components/staticSettingsProvider";
 import { FileSystemBlobStorage } from "./components/filesystemBlobStorage";
 import { ApimPublishModule } from "./apim.publish.module";
 import { ApiClientsPublishModule } from "../community/widgets/api-clients/apiClients.publish.module";
+import { ApiAppsPublishModule } from "../community/widgets/api-apps/apiApps.publish.module";
 
 /* Reading settings from configuration file */
 const configFile = path.resolve(__dirname, "./config.json");
@@ -29,6 +30,7 @@ injector.bindModule(new ApimPublishModule());
 injector.bindInstance("settingsProvider", settingsProvider);
 injector.bindInstance("outputBlobStorage", outputBlobStorage);
 injector.bindModule(new ApiClientsPublishModule());
+injector.bindModule(new ApiAppsPublishModule());
 injector.resolve("autostart");
 
 /* Allowing self-signed certificates for HTTP requests */

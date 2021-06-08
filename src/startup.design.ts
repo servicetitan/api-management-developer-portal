@@ -8,6 +8,7 @@ import { OfflineModule } from "@paperbits/common/persistence/offline.module";
 import { SessionExpirationErrorHandler } from "./errors/sessionExpirationErrorHandler";
 import { ApimDesignModule } from "./apim.design.module";
 import { ApiClientsDesignModule } from "../community/widgets/api-clients/apiClients.design.module";
+import { ApiAppsDesignModule } from "../community/widgets/api-apps/apiApps.design.module";
 
 /* Initializing dependency injection container */
 const injector = new InversifyInjector();
@@ -18,6 +19,7 @@ injector.bindModule(new ProseMirrorModule());
 injector.bindModule(new ApimDesignModule());
 injector.bindModule(new OfflineModule({ autosave: false }));
 injector.bindModule(new ApiClientsDesignModule());
+injector.bindModule(new ApiAppsDesignModule());
 injector.resolve("autostart");
 
 /* Bootstrapping the application */
