@@ -1,20 +1,43 @@
-<a href="#" role="button" style="color: #141414; text-decoration: none;" data-bind="click: clickCancel">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="17px" width="17px" viewBox="0 0 24 24">
-        <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path>
-    </svg>
-    <span>Back to all apps</span>
-</a>
-<h3 style="margin: 20px 0 20px;" data-bind="text: id > 0 ? name : 'New App'"></h3>
-<!-- ko if: id > 0 -->
-<div style="color: #777; margin-top: -15px; margin-bottom: 25px;" data-bind="text: 'App ID: ' + publicId"></div>
+<!-- ko template: { name: 'apiAppError', data: { errorMessage: errorMessage } } -->
 <!-- /ko -->
+<div style="margin-bottom: 20px;">
+    <a href="#" role="button" style="color: #141414; text-decoration: none;" data-bind="click: clickCancel">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="17px" width="17px" viewBox="0 0 24 24">
+            <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path>
+        </svg>
+        <span>Back to all apps</span>
+    </a>
+</div>
+<div style="margin-bottom: 25px;">
+    <!-- ko if: id == 0 -->
+    <h3 style="margin: 0; font-size: 25px;">New App</h3>
+    <!-- /ko -->
+    <!-- ko if: id > 0 -->
+    <div style="display: flex; align-items: center;">
+        <div>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="#6954C0" />
+                <path
+                    d="M33.7 30.6V29.6L34.8 28.8C34.9 28.7 35 28.6 34.9 28.5L33.9 26.8C33.9 26.7 33.7 26.7 33.6 26.7L32.4 27.2C32.1 27 31.8 26.8 31.5 26.7L31.3 25.4C31.3 25.3 31.2 25.2 31.1 25.2H29.1C28.9 25.2 28.8 25.3 28.8 25.4L28.6 26.7C28.3 26.9 28.1 27 27.8 27.2L26.6 26.7C26.5 26.7 26.4 26.7 26.3 26.8L25.3 28.5C25.3 28.6 25.3 28.7 25.4 28.8L26.5 29.6V30.6L25.4 31.4C25.3 31.5 25.2 31.6 25.3 31.7L26.3 33.4C26.4 33.5 26.5 33.5 26.6 33.5L27.8 33C28 33.2 28.3 33.4 28.6 33.5L28.8 34.8C28.9 34.9 29 35 29.1 35H31.1C31.2 35 31.3 34.9 31.3 34.8L31.5 33.5C31.8 33.3 32 33.2 32.3 33L33.5 33.4C33.6 33.4 33.7 33.4 33.8 33.3L34.8 31.6C34.9 31.5 34.9 31.4 34.8 31.4L33.7 30.6ZM30 31.5C29.2 31.5 28.5 30.8 28.5 30C28.5 29.2 29.2 28.5 30 28.5C30.8 28.5 31.5 29.2 31.5 30C31.5 30.8 30.8 31.5 30 31.5ZM23.29 32H17C15.89 32 15 31.1 15 30V18C15 16.89 15.9 16 17 16H31C32.11 16 33 16.9 33 18V23.68C32.38 23.39 31.71 23.18 31 23.08V20H17V30H23C23 30.7 23.11 31.37 23.29 32Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <div style="padding-left: 17px;">
+            <h3 style="margin: 0; font-size: 25px; margin-bottom: 4px;" data-bind="text: name"></h3>
+            <div style="color: #777;" data-bind="text: 'App ID: ' + publicId">
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+</div>
 <!-- ko if: isLoading -->
 <div>
     <spinner></spinner>
 </div>
 <!-- /ko -->
 <!-- ko ifnot: isLoading -->
-<div style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 30px; margin: 0 0 20px;">
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 30px; margin: 0 0 20px;">
     <fieldset class="form">
         <div style="margin: 25px 0 20px">
             <span style="font-size: 20px;font-weight: 400;">App details</span>
@@ -27,19 +50,22 @@
                     <label for="name">Application Name</label>
                     <input type="text" id="name" class="form-control form-control-default" maxlength="120"
                         data-bind="textInput: name" />
-                    <div style="color: #E63717; margin-top: -15px;" data-bind="text: nameValidation, visible: nameValidation"></div>
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: nameValidation, visible: nameValidation"></div>
                 </div>
                 <div class="form-group">
                     <label for="organizationName">Organization</label>
                     <input type="text" id="organizationName" class="form-control form-control-default" maxlength="120"
                         data-bind="textInput: organizationName" />
-                    <div style="color: #E63717; margin-top: -15px;" data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
                 </div>
                 <div class="form-group">
                     <label for="homepageUrl">Homepage</label>
                     <input type="text" id="homepageUrl" placeholder="https://www.my-app.com" maxlength="120"
                         class="form-control form-control-default" data-bind="textInput: homepageUrl" />
-                    <div style="color: #E63717; margin-top: -15px;" data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
                 </div>
             </div>
         </div>
@@ -80,7 +106,8 @@
         </div>
         <!-- /ko -->
         <label style="margin-bottom: 0;">Tenant(s)</label>
-        <div style="color: #E63717;" data-bind="text: appAvailabilityValidation, visible: appAvailabilityValidation"></div>
+        <div style="color: #E63717;" data-bind="text: appAvailabilityValidation, visible: appAvailabilityValidation">
+        </div>
         <div class="row">
             <div class="col-12">
                 <button type="button" class="button" style="padding: 7px 20px 8px;"
@@ -92,12 +119,12 @@
         <!-- ko foreach: appAvailabilityList -->
         <div class="row">
             <div class="col-5" style="padding-right: 0;">
-                <input type="text" id="ResourceOwner" placeholder="Tenant ID" class="form-control form-control-default" maxlength="120"
-                    style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+                <input type="text" id="ResourceOwner" placeholder="Tenant ID" class="form-control form-control-default"
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
             </div>
             <div class="col-5">
-                <input type="text" id="Note" placeholder="Note" class="form-control form-control-default" maxlength="4000"
-                    style="margin-bottom: 10px;" data-bind="textInput: note" />
+                <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
             </div>
             <div class="col-2">
                 <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
@@ -112,13 +139,14 @@
         <!-- /ko -->
         <!-- ko if: id == 0 -->
         <label style="margin-top: 10px;">API Scopes</label>
-        <div style="color: #E63717; margin: -8px 0 15px" data-bind="text: authScopesValidation, visible: authScopesValidation"></div>
+        <div style="color: #E63717; margin: -8px 0 15px"
+            data-bind="text: authScopesValidation, visible: authScopesValidation"></div>
         <div style="background-color: #f0f0f0; border-radius: 3px; padding-bottom: 15px; border: 1px solid #dfe0e1;">
             <div style="background-color: #fafafa; border-bottom: 1px solid #dfe0e1;">
                 <div class="row" style="padding: 10px">
-                    <div class="col-8" style="padding-left: 35px;">API Endpoint</div>
-                    <div class="col-2 text-center">Read&nbsp;&nbsp;&nbsp;</div>
-                    <div class="col-2 text-center">Write&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    <div class="col-7" style="padding-left: 35px;">API Endpoint</div>
+                    <div class="col-2" style="text-align: right;">Read</div>
+                    <div class="col-3 text-center">Write&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                 </div>
             </div>
             <!-- ko foreach: allScopeGroups -->
@@ -128,19 +156,21 @@
                         viewBox="0 0 24 24">
                         <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"></path>
                     </svg>
-                    <span data-bind="text: displayName"></span>
+                    <span data-bind="text: displayName"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style="color: #2270EE; cursor: pointer;" data-bind="click: $parent.clickSelectScopeGroup.bind($parent)">All</span>&nbsp;&nbsp;
+                    <span style="color: #2270EE; cursor: pointer; opacity: 0.4;" data-bind="click: $parent.clickUnselectScopeGroup.bind($parent)">None</span>
                 </div>
                 <div style="background-color: white; border-radius: 3px;">
                     <!-- ko foreach: scopes -->
                     <div style="border-bottom: 1px solid #f0f0f0; padding: 7px 0 0 12px;" class="row">
-                        <div class="col-8">
+                        <div class="col-7">
                             <label data-bind="text: displayName, attr: { for: name }"></label>
                         </div>
-                        <div class="col-2 text-center">
+                        <div class="col-2" style="text-align: right;">
                             <input type="checkbox"
                                 data-bind="checked: $parents[1].authScopes, value: name + ':r', attr: { id: name }" />
                         </div>
-                        <div class="col-2 text-center">
+                        <div class="col-3 text-center">
                             <input type="checkbox"
                                 data-bind="checked: $parents[1].authScopes, value: name + ':w', attr: { id: name }" />
                         </div>
@@ -154,7 +184,8 @@
     </fieldset>
 </div>
 <!-- ko if: id > 0 -->
-<div style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 10px; margin: 0 0 20px;">
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 10px; margin: 0 0 20px;">
     <h3 style="margin-top: 20px;" data-bind="text: confirmDelete() ? 'Confirm Delete' : 'Delete Application'"></h3>
     <div style="color: #444445; margin-bottom: 10px;"
         data-bind="text: confirmDelete() ? 'Application will be deleted permanently. This action cannot be undone. Would you like to continue?' : 'Permanently delete this application.'">

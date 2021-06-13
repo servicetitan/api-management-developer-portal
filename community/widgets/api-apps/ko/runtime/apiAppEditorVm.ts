@@ -7,7 +7,6 @@ import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdat
 
 export class ApiAppEditorVm {
     private maxTenants: number = 200;
-    
     public id: number;
     public publicId: string;
     public applicationKey1: string;
@@ -28,7 +27,7 @@ export class ApiAppEditorVm {
     public appAvailabilityValidation: ko.PureComputed<string>;
     public isValid: ko.PureComputed<boolean>;
     public saveButtonEnabled: ko.PureComputed<boolean>;
-
+    public errorMessage: ko.Observable<string>;
     public isLoading: ko.Observable<boolean>;
     public allScopeGroups: Array<ApiAppScopeGroupContract>;
     public confirmDelete: ko.Observable<boolean>;
@@ -65,10 +64,13 @@ export class ApiAppEditorVm {
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
         this.close = close;
+        this.errorMessage = ko.observable("");
         this.initValidation();
     }
 
     private initValidation() {
+        this.validationActivated = ko.observable(this.id > 0);
+
         this.nameValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
             const name = this.name();
@@ -89,9 +91,9 @@ export class ApiAppEditorVm {
             if (url.length == 0) return "Url is empty";
             try {
                 new URL(url);
-              } catch (e) {
+            } catch (e) {
                 return "Url is not valid";
-              }
+            }
             return "";
         });
         this.authScopesValidation = ko.pureComputed(() => {
@@ -108,7 +110,6 @@ export class ApiAppEditorVm {
             return "";
         });
 
-        this.validationActivated = ko.observable(this.id > 0);
         this.isValid = ko.pureComputed(() =>
             this.nameValidation().length == 0 &&
             this.organizationNameValidation().length == 0 &&
@@ -154,16 +155,38 @@ export class ApiAppEditorVm {
             appAvailabilityList: this.appAvailabilityList()
         }
 
-        await this.apiAppsService.createOrUpdateApiClient(this.projectId, apiApp);
-        this.isLoading(false);
-        await this.close();
+        try {
+            await this.apiAppsService.createOrUpdateApiClient(this.projectId, apiApp);
+            this.isLoading(false);
+            await this.close();
+        }
+        catch (e) {
+            this.errorMessage(e.message);
+            this.isLoading(false);
+        }
     }
+
+    public clickSelectScopeGroup(group: ApiAppScopeGroupContract) {
+        const addScopes =
+            group.scopes.filter(s => s.hasRead).map(s => s.name + ":r").concat(
+                group.scopes.filter(s => s.hasWrite).map(s => s.name + ":w")
+            );
+        this.authScopes.remove(i => i.startsWith(group.name + "."));
+        ko.utils.arrayPushAll(this.authScopes, addScopes);
+    }
+
+    public clickUnselectScopeGroup(group: ApiAppScopeGroupContract) {
+        this.authScopes.remove(i => i.startsWith(group.name + "."));
+    }
+
     public clickDelete() {
         this.confirmDelete(true);
     }
+
     public clickCancelDelete() {
         this.confirmDelete(false);
     }
+
     public async clickDeletePermanently() {
         this.deleted(true);
         await this.clickSave();

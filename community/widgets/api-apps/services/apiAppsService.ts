@@ -56,7 +56,7 @@ export class ApiAppsService {
             }
         }
         catch (error) {
-            throw new Error(`Unable to complete request. Try re-login. Error: ${error.message}`);
+            throw new Error(`Unable to complete request (${error.message}). Please re-login and try again.`);
         }
     }
 }
