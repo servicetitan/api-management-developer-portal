@@ -55,7 +55,7 @@ export class ApiAppsRuntime {
             authScopes: [],
             applicationKey1: "",
             deleted: false,
-            appAvailabilityList: []
+            appAvailabilityList: this.pageContract().defaultAvailabilityList
         }
 
         this.clickEditApiApp(emptyApiApp);

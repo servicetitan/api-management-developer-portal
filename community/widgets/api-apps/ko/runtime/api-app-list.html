@@ -4,7 +4,8 @@
         <span data-bind="text: ((pageContract() || {}).apps || []).length" style="color: #737475;"></span>
     </div>
     <div class="col-9" style="text-align: right;">
-        <button type="button" class="button" style="margin-top: 0;" data-bind="click: clickCreateApiApp">
+        <button type="button" class="button" style="margin-top: 0; background-color: #2270EE; color: #fff; border: 0;"
+            data-bind="click: clickCreateApiApp">
             + New App
         </button>
     </div>
@@ -18,21 +19,36 @@
 <div class="row" style="border-top: 1px solid #dfe0e1; margin-bottom: 25px; margin-top: 10px;">
 </div>
 <!-- ko foreach: pageContract().apps -->
-<div class="row" style="border: 1px solid #dfe0e1; border-radius: 3px; margin-bottom: 15px;">
-    <div class="col-3" style="display: flex; align-items: center; padding-top: 10px; padding-bottom: 10px;">
+<div class="row"
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; margin-bottom: 15px;">
+    <div class="col-4" style="display: flex; align-items: center; padding: 20px 10px 20px 20px;">
         <div>
-            <span data-bind="text: name" style="font-weight: 600;"></span><br>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="#6954C0" />
+                <path
+                    d="M33.7 30.6V29.6L34.8 28.8C34.9 28.7 35 28.6 34.9 28.5L33.9 26.8C33.9 26.7 33.7 26.7 33.6 26.7L32.4 27.2C32.1 27 31.8 26.8 31.5 26.7L31.3 25.4C31.3 25.3 31.2 25.2 31.1 25.2H29.1C28.9 25.2 28.8 25.3 28.8 25.4L28.6 26.7C28.3 26.9 28.1 27 27.8 27.2L26.6 26.7C26.5 26.7 26.4 26.7 26.3 26.8L25.3 28.5C25.3 28.6 25.3 28.7 25.4 28.8L26.5 29.6V30.6L25.4 31.4C25.3 31.5 25.2 31.6 25.3 31.7L26.3 33.4C26.4 33.5 26.5 33.5 26.6 33.5L27.8 33C28 33.2 28.3 33.4 28.6 33.5L28.8 34.8C28.9 34.9 29 35 29.1 35H31.1C31.2 35 31.3 34.9 31.3 34.8L31.5 33.5C31.8 33.3 32 33.2 32.3 33L33.5 33.4C33.6 33.4 33.7 33.4 33.8 33.3L34.8 31.6C34.9 31.5 34.9 31.4 34.8 31.4L33.7 30.6ZM30 31.5C29.2 31.5 28.5 30.8 28.5 30C28.5 29.2 29.2 28.5 30 28.5C30.8 28.5 31.5 29.2 31.5 30C31.5 30.8 30.8 31.5 30 31.5ZM23.29 32H17C15.89 32 15 31.1 15 30V18C15 16.89 15.9 16 17 16H31C32.11 16 33 16.9 33 18V23.68C32.38 23.39 31.71 23.18 31 23.08V20H17V30H23C23 30.7 23.11 31.37 23.29 32Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <div style="padding-left: 17px;">
+            <span data-bind="text: name" style="font-weight: 600; font-size: 16px;"></span><br>
             <span data-bind="text: organizationName" style="color: #737475;"></span>
         </div>
     </div>
-    <div class="col-6" style="color: #444445; display: flex; align-items: center; padding: 10px 0;">
+    <div class="col-5" style="color: #444445; display: flex; align-items: center; padding: 20px 0;">
         <span
             data-bind="text: 'Access to ' + authScopes.map(s => s.displayName).join(', ') + (authScopes.length > 1 ? ' scopes' : ' scope')"></span>
     </div>
-    <div class="col-3" style="display: flex; align-items: center; justify-content: right;">
-        <button type="button" class="button" style="text-align: right;"
+    <div class="col-3" style="display: flex; align-items: center; justify-content: flex-end;">
+        <button type="button" class="button" style="text-align: right; border: 0; background-color: #eee;"
             data-bind="click: $parent.clickEditApiApp">Edit</button>
     </div>
+</div>
+<!-- /ko -->
+<!-- ko if: pageContract().apps.length == 0 -->
+<div style="text-align: center; color: #737475; margin-top: 100px 0 200px;">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="48px" width="48px" viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4a7.48 7.48 0 0 0-6.64 4.04A5.996 5.996 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4h2c0-2.76-1.86-5.08-4.4-5.78C8.61 6.88 10.2 6 12 6c3.03 0 5.5 2.47 5.5 5.5v.5H19c1.65 0 3 1.35 3 3s-1.35 3-3 3z"></path></svg><br>
+<span style="color: #737475; font-size: 18px; font-weight: 400;">It looks like you haven’t created any apps yet</span>
 </div>
 <!-- /ko -->
 <!-- /ko -->
