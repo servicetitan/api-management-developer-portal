@@ -39,6 +39,9 @@ export class ApiAppsService {
         if (authToken) {
             httpRequest.headers.push({ name: "ApimUserAccessToken", value: `${authToken}` });
         }
+        else {
+            window.open("/signin", "_self");
+        }
         try {
             const response = await this.httpClient.send<T>(httpRequest);
             let contentType = "";
