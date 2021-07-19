@@ -183,7 +183,7 @@ export class OperationList {
         this.searchRequest.skip = (this.pageNumber() - 1) * Constants.defaultPageSize;
         const pageOfOperations = await this.apiService.getOperations(`apis/${apiName}`, this.searchRequest);
 
-        this.operations(pageOfOperations.value);
+        this.operations(pageOfOperations.value.sort((a, b) => a.name > b.name ? 1 : -1));
 
         this.hasPrevPage(this.pageNumber() > 1);
         this.hasNextPage(!!pageOfOperations.nextLink);

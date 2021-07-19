@@ -352,13 +352,13 @@ export class ApiService {
                 query = Utils.addQueryParameter(query, `$filter=contains(properties/${searchQuery.propertyName || 'displayName'},'${encodeURIComponent(pattern)}')`);
             }
 
-            top = searchQuery && searchQuery.take || Constants.defaultPageSize;
+            top = searchQuery && searchQuery.take || 200;
 
             if (searchQuery.skip) {
                 query = Utils.addQueryParameter(query, `$skip=${searchQuery.skip}`);
             }
         }
-        query = Utils.addQueryParameter(query, `$top=${top || 20}`);
+        query = Utils.addQueryParameter(query, `$top=${top || 200}`);
 
         const result = await this.mapiClient.get<Page<OperationContract>>(query, [MapiClient.getPortalHeader("getOperations")]);
         const page = new Page<Operation>();
