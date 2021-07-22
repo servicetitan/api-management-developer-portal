@@ -9,6 +9,7 @@ import { ProseMirrorModule } from "@paperbits/prosemirror/prosemirror.module";
 import { StaticSettingsProvider } from "./components/staticSettingsProvider";
 import { FileSystemBlobStorage } from "./components/filesystemBlobStorage";
 import { ApimPublishModule } from "./apim.publish.module";
+import { PublishingCacheModule } from "./persistence/publishingCacheModule";
 import { ApiClientsPublishModule } from "../community/widgets/api-clients/apiClients.publish.module";
 import { ApiAppsPublishModule } from "../community/widgets/api-apps/apiApps.publish.module";
 
@@ -29,6 +30,7 @@ injector.bindModule(new ProseMirrorModule());
 injector.bindModule(new ApimPublishModule());
 injector.bindInstance("settingsProvider", settingsProvider);
 injector.bindInstance("outputBlobStorage", outputBlobStorage);
+injector.bindModule(new PublishingCacheModule());
 injector.bindModule(new ApiClientsPublishModule());
 injector.bindModule(new ApiAppsPublishModule());
 injector.resolve("autostart");

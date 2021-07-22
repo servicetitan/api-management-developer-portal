@@ -13,8 +13,19 @@ export enum ServiceSkuName {
  * Types of API.
  */
 export enum TypeOfApi {
+    webSocket = "websocket",
     soap = "soap",
     http = "http"
+}
+
+/**
+ * Types of body format.
+ */
+export enum RequestBodyType {
+    raw = "raw",
+    string = "string",
+    binary = "binary",
+    form = "form"
 }
 
 /**
@@ -88,7 +99,9 @@ export const AppType = "developerPortal";
 export enum SettingNames {
     backendUrl = "backendUrl",
     managementApiUrl = "managementApiUrl",
-    managementApiAccessToken = "managementApiAccessToken"
+    managementApiAccessToken = "managementApiAccessToken",
+    aadClientConfig = "aad",
+    aadB2CClientConfig = "aadB2C"
 }
 
 /**
@@ -121,7 +134,7 @@ export enum GrantTypes {
     password = "password"
 }
 
-export const managementApiVersion = "2019-12-01";
+export const managementApiVersion = "2021-01-01-preview";
 
 /**
  * Developer portal type (self-hosted or managed).
@@ -132,3 +145,5 @@ export const developerPortalType = "self-hosted-portal";
  * Header name to track developer portal type.
  */
 export const portalHeaderName = "x-ms-apim-client";
+
+export const releaseNameFormat = "YYYYMMDDHHmm";

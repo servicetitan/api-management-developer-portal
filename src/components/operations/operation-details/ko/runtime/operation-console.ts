@@ -1,35 +1,37 @@
 import * as ko from "knockout";
 import * as validation from "knockout.validation";
-import template from "./operation-console.html";
-import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
-import { Component, Param, OnMounted } from "@paperbits/common/ko/decorators";
 import { ISettingsProvider } from "@paperbits/common/configuration";
-import { Operation } from "../../../../../models/operation";
-import { ApiService } from "../../../../../services/apiService";
-import { ConsoleOperation } from "../../../../../models/console/consoleOperation";
-import { ConsoleHeader } from "../../../../../models/console/consoleHeader";
-import { Utils } from "../../../../../utils";
-import { KnownHttpHeaders } from "../../../../../models/knownHttpHeaders";
-import { Api } from "../../../../../models/api";
-import { KnownStatusCodes } from "../../../../../models/knownStatusCodes";
-import { Product } from "../../../../../models/product";
-import { ProductService } from "../../../../../services/productService";
-import { UsersService } from "../../../../../services/usersService";
-import { TenantService } from "../../../../../services/tenantService";
-import { ServiceSkuName, TypeOfApi } from "../../../../../constants";
-import { Revision } from "../../../../../models/revision";
-import { templates } from "./templates/templates";
-import { ConsoleParameter } from "../../../../../models/console/consoleParameter";
+import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
+import { Component, OnMounted, Param } from "@paperbits/common/ko/decorators";
+import { SessionManager } from "@paperbits/common/persistence/sessionManager";
+import { RequestBodyType, ServiceSkuName, TypeOfApi } from "../../../../../constants";
 import { SubscriptionState } from "../../../../../contracts/subscription";
-import { RouteHelper } from "../../../../../routing/routeHelper";
-import { TemplatingService } from "../../../../../services/templatingService";
-import { OAuthService } from "../../../../../services/oauthService";
-import { AuthorizationServer } from "../../../../../models/authorizationServer";
-import { SessionManager } from "../../../../../authentication/sessionManager";
-import { OAuthSession, StoredCredentials } from "./oauthSession";
 import { UnauthorizedError } from "../../../../../errors/unauthorizedError";
+import { Api } from "../../../../../models/api";
+import { AuthorizationServer } from "../../../../../models/authorizationServer";
+import { ConsoleHeader } from "../../../../../models/console/consoleHeader";
+import { ConsoleOperation } from "../../../../../models/console/consoleOperation";
+import { ConsoleParameter } from "../../../../../models/console/consoleParameter";
+import { KnownHttpHeaders } from "../../../../../models/knownHttpHeaders";
+import { KnownStatusCodes } from "../../../../../models/knownStatusCodes";
+import { Operation } from "../../../../../models/operation";
+import { Product } from "../../../../../models/product";
+import { Revision } from "../../../../../models/revision";
+import { RouteHelper } from "../../../../../routing/routeHelper";
+import { ApiService } from "../../../../../services/apiService";
+import { OAuthService } from "../../../../../services/oauthService";
+import { ProductService } from "../../../../../services/productService";
+import { TemplatingService } from "../../../../../services/templatingService";
+import { TenantService } from "../../../../../services/tenantService";
+import { UsersService } from "../../../../../services/usersService";
+import { Utils } from "../../../../../utils";
 import { GrantTypes } from "./../../../../../constants";
+import { OAuthSession, StoredCredentials } from "./oauthSession";
+import template from "./operation-console.html";
 import { ResponsePackage } from "./responsePackage";
+import { templates } from "./templates/templates";
+import { LogItem, WebsocketClient } from "./websocketClient";
+import { KnownMimeTypes } from "../../../../../models/knownMimeTypes";
 
 const oauthSessionKey = "oauthSession";
 
@@ -65,6 +67,15 @@ export class OperationConsole {
     public isConsumptionMode: boolean;
     public templates: Object;
     public backendUrl: string;
+
+    public readonly wsConnected: ko.Observable<boolean>;
+    public readonly wsConnecting: ko.Observable<boolean>;
+    public readonly wsStatus: ko.Observable<string>;
+    public readonly wsSending: ko.Observable<boolean>;
+    public readonly wsSendStatus: ko.Observable<string>;
+    public readonly wsPayload: ko.Observable<string | File>;
+    public readonly wsDataFormat: ko.Observable<string>;
+    public readonly wsLogItems: ko.ObservableArray<LogItem>;
 
     constructor(
         private readonly apiService: ApiService,
@@ -111,6 +122,15 @@ export class OperationConsole {
 
         this.useCorsProxy = ko.observable(false);
         this.wildcardSegment = ko.observable();
+
+        this.wsConnected = ko.observable(false);
+        this.wsConnecting = ko.observable(false);
+        this.wsStatus = ko.observable("Connect");
+        this.wsSendStatus = ko.observable("Send");
+        this.wsSending = ko.observable(false);
+        this.wsPayload = ko.observable();
+        this.wsDataFormat = ko.observable("raw");
+        this.wsLogItems = ko.observableArray([]);
 
         validation.rules["maxFileSize"] = {
             validator: (file: File, maxSize: number) => !file || file.size < maxSize,
@@ -177,6 +197,7 @@ export class OperationConsole {
 
         this.working(true);
         this.sendingRequest(false);
+        this.wsConnected(false);
         this.consoleOperation(null);
         this.secretsRevealed(false);
         this.responseStatusCode(null);
@@ -203,7 +224,11 @@ export class OperationConsole {
             this.setSoapHeaders();
         }
 
-        if (!this.isConsumptionMode) {
+        if (this.api().type === TypeOfApi.webSocket) {
+            this.selectedLanguage("ws_wscat");
+        }
+
+        if (!this.isConsumptionMode && this.api().type !== TypeOfApi.webSocket) {
             this.setNoCacheHeader();
         }
 
@@ -333,7 +358,11 @@ export class OperationConsole {
             return;
         }
 
-        this.setSubscriptionKeyHeader(subscriptionKey);
+        if (this.api().type === TypeOfApi.webSocket) {
+            this.setSubscriptionKeyParameter(subscriptionKey)
+        } else {
+            this.setSubscriptionKeyHeader(subscriptionKey);
+        }
         this.updateRequestSummary();
     }
 
@@ -346,13 +375,52 @@ export class OperationConsole {
     }
 
     private getSubscriptionKeyHeaderName(): string {
-        let subscriptionKeyHeaderName = KnownHttpHeaders.OcpApimSubscriptionKey;
+        let subscriptionKeyHeaderName: string = KnownHttpHeaders.OcpApimSubscriptionKey;
 
         if (this.api().subscriptionKeyParameterNames && this.api().subscriptionKeyParameterNames.header) {
             subscriptionKeyHeaderName = this.api().subscriptionKeyParameterNames.header;
         }
 
         return subscriptionKeyHeaderName;
+    }
+
+    private getSubscriptionKeyParamName(): string {
+        let subscriptionKeyParamName = "subscription-key";
+
+        if (this.api().subscriptionKeyParameterNames && this.api().subscriptionKeyParameterNames.query) {
+            subscriptionKeyParamName = this.api().subscriptionKeyParameterNames.query;
+        }
+
+        return subscriptionKeyParamName;
+    }
+
+    private getSubscriptionKeyParam(): ConsoleParameter {
+        const subscriptionKeyParamName = this.getSubscriptionKeyParamName();
+        const searchName = subscriptionKeyParamName.toLocaleLowerCase();
+
+        return this.consoleOperation().request.queryParameters().find(x => x.name()?.toLocaleLowerCase() === searchName);
+    }
+
+    private setSubscriptionKeyParameter(subscriptionKey: string): void {
+        const subscriptionKeyParam = this.getSubscriptionKeyParam();
+        this.removeQueryParameter(subscriptionKeyParam);
+
+        if (!subscriptionKey) {
+            return;
+        }
+
+        const subscriptionKeyParamName = this.getSubscriptionKeyParamName();
+
+        const keyParameter = new ConsoleParameter();
+        keyParameter.name(subscriptionKeyParamName);
+        keyParameter.value(subscriptionKey);
+        keyParameter.secret = true;
+        keyParameter.type = "string";
+        keyParameter.canRename = false;
+        keyParameter.required = true;
+
+        this.consoleOperation().request.queryParameters.push(keyParameter);
+        this.updateRequestSummary();
     }
 
     private getSubscriptionKeyHeader(): ConsoleHeader {
@@ -451,7 +519,7 @@ export class OperationConsole {
         }
 
         const formData = new FormData();
-        const requestPackage = new Blob([JSON.stringify(request)], { type: "application/json" });
+        const requestPackage = new Blob([JSON.stringify(request)], { type: KnownMimeTypes.Json });
         formData.append("requestPackage", requestPackage);
 
         const baseProxyUrl = this.backendUrl || "";
@@ -496,12 +564,16 @@ export class OperationConsole {
         let payload;
 
         switch (consoleOperation.request.bodyFormat()) {
-            case "raw":
+            case RequestBodyType.raw:
                 payload = request.body();
                 break;
 
-            case "binary":
+            case RequestBodyType.binary:
                 payload = await Utils.readFileAsByteArray(request.binary());
+                break;
+
+            case RequestBodyType.form:
+                payload = request.getFormDataPayload();
                 break;
 
             default:
@@ -561,6 +633,95 @@ export class OperationConsole {
         finally {
             this.sendingRequest(false);
         }
+    }
+
+    private ws: WebsocketClient;
+
+    public async wsConnect(): Promise<void> {
+        const operation = this.consoleOperation();
+        const templateParameters = operation.templateParameters();
+        const queryParameters = operation.request.queryParameters();
+        const headers = operation.request.headers();
+        const binary = operation.request.binary;
+        const parameters = [].concat(templateParameters, queryParameters, headers);
+        const validationGroup = validation.group(parameters.map(x => x.value).concat(binary), { live: true });
+        const clientErrors = validationGroup();
+
+        if (clientErrors.length > 0) {
+            validationGroup.showAllMessages();
+            return;
+        }
+
+        this.sendWsConnect();
+    }
+
+    public clearLogs(): void {
+        this.ws?.clearLogs();
+    }
+
+    public async wsDisconnect(): Promise<void> {
+        if (this.ws) {
+            this.ws.disconnect();
+        }
+    }
+
+    public async wsSendData(): Promise<void> {
+        let data = this.wsPayload();
+        if (this.wsDataFormat() === "binary") {
+            data = this.consoleOperation().request.binary();
+        }
+        if (this.ws && data) {
+            this.wsSending(true);
+            this.wsSendStatus("Sending...");
+            this.ws.send(data);
+            this.wsSendStatus("Send");
+        }
+    }
+
+    private initWebSocket() {
+        if (!this.ws) {
+            this.ws = new WebsocketClient();
+            this.ws.onOpen = () => {
+                this.wsConnecting(false);
+                this.wsConnected(true);
+                this.wsStatus("Connected");
+            };
+            this.ws.onClose = () => {
+                this.wsSending(false);
+                this.wsConnecting(false);
+                this.wsConnected(false);
+                this.wsStatus("Connect");
+            };
+            this.ws.onError = (error: string) => {
+                this.wsSending(false);
+                this.requestError(error);
+            };
+            this.ws.onMessage = (message: MessageEvent<any>) => {
+                this.wsSending(false);
+                this.responseBody(message.data);
+            };
+            this.ws.onLogItem = (data: LogItem) => {
+                this.wsLogItems(this.ws.logItems);
+            };
+        }
+    }
+
+    private sendWsConnect(): void {
+        if (this.ws?.isConnected) {
+            return;
+        }
+
+        this.requestError(null);
+        this.wsConnecting(true);
+        this.wsConnected(false);
+        this.responseStatusCode(null);
+
+        const consoleOperation = this.consoleOperation();
+        const url = consoleOperation.wsUrl();
+
+        this.initWebSocket();
+        this.wsStatus("Connecting...");
+        this.ws.connect(url);
     }
 
     public toggleRequestSummarySecrets(): void {
