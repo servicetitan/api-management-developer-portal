@@ -104,7 +104,7 @@ export class ApiList {
             else {
                 const pageOfApis = await this.apiService.getApis(query);
                 const apis = pageOfApis ? pageOfApis.value : [];
-                this.apis(apis);
+                this.apis(apis.filter(x => x.name != "tenant-accounting-core-v2"));
 
                 nextLink = pageOfApis.nextLink;
             }
