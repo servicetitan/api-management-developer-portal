@@ -52,11 +52,11 @@
         <ul class="nav" role="list">
             <!-- ko foreach: { data: group.items, as: 'item' } -->
             <li class="nav-item" role="presentation">
-                <a href="#" role="listitem" class="nav-link" style="margin-left: 0px;"
+                <a href="#" role="listitem" class="nav-link" style="margin-left: -1px;"
                     data-bind="attr: { href: $component.getReferenceUrl(item) }, css: { 'nav-link-active': $component.selectedOperationName() === item.name }">
-                    <div class="row">
-                        <span class="col-md-2" data-bind="attr: { 'data-method': method }"></span>
-                        <span class="col-md-9" data-bind="text: ($component.showUrlPath() ? item.urlTemplate : item.name), css: { 'text-truncate': !$component.wrapText(), 'text-wrap': $component.wrapText() }, attr: { title: ($component.showUrlPath() ? item.urlTemplate : item.displayName) }"></span>
+                    <div style="margin-right: -15px;" class="row">
+                        <span style="width: 44px;" data-bind="attr: { 'data-method': method }"></span>
+                        <span style="margin-left: 11px;" data-bind="text: ($component.showUrlPath() ? item.urlTemplate.replace('/tenant/', '') : item.name), css: { 'text-truncate': !$component.wrapText(), 'text-wrap': $component.wrapText() }, attr: { title: ($component.showUrlPath() ? item.urlTemplate : item.displayName) }"></span>
                     </div>
                 </a>
             </li>
