@@ -39,7 +39,7 @@
         </div>
         <!-- ko foreach: { data: group.items, as: 'item' } -->
         <div class="table-row" role="row">
-            <div class="col-5 text-truncate" role="cell">
+            <div class="col-4 text-truncate" role="cell">
                 <a href="#"
                     data-bind="attr: { href: $component.getReferenceUrl(item), title: item.displayName }">
                     <span data-bind="text: item.displayName"></span>
@@ -58,7 +58,7 @@
             </div>
             <!-- /ko -->
             <!-- ko ifnot: $component.showApiType -->
-            <div class="col-7" role="cell">
+            <div class="col-8" role="cell">
                 <div tabindex="0" data-bind="markdown: { source: item.description, truncateAt: 250 }"></div>
             </div>
             <!-- /ko -->            
@@ -78,7 +78,7 @@
         <!-- ko ifnot: groupByTag -->
         <!-- ko foreach: { data: apis, as: 'item' } -->
         <div class="table-row" role="row">
-            <div class="col-5 text-truncate" role="cell">
+            <div class="col-4 text-truncate" role="cell">
                 <a href="#"
                     data-bind="attr: { href: $component.getReferenceUrl(item), title: item.displayName }">
                     <span data-bind="text: item.displayName"></span>
@@ -96,7 +96,7 @@
             </div>
             <!-- /ko -->
             <!-- ko ifnot: $component.showApiType -->
-            <div class="col-7" role="cell">
+            <div class="col-8" role="cell">
                 <div tabindex="0" data-bind="markdown: { source: item.description, truncateAt: 250 }"></div>
             </div>
             <!-- /ko -->
