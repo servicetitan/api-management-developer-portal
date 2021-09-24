@@ -28,20 +28,19 @@ export class ApiService {
         "tenant-accounting-core-v2": "Invoices, Payments, Purchase Orders, Inventory Receipts, Inventory Bills, Purchase Returns, Inventory Adjustments, Inventory Transfers endpoints.",
         "tenant-accounting-v2": "Invoices, Payments, Payment Terms, Payment Types, Tax Zones, endpoints. Coming soon: Inventory Bills.",
         "tenant-settings-v2": "Employees, Technicians, Business Units endpoints.",
-        "tenant-telecom-v2": "Calls endpoints.",
+        "tenant-telecom-v2": "Calls endpoint.",
         "tenant-marketing-v2": "Campaigns, Campaign Costs endpoints.",
         "tenant-memberships-v2": "Membership Types, Customer Memberships, Recurring Service Types, Recurring Services, Recurring Service Events, Invoice Templates endpoints.",
         "tenant-pricebook-v2": "Materials, Services, Equipment, Categories, Discounts and Fees endpoints.",
         "tenant-crm-v2": "Leads, Tags endpoints. Coming soon: Bookings, Customers, Locations, Tag Types.",
-        "tenant-jbce-v2": "Call Reasons endpoints.",
+        "tenant-jbce-v2": "Call Reasons endpoint.",
         "tenant-dispatch-v2": "Technician Shifts, Capacity, Appointment Assignments endpoints. Coming soon: GPS Pings, Zones, Non-Job Appointments.",
-        "tenant-salestech-v2": "Estimates endpoints.",
+        "tenant-salestech-v2": "Estimates endpoint.",
         "tenant-jpm-v2": "Jobs, Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Projects endpoints.",
         "tenant-inventory-v2": "Vendors, Purchase Orders endpoints. Coming soon: Adjustments, Returns, Transfers, Receipts.",
         "tenant-payroll-v2": "Timesheet Codes, Activity Codes, Job Splits, Payroll Adjustments, Payrolls, Technician Payrolls, Employee Payrolls, Gross Pay Items endpoints.",
-        "tenant-equipment-systems-v2": "Installed Equipment endpoints.",
-        "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
-        "internal-platform-sandbox-v2": "Integration Tests endpoints."
+        "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
+        "tenant-task-management-v2": "Task Management Data, Tasks endpoints."
     }
 
     constructor(private readonly mapiClient: MapiClient) { }
