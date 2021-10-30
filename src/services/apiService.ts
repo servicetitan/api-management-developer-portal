@@ -26,22 +26,21 @@ import { Tag } from "../models/tag";
 export class ApiService {
     private readonly customDescriptions: Record<string, string> = {
         "tenant-accounting-core-v2": "Invoices, Payments, Purchase Orders, Inventory Receipts, Inventory Bills, Purchase Returns, Inventory Adjustments, Inventory Transfers endpoints.",
-        "tenant-accounting-v2": "Invoices, Payments, Payment Terms, Payment Types, Tax Zones, endpoints. Coming soon: Inventory Bills.",
-        "tenant-settings-v2": "Employees, Technicians, Business Units endpoints.",
-        "tenant-telecom-v2": "Calls endpoint.",
-        "tenant-marketing-v2": "Campaigns, Campaign Costs endpoints.",
+        "tenant-accounting-v2": "Invoices, Payments, Payment Terms, Payment Types, Tax Zones endpoints.",
+        "tenant-settings-v2": "Employees, Technicians, Business Units, Tag Types endpoints.",
+        "tenant-telecom-v2": "Calls, Call Reasons endpoints.",
+        "tenant-marketing-v2": "Campaigns, Campaign Costs, Campaign Categories endpoints.",
         "tenant-memberships-v2": "Membership Types, Customer Memberships, Recurring Service Types, Recurring Services, Recurring Service Events, Invoice Templates endpoints.",
         "tenant-pricebook-v2": "Materials, Services, Equipment, Categories, Discounts and Fees endpoints.",
-        "tenant-crm-v2": "Leads, Tags endpoints. Coming soon: Bookings, Customers, Locations, Tag Types.",
-        "tenant-jbce-v2": "Call Reasons endpoint.",
+        "tenant-crm-v2": "Leads endpoint. Coming soon: Bookings, Customers, Locations.",
         "tenant-dispatch-v2": "Technician Shifts, Capacity, Appointment Assignments endpoints. Coming soon: GPS Pings, Zones, Non-Job Appointments.",
         "tenant-salestech-v2": "Estimates endpoint.",
         "tenant-jpm-v2": "Jobs, Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Projects endpoints.",
-        "tenant-inventory-v2": "Vendors, Purchase Orders endpoints. Coming soon: Adjustments, Returns, Transfers, Receipts.",
+        "tenant-inventory-v2": "Vendors, Purchase Orders, Purchase Order Types, Trucks, Warehouses endpoints. Coming soon: Adjustments, Returns, Transfers, Receipts.",
         "tenant-payroll-v2": "Timesheet Codes, Activity Codes, Job Splits, Payroll Adjustments, Payrolls, Technician Payrolls, Employee Payrolls, Gross Pay Items endpoints.",
         "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints."
-    }
+      }
 
     constructor(private readonly mapiClient: MapiClient) { }
 
