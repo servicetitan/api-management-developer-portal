@@ -341,6 +341,10 @@ api-list-dropdown {
     text-align: left;
 }
 
+a.nav-link[href="#"] {
+    cursor: default;
+}
+
 api-apps-runtime,
 api-details,
 api-history,
