@@ -9,7 +9,7 @@ export class Operation {
     public readonly name: string;
     public readonly displayName: string;
     public readonly description: string;
-    public readonly urlTemplate: string;
+    public urlTemplate: string;
     public readonly templateParameters: Parameter[];
     public readonly parameters: Parameter[];
     public readonly method: string;

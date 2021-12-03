@@ -186,8 +186,17 @@ export class OperationList {
 
         const pageOfOperationsByTag = await this.apiService.getOperationsByTags(this.selectedApiName(), this.searchRequest);
         const operationGroups = pageOfOperationsByTag.value;
+        operationGroups.forEach(g => {
+            g.items.forEach(i => i.urlTemplate = i.urlTemplate
+                .replace('/tenant/{tenant}/booking-partner/', '')
+                .replace('/tenant/{tenant}/gps-partner/', '')
+                .replace('/tenant/', '')
+            );
+            g.items.sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
+        });
 
         this.operationGroups(operationGroups);
+
 
         this.hasPrevPage(this.pageNumber() > 1);
         this.hasNextPage(!!pageOfOperationsByTag.nextLink);
@@ -203,7 +212,7 @@ export class OperationList {
         this.searchRequest.skip = (this.pageNumber() - 1) * Constants.defaultPageSize;
         const pageOfOperations = await this.apiService.getOperations(`apis/${apiName}`, this.searchRequest);
 
-        this.operations(pageOfOperations.value.sort((a, b) => a.name > b.name ? 1 : -1));
+        this.operations(pageOfOperations.value);
 
         this.hasPrevPage(this.pageNumber() > 1);
         this.hasNextPage(!!pageOfOperations.nextLink);

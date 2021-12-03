@@ -56,7 +56,7 @@
                     data-bind="attr: { href: $component.getReferenceUrl(item) }, css: { 'nav-link-active': $component.selectedOperationName() === item.name }">
                     <div style="margin-right: -15px;" class="row">
                         <span style="width: 44px;" data-bind="attr: { 'data-method': method }"></span>
-                        <span style="margin-left: 11px;" data-bind="text: ($component.showUrlPath() ? item.urlTemplate.replace('/tenant/', '') : item.name), css: { 'text-truncate': !$component.wrapText(), 'text-wrap': $component.wrapText() }, attr: { title: ($component.showUrlPath() ? item.urlTemplate : item.displayName) }"></span>
+                        <span style="margin-left: 11px;" data-bind="text: ($component.showUrlPath() ? item.urlTemplate : item.name), css: { 'text-truncate': !$component.wrapText(), 'text-wrap': $component.wrapText() }, attr: { title: ($component.showUrlPath() ? item.urlTemplate : item.displayName) }"></span>
                     </div>
                 </a>
             </li>
