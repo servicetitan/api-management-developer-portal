@@ -192,7 +192,7 @@ export class OperationList {
                 .replace('/tenant/{tenant}/gps-partner/', '')
                 .replace('/tenant/', '')
             );
-            g.items =g.items
+            g.items = g.items
                 .filter(i => i.urlTemplate != '{tenant}/jobs/{id}/hold')
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
         });
