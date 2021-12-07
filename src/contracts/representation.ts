@@ -1,3 +1,5 @@
+import { Bag } from "@paperbits/common";
+import { Example } from "./example";
 import { ParameterContract } from "./parameter";
 
 /**
@@ -10,12 +12,12 @@ export interface RepresentationContract {
     contentType: string;
 
     /**
-     * User created sample.
+     * @deprecated User created sample.
      */
     sample?: string;
 
     /**
-     * Sample generated during API import.
+     * @deprecated Sample generated during API import.
      */
     generatedSample?: string;
 
@@ -34,5 +36,8 @@ export interface RepresentationContract {
      */
     formParameters?: ParameterContract[];
 
-    examples: object;
+    /**
+     * Object containing examples of the representation.
+     */
+    examples: Bag<Example>;
 }

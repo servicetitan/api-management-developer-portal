@@ -4,6 +4,7 @@ import "@paperbits/core/ko/bindingHandlers/bindingHandlers.component";
 import "@paperbits/core/ko/bindingHandlers/bindingHandlers.dialog";
 import "@paperbits/core/ko/bindingHandlers/bindingHandlers.focus";
 import "@paperbits/core/ko/bindingHandlers/bindingHandlers.scrollable";
+import "@paperbits/core/ko/bindingHandlers/bindingHandlers.listbox";
 import { IInjector, IInjectorModule } from "@paperbits/common/injection";
 import { ConsoleLogger } from "@paperbits/common/logging";
 import { DefaultSessionManager } from "@paperbits/common/persistence/defaultSessionManager";
@@ -25,8 +26,10 @@ import { ApiHistory } from "./components/apis/history-of-api/ko/runtime/api-hist
 import { ApiList, ApiListDropdown, ApiListTiles } from "./components/apis/list-of-apis/ko/runtime";
 import { DefaultAuthenticator } from "./components/defaultAuthenticator";
 import { FileInput } from "./components/file-input/file-input";
-import { CodeSampleViewModel } from "./components/operations/operation-details/ko/runtime/code-sample";
+import { CodeSnippet } from "./components/operations/operation-details/ko/runtime/code-snippet";
+import { Authorization } from "./components/operations/operation-details/ko/runtime/authorization";
 import { OperationConsole } from "./components/operations/operation-details/ko/runtime/operation-console";
+import { GraphqlConsole } from "./components/operations/operation-details/ko/runtime/graphql-console";
 import { OperationDetails } from "./components/operations/operation-details/ko/runtime/operation-details";
 import { TypeDefinitionViewModel } from "./components/operations/operation-details/ko/runtime/type-definition";
 import { OperationList } from "./components/operations/operation-list/ko/runtime/operation-list";
@@ -69,6 +72,7 @@ import { TagService } from "./services/tagService";
 import { TenantService } from "./services/tenantService";
 import { UsersService } from "./services/usersService";
 import { ApimSettingsProvider } from "./configuration/apimSettingsProvider";
+import { AccessTokenRefrsher } from "./authentication/accessTokenRefresher";
 
 export class ApimRuntimeModule implements IInjectorModule {
     public register(injector: IInjector): void {
@@ -87,8 +91,10 @@ export class ApimRuntimeModule implements IInjectorModule {
         injector.bind("apiHistory", ApiHistory);
         injector.bind("operationDetails", OperationDetails);
         injector.bind("operationConsole", OperationConsole);
+        injector.bind("graphqlConsole", GraphqlConsole);
+        injector.bind("authorization", Authorization);
         injector.bind("typeDefinition", TypeDefinitionViewModel);
-        injector.bind("codeSample", CodeSampleViewModel);
+        injector.bind("codeSnippet", CodeSnippet);
         injector.bind("fileInput", FileInput);
         injector.bind("apiService", ApiService);
         injector.bind("tagService", TagService);
@@ -131,5 +137,6 @@ export class ApimRuntimeModule implements IInjectorModule {
         injector.bindSingleton("viewStack", ViewStack);
         injector.bindSingleton("sessionManager", DefaultSessionManager);
         injector.bind("tagInput", TagInput);
+        injector.bindToCollection("autostart", AccessTokenRefrsher)
     }
 }

@@ -64,8 +64,8 @@ export class ApiService {
             }
 
             if (searchQuery.pattern) {
-                const pattern = Utils.escapeValueForODataFilter(searchQuery.pattern);
-                odataFilterEntries.push(`(contains(properties/displayName,'${encodeURIComponent(pattern)}'))`);
+                const pattern = Utils.encodeURICustomized(searchQuery.pattern, Constants.reservedCharTuplesForOData);
+                odataFilterEntries.push(`(contains(properties/displayName,'${pattern}'))`);
             }
         }
 
@@ -124,8 +124,8 @@ export class ApiService {
             }
 
             if (searchQuery.pattern) {
-                const pattern = Utils.escapeValueForODataFilter(searchQuery.pattern);
-                odataFilterEntries.push(`(contains(operation/${searchQuery.propertyName || 'name'},'${encodeURIComponent(pattern)}'))`);
+                const pattern = Utils.encodeURICustomized(searchQuery.pattern, Constants.reservedCharTuplesForOData);
+                odataFilterEntries.push(`(contains(operation/${searchQuery.propertyName || 'name'},'${pattern}'))`);
             }
         }
 
@@ -183,8 +183,8 @@ export class ApiService {
             }
 
             if (searchRequest.pattern) {
-                const pattern = Utils.escapeValueForODataFilter(searchRequest.pattern);
-                odataFilterEntries.push(`(contains(api/name,'${encodeURIComponent(pattern)}'))`);
+                const pattern = Utils.encodeURICustomized(searchRequest.pattern, Constants.reservedCharTuplesForOData);
+                odataFilterEntries.push(`(contains(api/name,'${pattern}'))`);
             }
         }
 
@@ -369,8 +369,8 @@ export class ApiService {
             });
 
             if (searchQuery.pattern) {
-                const pattern = Utils.escapeValueForODataFilter(searchQuery.pattern);
-                query = Utils.addQueryParameter(query, `$filter=contains(properties/${searchQuery.propertyName || 'displayName'},'${encodeURIComponent(pattern)}')`);
+                const pattern = Utils.encodeURICustomized(searchQuery.pattern, Constants.reservedCharTuplesForOData);
+                query = Utils.addQueryParameter(query, `$filter=contains(properties/${searchQuery.propertyName || 'displayName'},'${pattern}')`);
             }
 
             top = searchQuery && searchQuery.take || 200;
@@ -397,7 +397,6 @@ export class ApiService {
     public async getApiSchema(schemaId: string): Promise<Schema> {
         const contract = await this.mapiClient.get<SchemaContract>(schemaId, [MapiClient.getPortalHeader("getApiSchema")]);
         const model = new Schema(contract);
-
         return model;
     }
 
@@ -405,7 +404,7 @@ export class ApiService {
         const result = await this.mapiClient.get<Page<SchemaContract>>(`${api.id}/schemas`, [MapiClient.getPortalHeader("getSchemas")]);
         const schemaReferences = result.value;
         const schemaType = this.getSchemasType(schemaReferences);
-        const schemas = await Promise.all(schemaReferences.filter(schema => schema.properties.contentType === schemaType).map(schemaReference => this.getApiSchema(schemaReference.id)));
+        const schemas = await Promise.all(schemaReferences.filter(schema => schema.properties.contentType === schemaType).map(schemaReference => this.getApiSchema((schemaType === SchemaType.graphQL) ? `${api.id}/schemas/${schemaReference.name}` : schemaReference.id)));
 
         // return schemas;
         // const result = await this.mapiClient.get<Page<SchemaContract>>(`${api.id}/schemas?$top=20`, null);
@@ -419,6 +418,10 @@ export class ApiService {
 
     private getSchemasType(schemas: SchemaContract[]): SchemaType {
         if (schemas && schemas.length > 0) {
+
+            const gql = schemas.find(s => s.properties.contentType === SchemaType.graphQL);
+            if(gql) return SchemaType.graphQL;
+
             const is2 = !!schemas.find(item => item.properties.contentType === SchemaType.swagger)
                 &&
                 !schemas.find(item => item.properties.contentType === SchemaType.openapi);
@@ -472,8 +475,8 @@ export class ApiService {
         let query = `${productId}/apis`;
 
         if (searchQuery.pattern) {
-            const pattern = Utils.escapeValueForODataFilter(searchQuery.pattern);
-            query = Utils.addQueryParameter(query, `$filter=contains(properties/displayName,'${encodeURIComponent(pattern)}')`);
+            const pattern = Utils.encodeURICustomized(searchQuery.pattern, Constants.reservedCharTuplesForOData);
+            query = Utils.addQueryParameter(query, `$filter=contains(properties/displayName,'${pattern}')`);
         }
 
         if (searchQuery.skip) {

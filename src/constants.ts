@@ -15,7 +15,8 @@ export enum ServiceSkuName {
 export enum TypeOfApi {
     webSocket = "websocket",
     soap = "soap",
-    http = "http"
+    http = "http",
+    graphQL = "graphql"
 }
 
 /**
@@ -41,6 +42,16 @@ export enum AadEndpoints {
     primary = "login.microsoftonline.com",
     legacy = "login.windows.net"
 }
+
+/**
+ * Types of direction (e.g. for sorting of elements in a table)
+ */
+export enum Direction {
+    asc = 'asc',
+    desc = 'desc'
+}
+
+export const defaultAadTenantName = "common";
 
 export const closeAccount = "close-account";
 export const hashSignOut = "signout";
@@ -94,6 +105,48 @@ export const defaultInputDelayMs = 600;
 export const AppType = "developerPortal";
 
 /**
+ * Query Editor Settings - GraphQL Console
+ */
+export const QueryEditorSettings = {
+    id: "queryEditor",
+    config: {
+        language: 'graphqlQuery',
+        readOnly: false,
+    }
+}
+
+/**
+* Variables Editor Settings - GraphQL Console
+*/
+export const VariablesEditorSettings = {
+    id: "variablesEditor",
+    config: {
+        language: 'json',
+        readOnly: false,
+    }
+}
+
+/**
+ * Response Settings - GraphQL Console
+ */
+export const ResponseSettings = {
+    id: "responseEditor",
+    config: {
+        language: 'json',
+        readOnly: true,
+    }
+}
+
+/**
+* Graphql operation types
+*/
+export enum GraphqlOperationTypes {
+    query = "query",
+    mutation = "mutation",
+    subscription = "subscription"
+}
+
+/**
  * Known setting names.
  */
 export enum SettingNames {
@@ -134,7 +187,7 @@ export enum GrantTypes {
     password = "password"
 }
 
-export const managementApiVersion = "2021-01-01-preview";
+export const managementApiVersion = "2021-04-01-preview";
 
 /**
  * Developer portal type (self-hosted or managed).
@@ -149,3 +202,6 @@ export const portalHeaderName = "x-ms-apim-client";
 export const releaseNameFormat = "YYYYMMDDHHmm";
 
 export const genericHttpRequestError = "Server error. Unable to send request. Please try again later.";
+
+export const oauthSessionKey = "oauthSession";
+export const reservedCharTuplesForOData: [string, string][] = [["'", "''"]];

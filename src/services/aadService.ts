@@ -1,5 +1,6 @@
 import * as Msal from "msal";
 import * as Constants from "../constants";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import { HttpClient } from "@paperbits/common/http";
 import { Router } from "@paperbits/common/routing";
 import { RouteHelper } from "../routing/routeHelper";
@@ -46,7 +47,7 @@ export class AadService {
 
         this.router.getCurrentUrl() === returnUrl
             ? location.reload()
-            : await this.router.navigateTo(returnUrl);
+            : await this.router.navigateTo(sanitizeUrl(returnUrl));
     }
 
     /**
@@ -57,6 +58,18 @@ export class AadService {
      * @param {string} replyUrl - Reply URL, e.g. `https://contoso.com/signin-aad`.
      */
     public async signInWithAad(clientId: string, authority: string, signinTenant: string, replyUrl?: string): Promise<void> {
+        if (!clientId) {
+            throw new Error(`Parameter "clientId" not specified.`);
+        }
+
+        if (!authority) {
+            throw new Error(`Parameter "authority" not specified.`);
+        }
+
+        if (!signinTenant) {
+            throw new Error(`Parameter "signinTenant" not specified.`);
+        }
+
         const authorityUrl = `https://${authority}/${signinTenant}`;
         const metadataResponse = await this.httpClient.send({ url: `${authorityUrl}/.well-known/openid-configuration` });
         const metadata = metadataResponse.toText();
@@ -97,11 +110,19 @@ export class AadService {
      */
     public async runAadB2CUserFlow(clientId: string, tenant: string, instance: string, userFlow: string, replyUrl?: string): Promise<void> {
         if (!clientId) {
-            throw new Error(`Client ID not specified.`);
+            throw new Error(`Parameter "clientId" not specified.`);
         }
 
         if (!tenant) {
-            throw new Error(`Authority not specified.`);
+            throw new Error(`Parameter "tenant" not specified.`);
+        }
+
+        if (!instance) {
+            throw new Error(`Parameter "instance" not specified.`);
+        }
+
+        if (!userFlow) {
+            throw new Error(`Parameter "userFlow" not specified.`);
         }
 
         const auth = `https://${tenant}/tfp/${instance}/${userFlow}`;

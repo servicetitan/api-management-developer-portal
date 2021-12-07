@@ -57,7 +57,17 @@
                         <div role="cell" class="text-truncate" data-bind="text: parameter.in"></div>
                         <div role="cell" class="text-truncate" data-bind="text: parameter.required"></div>
                         <div role="cell" class="text-truncate monospace" data-bind="text: parameter.type"></div>
-                        <div role="cell" data-bind="markdown: parameter.description"></div>
+                        <div role="cell">
+                            <span data-bind="markdown: parameter.description"></span>
+
+                            <!-- ko foreach: { data: parameter.examples, as: 'example' } -->
+                            <p>
+                                <span data-bind="text: example.title"></span>:
+                                <span data-bind="text: example.value" class="monospace text-wrap"></span>
+                                <span data-bind="text: example.description" class="d-block"></span>
+                            </p>
+                            <!-- /ko -->
+                        </div>
                     </div>
                     <!-- /ko -->
                 </div>
@@ -84,7 +94,17 @@
                         <div role="cell" class="text-truncate" data-bind="text: header.required"></div>
                         <div role="cell" class="text-truncate monospace"
                             data-bind="text: header.type, attr: { title: header.type }"></div>
-                        <div role="cell" data-bind="markdown: header.description"></div>
+                        <div role="cell">
+                            <span data-bind="markdown: header.description"></span>
+
+                            <!-- ko foreach: { data: header.examples, as: 'example' } -->
+                            <p>
+                                <span data-bind="text: example.title"></span>:
+                                <span data-bind="text: example.value" class="monospace text-wrap"></span>
+                                <span data-bind="text: example.description" class="d-block"></span>
+                            </p>
+                            <!-- /ko -->
+                        </div>
                     </div>
                     <!-- /ko -->
                 </div>
@@ -144,8 +164,8 @@
 
                     <!-- ko if: representation.examples -->
                     <!-- ko foreach: { data: representation.examples, as: 'example' } -->
-                    <code-sample params="{ title: example.title, content: example.value, language: representation.exampleFormat }">
-                    </code-sample>
+                    <code-snippet params="{ title: example.title, content: example.value, language: example.format }">
+                    </code-snippet>
                     <!-- /ko -->
                     <!-- /ko -->
                 </div>
@@ -203,11 +223,11 @@
                         params="{ apiName: $component.api().name, operationName: $component.operation().name, definition: $component.getDefinitionForRepresentation(representation), defaultSchemaView: $component.defaultSchemaView }">
                     </type-definition>
                     <!-- /ko -->
-                    
+
                     <!-- ko if: representation.examples -->
                     <!-- ko foreach: { data: representation.examples, as: 'example' } -->
-                    <code-sample params="{ title: example.title, content: example.value, language: representation.exampleFormat }">
-                    </code-sample>
+                    <code-snippet params="{ title: example.title, content: example.value, language: example.format }">
+                    </code-snippet>
                     <!-- /ko -->
                     <!-- /ko -->
                 </div>
@@ -248,8 +268,10 @@
 </div>
 <!-- /ko -->
 
+<!-- ko ifnot: apiType() === 'graphql' -->
 <!-- ko ifnot: operation -->
 <p>No operation selected.</p>
+<!-- /ko -->
 <!-- /ko -->
 <!-- /ko -->
 
@@ -289,12 +311,42 @@
 <!-- /ko -->
 <!-- /ko -->
 
+<!-- ko if: apiType() === 'graphql' -->
+<div class="animation-fade-in">
+    <div class="operation-header">
+        <h2 class="operation-name"></h2>
+        <!-- ko if: $component.enableConsole -->
+        <button class="open-console-button" data-bind="click: $component.openConsole">Try it <i
+                class="icon-emb icon-emb-play"></i>
+        </button>
+        <!-- /ko -->
+    </div>
+
+    <div class="collapsible">
+        <h3>GraphQL Endpoint</h3>
+        <div class="collapsible-container">
+            <span class="monospace" data-bind="text: $component.requestUrlSample"></span>
+        </div>
+    </div>
+
+</div>
+<!-- /ko -->
+
 <!-- /ko -->
 
 <!-- ko if: $component.consoleIsOpen -->
+<!-- ko ifnot: apiType() === 'graphql' -->
 <div class="detachable-right scrollable flex-grow animation-fade-in">
     <operation-console class="test flex flex-column" data-bind="dialog: {}"
         params="{ api: api, operation: operation, hostnames: hostnames, authorizationServer: associatedAuthServer, useCorsProxy: useCorsProxy }">
     </operation-console>
 </div>
+<!-- /ko -->
+<!-- ko if: apiType() === 'graphql' -->
+<div class="detachable-right graphql-console-width scrollable flex-grow animation-fade-in">
+    <graphql-console class="gql-console-height flex flex-column" data-bind="dialog: {}"
+        params="{ api: api, operationUrl: $component.requestUrlSample, authorizationServer: associatedAuthServer, useCorsProxy: useCorsProxy }">
+    </graphql-console>
+</div>
+<!-- /ko -->
 <!-- /ko -->
