@@ -24,7 +24,7 @@
 
                 <!-- ko if: property.type.displayAs === 'arrayOfPrimitive' -->
                 <span class="monospace"
-                    data-bind="text: property.type.name, attr: { title: property.type.name }"></span>[]
+                    data-bind="text: property.type.name, attr: { title: property.type.name + '[]' }"></span>[]
                 <!-- /ko -->
 
                 <!-- ko if: property.type.displayAs === 'reference' -->
@@ -34,7 +34,7 @@
 
                 <!-- ko if: property.type.displayAs === 'arrayOfReference' -->
                 <a class="monospace"
-                    data-bind="text: property.type.name, attr: { href: $component.getReferenceUrl(property.type.name), title: property.type.name }"></a>[]
+                    data-bind="text: property.type.name, attr: { href: $component.getReferenceUrl(property.type.name), title: property.type.name + '[]' }"></a>[]
                 <!-- /ko -->
 
                 <!-- ko if: property.type.displayAs === 'combination' -->
