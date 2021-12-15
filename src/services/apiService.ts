@@ -25,22 +25,22 @@ import { Tag } from "../models/tag";
 
 export class ApiService {
     private readonly customDescriptions: Record<string, string> = {
-        "tenant-accounting-core-v2": "Invoices, Payments, Purchase Orders, Inventory Receipts, Inventory Bills, Purchase Returns, Inventory Adjustments, Inventory Transfers endpoints.",
-        "tenant-accounting-v2": "Invoices, Payments, Payment Terms, Payment Types, Tax Zones, Inventory Bills endpoints.",
-        "tenant-settings-v2": "Employees, Technicians, Business Units, Tag Types endpoints.",
-        "tenant-telecom-v2": "Calls, Call Reasons endpoints.",
-        "tenant-marketing-v2": "Campaigns, Campaign Costs, Campaign Categories endpoints.",
-        "tenant-memberships-v2": "Membership Types, Customer Memberships, Recurring Service Types, Recurring Services, Recurring Service Events, Invoice Templates endpoints.",
-        "tenant-pricebook-v2": "Materials, Services, Equipment, Categories, Discounts and Fees endpoints.",
-        "tenant-crm-v2": "Leads, Tags, Customers, Locations, Bookings endpoints.",
-        "tenant-dispatch-v2": "Technician Shifts, Capacity, GPS Pings, Appointment Assignments, Non-Job Appointments endpoints. Coming soon: Zones.",
-        "tenant-salestech-v2": "Estimates endpoint.",
-        "tenant-jpm-v2": "Jobs, Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Projects endpoints.",
-        "tenant-inventory-v2": "Vendors, Purchase Orders, Purchase Order Types, Trucks, Warehouses, Adjustments, Returns, Transfers, Receipts endpoints.",
-        "tenant-payroll-v2": "Timesheet Codes, Activity Codes, Job Splits, Payroll Adjustments, Payrolls, Technician Payrolls, Employee Payrolls, Gross Pay Items endpoints.",
-        "tenant-forms-v2": "Job Forms endpoint.",
+        "tenant-accounting-core-v2": "Inventory Adjustments, Inventory Bills, Inventory Receipts, Inventory Transfers, Invoices, Payments, Purchase Orders, Purchase Returns endpoints.",
+        "tenant-accounting-v2": "Inventory Bills, Invoices, Payment Terms, Payment Types, Payments, Tax Zones endpoints.",
+        "tenant-crm-v2": "Bookings, Customers, Leads, Locations, Tags endpoints.",
+        "tenant-dispatch-v2": "Appointment Assignments, Capacity, GPS Pings, Non-Job Appointments, Technician Shifts, Zones endpoints.",
         "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
-        "tenant-task-management-v2": "Task Management Data, Tasks endpoints."
+        "tenant-forms-v2": "Job Forms endpoint.",
+        "tenant-inventory-v2": "Adjustments, Purchase Order Types, Purchase Orders, Receipts, Returns, Transfers, Trucks, Vendors, Warehouses endpoints.",
+        "tenant-jpm-v2": "Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Jobs, Projects endpoints.",
+        "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns endpoints.",
+        "tenant-memberships-v2": "Customer Memberships, Invoice Templates, Membership Types, Recurring Service Events, Recurring Service Types, Recurring Services endpoints.",
+        "tenant-payroll-v2": "Activity Codes, Employee Payrolls, Gross Pay Items, Job Splits, Payroll Adjustments, Payrolls, Technician Payrolls, Timesheet Codes endpoints.",
+        "tenant-pricebook-v2": "Categories, Discounts and Fees, Equipment, Materials, Services endpoints.",
+        "tenant-salestech-v2": "Estimates endpoint.",
+        "tenant-settings-v2": "Business Units, Employees, Tag Types, Technicians endpoints.",
+        "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
+        "tenant-telecom-v2": "Call Reasons, Calls endpoints."
       }
 
     constructor(private readonly mapiClient: MapiClient) { }
