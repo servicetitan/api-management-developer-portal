@@ -188,8 +188,8 @@ export class OperationList {
         const operationGroups = pageOfOperationsByTag.value;
         operationGroups.forEach(g => {
             g.items.forEach(i => i.urlTemplate = i.urlTemplate
-                .replace('/tenant/{tenant}/booking-partner/', '')
-                .replace('/tenant/{tenant}/gps-partner/', '')
+                .replace('/tenant/{tenant}/booking-provider/', '')
+                .replace('/tenant/{tenant}/gps-provider/', '')
                 .replace('/tenant/', '')
             );
             g.items = g.items
