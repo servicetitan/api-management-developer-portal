@@ -190,6 +190,7 @@ export class OperationList {
             g.items.forEach(i => i.urlTemplate = i.urlTemplate
                 .replace('/tenant/{tenant}/booking-provider/', '')
                 .replace('/tenant/{tenant}/gps-provider/', '')
+                .replace('/tenant/{tenant}/report-category/', '')
                 .replace('/tenant/', '')
             );
             g.items = g.items

@@ -37,6 +37,7 @@ export class ApiService {
         "tenant-memberships-v2": "Customer Memberships, Invoice Templates, Membership Types, Recurring Service Events, Recurring Service Types, Recurring Services endpoints.",
         "tenant-payroll-v2": "Activity Codes, Employee Payrolls, Gross Pay Items, Job Splits, Payroll Adjustments, Payrolls, Technician Payrolls, Timesheet Codes endpoints.",
         "tenant-pricebook-v2": "Categories, Discounts and Fees, Equipment, Materials, Services endpoints.",
+        "tenant-reporting-v2": "Reports, DynamicValueSets, ReportCategories endpoints.",
         "tenant-salestech-v2": "Estimates endpoint.",
         "tenant-settings-v2": "Business Units, Employees, Tag Types, Technicians endpoints.",
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
