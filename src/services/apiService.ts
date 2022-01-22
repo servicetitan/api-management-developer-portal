@@ -32,6 +32,7 @@ export class ApiService {
         "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
         "tenant-forms-v2": "Job Forms endpoint.",
         "tenant-inventory-v2": "Adjustments, Purchase Order Types, Purchase Orders, Receipts, Returns, Transfers, Trucks, Vendors, Warehouses endpoints.",
+        "tenant-jbce-v2": "Call Reasons endpoint.",
         "tenant-jpm-v2": "Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Jobs, Projects endpoints.",
         "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns endpoints.",
         "tenant-memberships-v2": "Customer Memberships, Invoice Templates, Membership Types, Recurring Service Events, Recurring Service Types, Recurring Services endpoints.",
@@ -41,8 +42,8 @@ export class ApiService {
         "tenant-salestech-v2": "Estimates endpoint.",
         "tenant-settings-v2": "Business Units, Employees, Tag Types, Technicians endpoints.",
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
-        "tenant-telecom-v2": "Call Reasons, Calls endpoints."
-      }
+        "tenant-telecom-v2": "Calls endpoint."
+    }
 
     constructor(private readonly mapiClient: MapiClient) { }
 
