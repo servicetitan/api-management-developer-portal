@@ -103,8 +103,20 @@ export class ApiList {
             }
             else {
                 const pageOfApis = await this.apiService.getApis(query);
-                const apis = pageOfApis ? pageOfApis.value : [];
-                this.apis(apis.filter(x => x.name != "tenant-accounting-core-v2"));
+                let apis = pageOfApis ? pageOfApis.value : [];
+                this.apis(
+                  apis
+                    .filter((x) => x.name != "tenant-accounting-core-v2")
+                    .sort((a, b) => {
+                      if (a.isBeta && !b.isBeta) {
+                        return 1;
+                      } else if (!a.isBeta && b.isBeta) {
+                        return -1;
+                      } else {
+                        return a.displayName > b.displayName ? 1 : -1;
+                      }
+                    })
+                );
 
                 nextLink = pageOfApis.nextLink;
             }

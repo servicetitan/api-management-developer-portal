@@ -86,6 +86,10 @@
                     - <span data-bind="text: item.apiVersion"></span>
                     <!-- /ko -->
                 </a>
+                <!-- ko if: item.isBeta -->
+                &nbsp;&nbsp;
+                <span class="tag-item" title="API may be updated anytime and may not become generally available. Additional request limits may be applied.">beta</span>
+                <!-- /ko -->
             </div>
             <!-- ko if: $component.showApiType -->
             <div class="col-5" role="cell">
@@ -97,7 +101,7 @@
             <!-- /ko -->
             <!-- ko ifnot: $component.showApiType -->
             <div class="col-8" role="cell">
-                <div tabindex="0" data-bind="markdown: { source: item.description, truncateAt: 250 }"></div>
+                <div tabindex="0" data-bind="markdown: { source: item.description }"></div>
             </div>
             <!-- /ko -->
         </div>

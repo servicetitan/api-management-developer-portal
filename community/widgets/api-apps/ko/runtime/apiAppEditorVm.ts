@@ -6,7 +6,7 @@ import { ApiAppAvailabilityCreateOrUpdateContract } from "../../services/apiAppA
 import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdateContract";
 
 export class ApiAppEditorVm {
-    private maxTenants: number = 200;
+    private maxTenants: number = 500;
     public id: number;
     public publicId: string;
     public applicationKey1: string;

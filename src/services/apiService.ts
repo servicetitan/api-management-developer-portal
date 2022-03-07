@@ -45,6 +45,8 @@ export class ApiService {
         "tenant-telecom-v2": "Calls endpoint."
     }
 
+    private readonly betaApis: Set<string> = new Set<string>(["tenant-reporting-v2"]);
+
     constructor(private readonly mapiClient: MapiClient) { }
 
     /**
@@ -81,7 +83,10 @@ export class ApiService {
         page.value = pageOfApis.value.map(x => new Api(x));
         page.nextLink = pageOfApis.nextLink;
 
-        page.value.forEach(api => api.description = this.customDescriptions[api.name] ?? api.description);
+        page.value.forEach(api => {
+            api.description = this.customDescriptions[api.name] ?? api.description;
+            api.isBeta = this.betaApis.has(api.name);
+        });
 
         return page;
     }

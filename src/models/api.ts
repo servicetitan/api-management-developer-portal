@@ -33,6 +33,8 @@ export class Api {
      */
     public description?: string;
 
+    public isBeta: boolean;
+
     /**
      * Version of API, e.g. "v1"
      */
@@ -114,6 +116,7 @@ export class Api {
         this.serviceUrl = contract.properties.serviceUrl;
         this.protocols = contract.properties.protocols;
         this.description = contract.properties.description;
+        this.isBeta = false;
         this.path = contract.properties.path;
         this.versionedPath = this.path;
         this.apiVersion = contract.properties.apiVersion;
