@@ -10,5 +10,6 @@ export interface ApiAppContract {
     authScopes: Array<ApiAppScopeSelectContract>;
     applicationKey1: string;
     deleted: boolean;
-    appAvailabilityList: Array<ApiAppAvailabilityContract>;
+    tenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;
+    networkAppAvailabilityList: Array<ApiAppAvailabilityContract>;
 }

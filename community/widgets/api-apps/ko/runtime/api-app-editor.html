@@ -106,17 +106,17 @@
         </div>
         <!-- /ko -->
         <label style="margin-bottom: 0;">Tenant(s)</label>
-        <div style="color: #E63717;" data-bind="text: appAvailabilityValidation, visible: appAvailabilityValidation">
+        <div style="color: #E63717;" data-bind="text: tenantAppAvailabilityValidation, visible: tenantAppAvailabilityValidation">
         </div>
         <div class="row">
             <div class="col-12">
                 <button type="button" class="button" style="padding: 7px 20px 8px;"
-                    data-bind="click: clickAddAppAvailability">
-                    + Add tenant
+                    data-bind="click: clickAddTenantAppAvailability">
+                    + Add Tenant
                 </button>
             </div>
         </div>
-        <!-- ko foreach: appAvailabilityList -->
+        <!-- ko foreach: tenantAppAvailabilityList -->
         <div class="row">
             <div class="col-5" style="padding-right: 0;">
                 <input type="text" id="ResourceOwner" placeholder="Tenant ID" class="form-control form-control-default"
@@ -128,7 +128,39 @@
             </div>
             <div class="col-2">
                 <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
-                    data-bind="click: $parent.clickDeleteAppAvailability.bind($parent, $data)">
+                    data-bind="click: $parent.clickDeleteTenantAppAvailability.bind($parent, $data)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
+                        viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                    </svg>
+                </span>
+            </div>
+        </div>
+        <!-- /ko -->
+        <label style="margin: 10px 0 0 0;">Customer Global Network(s)</label>
+        <div style="color: #E63717;" data-bind="text: networkAppAvailabilityValidation, visible: networkAppAvailabilityValidation">
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="button" style="padding: 7px 20px 8px;"
+                    data-bind="click: clickAddNetworkAppAvailability">
+                    + Add Network
+                </button>
+            </div>
+        </div>
+        <!-- ko foreach: networkAppAvailabilityList -->
+        <div class="row">
+            <div class="col-5" style="padding-right: 0;">
+                <input type="text" id="ResourceOwner" placeholder="Network ID" class="form-control form-control-default"
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+            </div>
+            <div class="col-5">
+                <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
+            </div>
+            <div class="col-2">
+                <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
+                    data-bind="click: $parent.clickDeleteNetworkAppAvailability.bind($parent, $data)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
                         viewBox="0 0 24 24">
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>

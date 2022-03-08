@@ -7,5 +7,6 @@ export interface ApiAppCreateOrUpdateContract {
     homepageUrl: string;
     authScopes: Array<string>;
     deleted: boolean;
-    appAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
+    tenantAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
+    networkAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
 }

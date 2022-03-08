@@ -7,6 +7,7 @@ import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdat
 
 export class ApiAppEditorVm {
     private maxTenants: number = 500;
+    private maxNetworks: number = 15;
     public id: number;
     public publicId: string;
     public applicationKey1: string;
@@ -17,14 +18,15 @@ export class ApiAppEditorVm {
     public homepageUrl: ko.Observable<string>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
-    public appAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>
-
+    public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
+    public networkAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
     public validationActivated: ko.Observable<boolean>;
     public nameValidation: ko.PureComputed<string>;
     public organizationNameValidation: ko.PureComputed<string>;
     public homepageUrlValidation: ko.PureComputed<string>;
     public authScopesValidation: ko.PureComputed<string>;
-    public appAvailabilityValidation: ko.PureComputed<string>;
+    public tenantAppAvailabilityValidation: ko.PureComputed<string>;
+    public networkAppAvailabilityValidation: ko.PureComputed<string>;
     public isValid: ko.PureComputed<boolean>;
     public saveButtonEnabled: ko.PureComputed<boolean>;
     public errorMessage: ko.Observable<string>;
@@ -55,8 +57,13 @@ export class ApiAppEditorVm {
         this.readScopeNames = readScopes.map(s => s.displayName).join(", ");
         this.writeScopeNames = writeScopes.map(s => s.displayName).join(", ");
         this.deleted = ko.observable(apiApp.deleted);
-        this.appAvailabilityList = ko.observableArray(
-            apiApp.appAvailabilityList.map(a => (
+        this.tenantAppAvailabilityList = ko.observableArray(
+            apiApp.tenantAppAvailabilityList.map(a => (
+                { resourceOwner: a.resourceOwner, note: a.note }
+            ))
+        );
+        this.networkAppAvailabilityList = ko.observableArray(
+            apiApp.networkAppAvailabilityList.map(a => (
                 { resourceOwner: a.resourceOwner, note: a.note }
             ))
         );
@@ -102,11 +109,18 @@ export class ApiAppEditorVm {
             if (scopes.length == 0) return "API Scopes are not selected";
             return "";
         });
-        this.appAvailabilityValidation = ko.pureComputed(() => {
+        this.tenantAppAvailabilityValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            var list = this.appAvailabilityList();
-            if (list.length == 0) return "Tenant list is empty";
-            if (list.length > this.maxTenants) return `Tenant list is more than ${this.maxTenants} items`;
+            var tenantList = this.tenantAppAvailabilityList();
+            var networkList = this.networkAppAvailabilityList();
+            if (tenantList.length == 0 && networkList.length == 0) return "Tenants list and networks list are empty";
+            if (tenantList.length > this.maxTenants) return `Tenants list contains more than ${this.maxTenants} items`;
+            return "";
+        });
+        this.networkAppAvailabilityValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            var list = this.networkAppAvailabilityList();
+            if (list.length > this.maxNetworks) return `Networks list contains more than ${this.maxNetworks} items`;
             return "";
         });
 
@@ -115,22 +129,37 @@ export class ApiAppEditorVm {
             this.organizationNameValidation().length == 0 &&
             this.homepageUrlValidation().length == 0 &&
             this.authScopesValidation().length == 0 &&
-            this.appAvailabilityValidation().length == 0
+            this.tenantAppAvailabilityValidation().length == 0 &&
+            this.networkAppAvailabilityValidation().length == 0
         );
         this.saveButtonEnabled = ko.pureComputed(() =>
             !this.validationActivated() || this.isValid());
     }
 
-    public clickDeleteAppAvailability(item: ApiAppAvailabilityCreateOrUpdateContract) {
-        this.appAvailabilityList.remove(item);
+    public clickDeleteTenantAppAvailability(item: ApiAppAvailabilityCreateOrUpdateContract) {
+        this.tenantAppAvailabilityList.remove(item);
     }
 
-    public clickAddAppAvailability() {
-        if (this.appAvailabilityList().length > this.maxTenants) {
+    public clickDeleteNetworkAppAvailability(item: ApiAppAvailabilityCreateOrUpdateContract) {
+        this.networkAppAvailabilityList.remove(item);
+    }
+
+    public clickAddTenantAppAvailability() {
+        if (this.tenantAppAvailabilityList().length >= this.maxTenants) {
             this.validationActivated(true);
-            return;
         }
-        this.appAvailabilityList.unshift({ resourceOwner: "", note: "" });
+        if (this.tenantAppAvailabilityList().length <= this.maxTenants) {
+            this.tenantAppAvailabilityList.unshift({ resourceOwner: "", note: "" });
+        }
+    }
+
+    public clickAddNetworkAppAvailability() {
+        if (this.networkAppAvailabilityList().length >= this.maxNetworks) {
+            this.validationActivated(true);
+        }
+        if (this.networkAppAvailabilityList().length <= this.maxNetworks) {
+            this.networkAppAvailabilityList.unshift({ resourceOwner: "", note: "" });
+        }
     }
 
     public async clickSave() {
@@ -152,7 +181,8 @@ export class ApiAppEditorVm {
             homepageUrl: this.homepageUrl(),
             authScopes: this.authScopes(),
             deleted: this.deleted(),
-            appAvailabilityList: this.appAvailabilityList()
+            tenantAppAvailabilityList: this.tenantAppAvailabilityList(),
+            networkAppAvailabilityList: this.networkAppAvailabilityList(),
         }
 
         try {

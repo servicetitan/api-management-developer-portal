@@ -66,16 +66,17 @@ export class ApiAppsRuntime {
             authScopes: [],
             applicationKey1: "",
             deleted: false,
-            appAvailabilityList: this.pageContract().defaultAvailabilityList
+            tenantAppAvailabilityList: this.pageContract().defaultTenantAppAvailabilityList,
+            networkAppAvailabilityList: []
         }
 
         this.clickEditApiApp(emptyApiApp);
     }
 
-    public clickEditApiApp(apiClient: ApiAppContract) {
+    public clickEditApiApp(apiApp: ApiAppContract) {
         const editor = new ApiAppEditorVm(
             this.apiAppsService,
-            apiClient,
+            apiApp,
             this.pageContract().projectId,
             this.pageContract().scopeGroups,
             async () => { this.isEditing(false); await this.initialize(); }

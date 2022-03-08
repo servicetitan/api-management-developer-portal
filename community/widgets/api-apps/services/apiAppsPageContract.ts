@@ -6,5 +6,5 @@ export interface ApiAppsPageContract {
     projectId: string;
     apps: Array<ApiAppContract>;
     scopeGroups: Array<ApiAppScopeGroupContract>;
-    defaultAvailabilityList: Array<ApiAppAvailabilityContract>;
+    defaultTenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;
 }
