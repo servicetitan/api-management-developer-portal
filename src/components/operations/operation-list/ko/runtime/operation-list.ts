@@ -22,6 +22,11 @@ import { Api } from "../../../../../models/api";
 export class OperationList {
     private searchRequest: SearchQuery;
 
+    private static readonly hiddenEndpoints: Set<string> = new Set<string>([
+        '{tenant}/jobs/{id}/hold',
+        '{tenant}/jobs/{id}/complete',
+    ]);
+
     public readonly selectedApiName: ko.Observable<string>;
     public readonly selectedOperationName: ko.Observable<string>;
     public readonly operations: ko.ObservableArray<Operation>;
@@ -194,7 +199,7 @@ export class OperationList {
                 .replace('/tenant/', '')
             );
             g.items = g.items
-                .filter(i => i.urlTemplate != '{tenant}/jobs/{id}/hold')
+                .filter(i => !OperationList.hiddenEndpoints.has(i.urlTemplate))
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
         });
 
