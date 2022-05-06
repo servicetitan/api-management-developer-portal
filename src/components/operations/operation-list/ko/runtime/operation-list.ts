@@ -23,8 +23,10 @@ export class OperationList {
     private searchRequest: SearchQuery;
 
     private static readonly hiddenEndpoints: Set<string> = new Set<string>([
-        '{tenant}/jobs/{id}/hold',
-        '{tenant}/jobs/{id}/complete',
+        'PUT {tenant}/jobs/{id}/hold',
+        'PUT {tenant}/jobs/{id}/complete',
+        'POST {tenant}/jobs/{job}/timesheets',
+        'PUT {tenant}/jobs/{job}/timesheets/{id}',
     ]);
 
     public readonly selectedApiName: ko.Observable<string>;
@@ -199,7 +201,7 @@ export class OperationList {
                 .replace('/tenant/', '')
             );
             g.items = g.items
-                .filter(i => !OperationList.hiddenEndpoints.has(i.urlTemplate))
+                .filter(i => !OperationList.hiddenEndpoints.has(`${i.method} ${i.urlTemplate}`))
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
         });
 
