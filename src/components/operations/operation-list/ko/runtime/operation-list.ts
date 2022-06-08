@@ -193,6 +193,17 @@ export class OperationList {
 
         const pageOfOperationsByTag = await this.apiService.getOperationsByTags(this.selectedApiName(), this.searchRequest);
         const operationGroups = pageOfOperationsByTag.value;
+
+        operationGroups.sort((a, b) => {
+            if (a.tag !== "Export" && b.tag === "Export") {
+                return 1;
+            } else if (a.tag === "Export" && b.tag !== "Export") {
+                return -1;
+            } else {
+                return (a.tag || "").localeCompare(b.tag || "");
+            }
+        });
+
         operationGroups.forEach(g => {
             g.items.forEach(i => i.urlTemplate = i.urlTemplate
                 .replace('/tenant/{tenant}/booking-provider/', '')
