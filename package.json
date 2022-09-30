@@ -75,7 +75,7 @@
         "client-oauth2": "4.3.3",
         "codemirror": "^5.63.3",
         "core-js": "^3.19.1",
-        "d3": "^5.11.0",
+        "d3": "^7.6.1",
         "google-maps": "^4.3.3",
         "graphql": "15.5.0",
         "graphql-config": "^4.0.1",
