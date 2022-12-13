@@ -16,6 +16,7 @@ export class ApiAppEditorVm {
     public name: ko.Observable<string>;
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
+    public externalDataAppGuid: ko.Observable<string>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
@@ -24,6 +25,7 @@ export class ApiAppEditorVm {
     public nameValidation: ko.PureComputed<string>;
     public organizationNameValidation: ko.PureComputed<string>;
     public homepageUrlValidation: ko.PureComputed<string>;
+    public externalDataAppGuidValidation: ko.PureComputed<string>;
     public authScopesValidation: ko.PureComputed<string>;
     public tenantAppAvailabilityValidation: ko.PureComputed<string>;
     public networkAppAvailabilityValidation: ko.PureComputed<string>;
@@ -45,6 +47,8 @@ export class ApiAppEditorVm {
         this.id = apiApp.id;
         this.publicId = apiApp.publicId;
         this.applicationKey1 = apiApp.applicationKey1;
+        this.externalDataAppGuid = ko.observable(
+            apiApp.id > 0 ? apiApp.externalDataAppGuid : this.generateGuid());
         this.name = ko.observable(apiApp.name);
         this.organizationName = ko.observable(apiApp.organizationName);
         this.homepageUrl = ko.observable(apiApp.homepageUrl);
@@ -75,6 +79,12 @@ export class ApiAppEditorVm {
         this.initValidation();
     }
 
+    private generateGuid()
+    {
+        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g,
+            (c: any) => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))
+    }
+
     private initValidation() {
         this.validationActivated = ko.observable(this.id > 0);
 
@@ -103,6 +113,13 @@ export class ApiAppEditorVm {
             }
             return "";
         });
+        this.externalDataAppGuidValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            const guid = this.externalDataAppGuid();
+            return /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(guid)
+                ? ""
+                : "App GUID must be RFC 4122 version 4 universally unique identifier"
+        });
         this.authScopesValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
             const scopes = this.authScopes();
@@ -130,7 +147,8 @@ export class ApiAppEditorVm {
             this.homepageUrlValidation().length == 0 &&
             this.authScopesValidation().length == 0 &&
             this.tenantAppAvailabilityValidation().length == 0 &&
-            this.networkAppAvailabilityValidation().length == 0
+            this.networkAppAvailabilityValidation().length == 0 &&
+            this.externalDataAppGuidValidation().length == 0
         );
         this.saveButtonEnabled = ko.pureComputed(() =>
             !this.validationActivated() || this.isValid());
@@ -162,6 +180,10 @@ export class ApiAppEditorVm {
         }
     }
 
+    public clickGenerateExternalDataGuid() {
+        this.externalDataAppGuid(this.generateGuid());
+    }
+
     public async clickSave() {
         if (this.isLoading()) {
             return;
@@ -180,6 +202,7 @@ export class ApiAppEditorVm {
             organizationName: this.organizationName(),
             homepageUrl: this.homepageUrl(),
             authScopes: this.authScopes(),
+            externalDataAppGuid: this.externalDataAppGuid(),
             deleted: this.deleted(),
             tenantAppAvailabilityList: this.tenantAppAvailabilityList(),
             networkAppAvailabilityList: this.networkAppAvailabilityList(),

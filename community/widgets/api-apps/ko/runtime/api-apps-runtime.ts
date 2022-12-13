@@ -65,6 +65,7 @@ export class ApiAppsRuntime {
             homepageUrl: "",
             authScopes: [],
             applicationKey1: "",
+            externalDataAppGuid: "",
             deleted: false,
             tenantAppAvailabilityList: this.pageContract().defaultTenantAppAvailabilityList,
             networkAppAvailabilityList: []

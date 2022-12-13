@@ -9,6 +9,7 @@ export interface ApiAppContract {
     homepageUrl: string;
     authScopes: Array<ApiAppScopeSelectContract>;
     applicationKey1: string;
+    externalDataAppGuid: string;
     deleted: boolean;
     tenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;
     networkAppAvailabilityList: Array<ApiAppAvailabilityContract>;
