@@ -91,18 +91,18 @@
                 </button>
             </div>
         </div>
-        <!-- ko if: externalDataAppGuid -->
+        <!-- ko if: externalDataGuid -->
         <div class="row">
             <div class="col-9">
                 <div class="form-group">
-                    <label for="externalDataAppGuid">External Data Application GUID</label>
-                    <input type="text" id="externalDataAppGuid" class="form-control form-control-default"
-                        style="background: #f7f7f7;" disabled="disabled" data-bind="value: externalDataAppGuid" />
+                    <label for="externalDataGuid">External Data Application GUID</label>
+                    <input type="text" id="externalDataGuid" class="form-control form-control-default"
+                        style="background: #f7f7f7;" disabled="disabled" data-bind="value: externalDataGuid" />
                 </div>
             </div>
             <div class="col-3" style="padding: 22px 10px 10px 0;">
                 <button type="button" class="button" style="padding: 6px 0px 7px; min-width: 90px;"
-                    data-bind="copyToClipboard: externalDataAppGuid">
+                    data-bind="copyToClipboard: externalDataGuid">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="20px" width="20px"
                         viewBox="0 0 24 24">
                         <path
@@ -196,11 +196,11 @@
         <div class="row" style="margin-top: 10px;">
             <div class="col-9">
                 <div class="form-group">
-                    <label for="externalDataAppGuid">External Data Application GUID</label>
-                    <input type="text" id="externalDataAppGuid" class="form-control form-control-default" maxlength="36"
-                        data-bind="textInput: externalDataAppGuid" />
+                    <label for="externalDataGuid">External Data Application GUID</label>
+                    <input type="text" id="externalDataGuid" class="form-control form-control-default" maxlength="36"
+                        data-bind="textInput: externalDataGuid" />
                     <div style="color: #E63717; margin-top: -15px;"
-                        data-bind="text: externalDataAppGuidValidation, visible: externalDataAppGuidValidation"></div>
+                        data-bind="text: externalDataGuidValidation, visible: externalDataGuidValidation"></div>
                 </div>
             </div>
             <div class="col-3" style="padding: 22px 10px 10px 0;">

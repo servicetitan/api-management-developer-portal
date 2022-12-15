@@ -6,7 +6,7 @@ export interface ApiAppCreateOrUpdateContract {
     organizationName: string;
     homepageUrl: string;
     authScopes: Array<string>;
-    externalDataAppGuid: string;
+    externalDataGuid: string;
     deleted: boolean;
     tenantAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
     networkAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;

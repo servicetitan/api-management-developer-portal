@@ -16,7 +16,7 @@ export class ApiAppEditorVm {
     public name: ko.Observable<string>;
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
-    public externalDataAppGuid: ko.Observable<string>;
+    public externalDataGuid: ko.Observable<string>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
@@ -25,7 +25,7 @@ export class ApiAppEditorVm {
     public nameValidation: ko.PureComputed<string>;
     public organizationNameValidation: ko.PureComputed<string>;
     public homepageUrlValidation: ko.PureComputed<string>;
-    public externalDataAppGuidValidation: ko.PureComputed<string>;
+    public externalDataGuidValidation: ko.PureComputed<string>;
     public authScopesValidation: ko.PureComputed<string>;
     public tenantAppAvailabilityValidation: ko.PureComputed<string>;
     public networkAppAvailabilityValidation: ko.PureComputed<string>;
@@ -47,8 +47,8 @@ export class ApiAppEditorVm {
         this.id = apiApp.id;
         this.publicId = apiApp.publicId;
         this.applicationKey1 = apiApp.applicationKey1;
-        this.externalDataAppGuid = ko.observable(
-            apiApp.id > 0 ? apiApp.externalDataAppGuid : this.generateGuid());
+        this.externalDataGuid = ko.observable(
+            apiApp.id > 0 ? apiApp.externalDataGuid : this.generateGuid());
         this.name = ko.observable(apiApp.name);
         this.organizationName = ko.observable(apiApp.organizationName);
         this.homepageUrl = ko.observable(apiApp.homepageUrl);
@@ -113,9 +113,9 @@ export class ApiAppEditorVm {
             }
             return "";
         });
-        this.externalDataAppGuidValidation = ko.pureComputed(() => {
+        this.externalDataGuidValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            const guid = this.externalDataAppGuid();
+            const guid = this.externalDataGuid();
             return /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(guid)
                 ? ""
                 : "App GUID must be RFC 4122 version 4 universally unique identifier"
@@ -148,7 +148,7 @@ export class ApiAppEditorVm {
             this.authScopesValidation().length == 0 &&
             this.tenantAppAvailabilityValidation().length == 0 &&
             this.networkAppAvailabilityValidation().length == 0 &&
-            this.externalDataAppGuidValidation().length == 0
+            this.externalDataGuidValidation().length == 0
         );
         this.saveButtonEnabled = ko.pureComputed(() =>
             !this.validationActivated() || this.isValid());
@@ -181,7 +181,7 @@ export class ApiAppEditorVm {
     }
 
     public clickGenerateExternalDataGuid() {
-        this.externalDataAppGuid(this.generateGuid());
+        this.externalDataGuid(this.generateGuid());
     }
 
     public async clickSave() {
@@ -202,7 +202,7 @@ export class ApiAppEditorVm {
             organizationName: this.organizationName(),
             homepageUrl: this.homepageUrl(),
             authScopes: this.authScopes(),
-            externalDataAppGuid: this.externalDataAppGuid(),
+            externalDataGuid: this.externalDataGuid(),
             deleted: this.deleted(),
             tenantAppAvailabilityList: this.tenantAppAvailabilityList(),
             networkAppAvailabilityList: this.networkAppAvailabilityList(),

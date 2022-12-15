@@ -36,7 +36,7 @@ export class ApiService {
         "tenant-jbce-v2": "Call Reasons endpoint.",
         "tenant-jpm-v2": "Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Jobs, Project Statuses, Project Sub-Statuses, Projects endpoints.",
         "tenant-marketing-ads-v2": "External Call Attributions, Web Booking Attributions, Web Lead Form Attributions endpoints.",
-        "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns endpoints.",
+        "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns, Suppressions endpoints.",
         "tenant-memberships-v2": "Customer Memberships, Invoice Templates, Membership Types, Recurring Service Events, Recurring Service Types, Recurring Services endpoints.",
         "tenant-payroll-v2": "Activity Codes, Employee Payrolls, Gross Pay Items, Non Job Timesheets, Payroll Adjustments, Payroll Jobs, Payroll Locations, Payrolls, Technician Payrolls, Timesheet Codes endpoints.",
         "tenant-pricebook-v2": "Categories, Discounts and Fees, Equipment, Materials, Pricebook Bulk Operations, Pricebook Images, Services endpoints.",
