@@ -1,0 +1,8 @@
+<!-- ko if: isEditing -->
+    <!-- ko template: { name: 'apiAppEditor', data: $component.apiAppEditor } -->
+    <!-- /ko -->
+<!-- /ko -->
+<!-- ko ifnot: isEditing -->
+    <!-- ko template: { name: 'apiAppList', data: $component } -->
+    <!-- /ko -->
+<!-- /ko -->

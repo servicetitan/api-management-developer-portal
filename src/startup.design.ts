@@ -9,7 +9,7 @@ import { ProseMirrorModule } from "@paperbits/prosemirror/prosemirror.module";
 import { StylesDesignModule } from "@paperbits/styles/styles.design.module";
 import { ApimDesignModule } from "./apim.design.module";
 import { SessionExpirationErrorHandler } from "./errors/sessionExpirationErrorHandler";
-
+import { ApiAppsDesignModule } from "../community/widgets/api-apps/apiApps.design.module";
 
 
 /* Initializing dependency injection container */
@@ -22,6 +22,7 @@ injector.bindModule(new PopupDesignModule());
 injector.bindModule(new FormsDesignModule());
 injector.bindModule(new ApimDesignModule());
 injector.bindModule(new OfflineModule({ autosave: false }));
+injector.bindModule(new ApiAppsDesignModule());
 injector.resolve("autostart");
 
 /* Bootstrapping the application */

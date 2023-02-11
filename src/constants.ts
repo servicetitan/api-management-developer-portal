@@ -104,7 +104,7 @@ export const reservedPermalinks = [
 /**
  * Maximum number of items to request from Managament API.
  */
-export const defaultPageSize = 50;
+export const defaultPageSize = 500;
 
 /**
  * Default value of first page in a paginated view.

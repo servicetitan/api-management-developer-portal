@@ -1,6 +1,6 @@
 export class TagGroup<TResource> {
     public tag: string;
-    public readonly items: TResource[];
+    public items: TResource[];
 
     constructor() {
         this.items = [];

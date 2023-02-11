@@ -96,15 +96,15 @@ export class ApiList {
             if (this.groupByTag()) {
                 const pageOfTagResources = await this.apiService.getApisByTags(query);
                 const apiGroups = pageOfTagResources.value;
-
+                apiGroups.forEach(g => g.items = g.items.filter(x => x.name != "tenant-accounting-core-v2"));
                 this.apiGroups(apiGroups);
+                this.groupTagsExpanded(new Set<string>(apiGroups.map(g => g.tag)));
                 totalItems = pageOfTagResources.count;
             }
             else {
                 const pageOfApis = await this.apiService.getApis(query);
                 const apis = pageOfApis ? pageOfApis.value : [];
-
-                this.apis(apis);
+                this.apis(apis.filter(x => x.name != "tenant-accounting-core-v2"));
                 totalItems = pageOfApis.count;
             }
 

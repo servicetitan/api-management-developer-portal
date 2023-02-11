@@ -120,6 +120,10 @@ pre {
     color: #e30012;
 }
 
+a.nav-link[href="#"] {
+    cursor: default;
+}
+
 .detachable-right {
     width: 100%;
     box-shadow: -2px 2px 5px 0 rgba(0, 0, 0, 0.1);
@@ -182,6 +186,7 @@ api-list-tiles {
     text-align: left;
 }
 
+api-apps-runtime,
 api-details,
 api-history,
 api-list,

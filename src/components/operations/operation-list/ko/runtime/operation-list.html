@@ -22,15 +22,6 @@
     <div class="d-block flex-grow mw-170">
         <input type="search" class="form-control form-control-light" aria-label="Search operations"
             placeholder="Search operations" spellcheck="false" data-bind="textInput: pattern" />
-        <tag-input params="{ scope: $component.tagScope, onChange: onTagsChange }"></tag-input>
-    </div>
-    <div class="form-group ml-auto">
-        <label>Group by tag
-            <div class="switch">
-                <input type="checkbox" data-bind="checked: $component.groupByTag">
-                <span class="slider round"></span>
-            </div>
-        </label>
     </div>
     <!-- ko if: showToggleUrlPath -->
     <div class="form-group ml-auto">
@@ -61,7 +52,6 @@
           data-bind="class: $component.groupTagsExpanded().has(group.tag) ? '' : 'active', click: () => $component.groupTagCollapseToggle(group.tag)"
         >
             <span class="tag-item" role="group" data-bind="text: group.tag"></span>
-            <i class="icon-emb icon-emb-chevron-down"></i>
         </button>
         <!-- ko if: $component.groupTagsExpanded().has(group.tag) -->
         <div class="list">

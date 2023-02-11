@@ -4,6 +4,7 @@ import { StyleRuntimeModule } from "@paperbits/styles/styles.runtime.module";
 import { ApimRuntimeModule } from "./apim.runtime.module";
 import { staticDataEnvironment } from "./../environmentConstants";
 import { define } from "mime";
+import { ApiAppsRuntimeModule } from "../community/widgets/api-apps/apiApps.runtime.module";
 
 define({ "application/x-zip-compressed": ["zip"] }, true);
 
@@ -11,6 +12,7 @@ const injector = new InversifyInjector();
 injector.bindModule(new CoreRuntimeModule());
 injector.bindModule(new StyleRuntimeModule());
 injector.bindModule(new ApimRuntimeModule());
+injector.bindModule(new ApiAppsRuntimeModule());
 
 document.addEventListener("DOMContentLoaded", () => {
     if (process.env.NODE_ENV === staticDataEnvironment) {

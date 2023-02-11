@@ -13,7 +13,7 @@ import { ApimPublishModule } from "./apim.publish.module";
 import { FileSystemBlobStorage } from "./components/filesystemBlobStorage";
 import { StaticSettingsProvider } from "./components/staticSettingsProvider";
 import { PublishingCacheModule } from "./persistence/publishingCacheModule";
-
+import { ApiAppsPublishModule } from "../community/widgets/api-apps/apiApps.publish.module";
 
 /* Reading settings from configuration file */
 let settingsProvider: ISettingsProvider;
@@ -33,7 +33,7 @@ else {
 }
 
 /* Storage where the website get published */
-const outputBlobStorage = new FileSystemBlobStorage("./dist/website");
+const outputBlobStorage = new FileSystemBlobStorage("../public-api-developer-portal/src/PublicApi.DeveloperPortal/wwwroot");
 
 /* Initializing dependency injection container */
 const injector = new InversifyInjector();
@@ -46,6 +46,7 @@ injector.bindModule(new ApimPublishModule());
 injector.bindInstance("settingsProvider", settingsProvider);
 injector.bindInstance("outputBlobStorage", outputBlobStorage);
 injector.bindModule(new PublishingCacheModule());
+injector.bindModule(new ApiAppsPublishModule());
 injector.resolve("autostart");
 
 /* Allowing self-signed certificates for HTTP requests */

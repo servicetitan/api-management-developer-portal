@@ -22,6 +22,13 @@ import { Api } from "../../../../../models/api";
 export class OperationList {
     private searchRequest: SearchQuery;
 
+    private static readonly hiddenEndpoints: Set<string> = new Set<string>([
+        'PUT {tenant}/jobs/{id}/hold',
+        'PUT {tenant}/jobs/{id}/complete',
+        'POST {tenant}/jobs/{job}/timesheets',
+        'PUT {tenant}/jobs/{job}/timesheets/{id}',
+    ]);
+
     public readonly selectedApiName: ko.Observable<string>;
     public readonly selectedOperationName: ko.Observable<string>;
     public readonly operations: ko.ObservableArray<Operation>;
@@ -189,7 +196,30 @@ export class OperationList {
         const pageOfOperationsByTag = await this.apiService.getOperationsByTags(this.selectedApiName(), this.searchRequest);
         const operationGroups = pageOfOperationsByTag.value;
 
+        operationGroups.sort((a, b) => {
+            if (a.tag !== "Export" && b.tag === "Export") {
+                return 1;
+            } else if (a.tag === "Export" && b.tag !== "Export") {
+                return -1;
+            } else {
+                return (a.tag || "").localeCompare(b.tag || "");
+            }
+        });
+
+        operationGroups.forEach(g => {
+            g.items.forEach(i => i.urlTemplate = i.urlTemplate
+                .replace('/tenant/{tenant}/booking-provider/', '')
+                .replace('/tenant/{tenant}/gps-provider/', '')
+                .replace('/tenant/{tenant}/report-category/', '')
+                .replace('/tenant/', '')
+            );
+            g.items = g.items
+                .filter(i => !OperationList.hiddenEndpoints.has(`${i.method} ${i.urlTemplate}`))
+                .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
+        });
+
         this.operationGroups(operationGroups);
+        this.groupTagsExpanded(new Set<string>(operationGroups.map(g => g.tag)));
         this.totalPages(Math.ceil(pageOfOperationsByTag.count / Constants.defaultPageSize));
     }
 

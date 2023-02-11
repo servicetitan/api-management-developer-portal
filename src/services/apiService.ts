@@ -34,6 +34,32 @@ const CacheItemRefreshMins = 60;
 
 export class ApiService {
 
+    private readonly customDescriptions: Record<string, string> = {
+        "tenant-accounting-core-v2": "Inventory Adjustments, Inventory Bills, Inventory Receipts, Inventory Transfers, Invoices, Payments, Purchase Orders, Purchase Returns endpoints.",
+        "tenant-accounting-v2": "Inventory Bills, Invoices, Journal Entries, Payment Terms, Payment Types, Payments, Tax Zones endpoints.",
+        "tenant-crm-v2": "Bookings, Bookings Provider Tags, Customers, Leads, Locations, Tags endpoints.",
+        "tenant-customer-interactions-v2": "Technician Rating endpoint.",
+        "tenant-dispatch-v2": "Appointment Assignments, Capacity, GPS Pings, Non-Job Appointments, Technician Shifts, Zones endpoints.",
+        "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
+        "tenant-forms-v2": "Form Submissions, Forms, Job Forms endpoints.",
+        "tenant-inventory-v2": "Adjustments, Purchase Order Markups, Purchase Order Types, Purchase Orders, Receipts, Returns, Transfers, Trucks, Vendors, Warehouses endpoints.",
+        "tenant-jbce-v2": "Call Reasons endpoint.",
+        "tenant-jpm-v2": "Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Jobs, Project Statuses, Project Sub-Statuses, Projects endpoints.",
+        "tenant-marketing-ads-v2": "External Call Attributions, Web Booking Attributions, Web Lead Form Attributions endpoints.",
+        "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns, Suppressions endpoints.",
+        "tenant-memberships-v2": "Customer Memberships, Invoice Templates, Membership Types, Recurring Service Events, Recurring Service Types, Recurring Services endpoints.",
+        "tenant-payroll-v2": "Activity Codes, Employee Payrolls, Gross Pay Items, Non Job Timesheets, Payroll Adjustments, Payroll Jobs, Payroll Locations, Payrolls, Technician Payrolls, Timesheet Codes endpoints.",
+        "tenant-pricebook-v2": "Categories, Discounts and Fees, Equipment, Materials, Pricebook Bulk Operations, Pricebook Images, Services endpoints.",
+        "tenant-reporting-v2": "Dynamic Value Sets, Report Categories, Reports within the category endpoints.",
+        "tenant-salestech-v2": "Estimates endpoint.",
+        "tenant-settings-v2": "Business Units, Employees, Tag Types, Technicians, User Roles endpoints.",
+        "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
+        "tenant-telecom-v2": "Calls endpoint.",
+        "tenant-telecom-v3": "Calls endpoint."
+      }
+
+    private readonly betaApis: Set<string> = new Set<string>(["tenant-reporting-v2"]);
+
     private readonly schemaCache: LruCache<Schema>;
 
     constructor(private readonly mapiClient: MapiClient) {
@@ -85,6 +111,10 @@ export class ApiService {
 
         const page = new Page<Api>();
         page.value = pageOfApis.value.map(x => new Api(x));
+        page.value.forEach(api => {
+            api.description = this.customDescriptions[api.name] ?? api.description;
+            api.isBeta = this.betaApis.has(api.name);
+        });
         page.nextLink = pageOfApis.nextLink;
         page.count = pageOfApis.count;
         return page;
@@ -224,7 +254,10 @@ export class ApiService {
                 tagGroup.tag = tagName;
                 tagGroups[tagName] = tagGroup;
             }
-            tagGroup.items.push(new Api(apiContract));
+            const api = new Api(apiContract);
+            api.description = this.customDescriptions[api.name] ?? api.description;
+            api.isBeta = this.betaApis.has(api.name);
+            tagGroup.items.push(api);
         });
 
         page.value = Object.keys(tagGroups).map(x => tagGroups[x]);

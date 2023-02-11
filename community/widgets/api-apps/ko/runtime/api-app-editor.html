@@ -1,0 +1,282 @@
+<!-- ko template: { name: 'apiAppError', data: { errorMessage: errorMessage } } -->
+<!-- /ko -->
+<div style="margin-bottom: 20px;">
+    <a href="#" role="button" style="color: #141414; text-decoration: none;" data-bind="click: clickCancel">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="17px" width="17px" viewBox="0 0 24 24">
+            <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path>
+        </svg>
+        <span>Back to all apps</span>
+    </a>
+</div>
+<div style="margin-bottom: 25px;">
+    <!-- ko if: id == 0 -->
+    <h3 style="margin: 0; font-size: 25px;">New App</h3>
+    <!-- /ko -->
+    <!-- ko if: id > 0 -->
+    <div style="display: flex; align-items: center;">
+        <div>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="24" fill="#6954C0" />
+                <path
+                    d="M33.7 30.6V29.6L34.8 28.8C34.9 28.7 35 28.6 34.9 28.5L33.9 26.8C33.9 26.7 33.7 26.7 33.6 26.7L32.4 27.2C32.1 27 31.8 26.8 31.5 26.7L31.3 25.4C31.3 25.3 31.2 25.2 31.1 25.2H29.1C28.9 25.2 28.8 25.3 28.8 25.4L28.6 26.7C28.3 26.9 28.1 27 27.8 27.2L26.6 26.7C26.5 26.7 26.4 26.7 26.3 26.8L25.3 28.5C25.3 28.6 25.3 28.7 25.4 28.8L26.5 29.6V30.6L25.4 31.4C25.3 31.5 25.2 31.6 25.3 31.7L26.3 33.4C26.4 33.5 26.5 33.5 26.6 33.5L27.8 33C28 33.2 28.3 33.4 28.6 33.5L28.8 34.8C28.9 34.9 29 35 29.1 35H31.1C31.2 35 31.3 34.9 31.3 34.8L31.5 33.5C31.8 33.3 32 33.2 32.3 33L33.5 33.4C33.6 33.4 33.7 33.4 33.8 33.3L34.8 31.6C34.9 31.5 34.9 31.4 34.8 31.4L33.7 30.6ZM30 31.5C29.2 31.5 28.5 30.8 28.5 30C28.5 29.2 29.2 28.5 30 28.5C30.8 28.5 31.5 29.2 31.5 30C31.5 30.8 30.8 31.5 30 31.5ZM23.29 32H17C15.89 32 15 31.1 15 30V18C15 16.89 15.9 16 17 16H31C32.11 16 33 16.9 33 18V23.68C32.38 23.39 31.71 23.18 31 23.08V20H17V30H23C23 30.7 23.11 31.37 23.29 32Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <div style="padding-left: 17px;">
+            <h3 style="margin: 0; font-size: 25px; margin-bottom: 4px;" data-bind="text: name"></h3>
+            <div style="color: #777;" data-bind="text: 'App ID: ' + publicId">
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+</div>
+<!-- ko if: isLoading -->
+<div>
+    <spinner></spinner>
+</div>
+<!-- /ko -->
+<!-- ko ifnot: isLoading -->
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 30px; margin: 0 0 20px;">
+    <fieldset class="form">
+        <div style="margin: 25px 0 20px">
+            <span style="font-size: 20px;font-weight: 400;">App details</span>
+            &nbsp;&nbsp;&nbsp;
+            <span style="color: #888;">All fields are required</span>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <div class="form-group">
+                    <label for="name">Application Name</label>
+                    <input type="text" id="name" class="form-control form-control-default" maxlength="120"
+                        data-bind="textInput: name" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: nameValidation, visible: nameValidation"></div>
+                </div>
+                <div class="form-group">
+                    <label for="organizationName">Organization</label>
+                    <input type="text" id="organizationName" class="form-control form-control-default" maxlength="120"
+                        data-bind="textInput: organizationName" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
+                </div>
+                <div class="form-group">
+                    <label for="homepageUrl">Homepage</label>
+                    <input type="text" id="homepageUrl" placeholder="https://my-app.com" maxlength="250"
+                        class="form-control form-control-default" data-bind="textInput: homepageUrl" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
+                </div>
+            </div>
+        </div>
+        <!-- ko if: id > 0 -->
+        <div class="row">
+            <div class="col-9">
+                <div class="form-group">
+                    <label for="applicationKey1">Application Key</label>
+                    <input type="text" id="applicationKey1" class="form-control form-control-default"
+                        style="background: #f7f7f7;" disabled="disabled" data-bind="value: applicationKey1" />
+                </div>
+            </div>
+            <div class="col-3" style="padding: 22px 10px 10px 0;">
+                <button type="button" class="button" style="padding: 6px 0px 7px; min-width: 90px;"
+                    data-bind="copyToClipboard: applicationKey1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="20px" width="20px"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z">
+                        </path>
+                    </svg>
+                    &nbsp;Copy
+                </button>
+            </div>
+        </div>
+        <!-- ko if: externalDataGuid -->
+        <div class="row">
+            <div class="col-9">
+                <div class="form-group">
+                    <label for="externalDataGuid">External Data Application GUID</label>
+                    <input type="text" id="externalDataGuid" class="form-control form-control-default"
+                        style="background: #f7f7f7;" disabled="disabled" data-bind="value: externalDataGuid" />
+                </div>
+            </div>
+            <div class="col-3" style="padding: 22px 10px 10px 0;">
+                <button type="button" class="button" style="padding: 6px 0px 7px; min-width: 90px;"
+                    data-bind="copyToClipboard: externalDataGuid">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="20px" width="20px"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z">
+                        </path>
+                    </svg>
+                    &nbsp;Copy
+                </button>
+            </div>
+        </div>
+        <!-- /ko -->
+        <div class="row" style="margin-bottom: 19px;">
+            <div class="col-9">
+                <label style="margin-bottom: 10px;">API Scopes</label>
+                <div style="background: #f7f7f7;border-radius: 3px; border: 1px solid #dfe0e1; padding: 10px 10px 0">
+                    <!-- ko if: readScopeNames.length > 0 -->
+                    <div style="padding-bottom: 10px;" data-bind="text: 'Read ' + readScopeNames + ' data'"></div>
+                    <!-- /ko -->
+                    <!-- ko if: writeScopeNames.length > 0 -->
+                    <div style="padding-bottom: 10px;" data-bind="text: 'Write ' + writeScopeNames + ' data'"></div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+        <label style="margin-bottom: 0;">Tenant(s)</label>
+        <div style="color: #E63717;" data-bind="text: tenantAppAvailabilityValidation, visible: tenantAppAvailabilityValidation">
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="button" style="padding: 7px 20px 8px;"
+                    data-bind="click: clickAddTenantAppAvailability">
+                    + Add Tenant
+                </button>
+            </div>
+        </div>
+        <!-- ko foreach: tenantAppAvailabilityList -->
+        <div class="row">
+            <div class="col-5" style="padding-right: 0;">
+                <input type="text" id="ResourceOwner" placeholder="Tenant ID" class="form-control form-control-default"
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+            </div>
+            <div class="col-5">
+                <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
+            </div>
+            <div class="col-2">
+                <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
+                    data-bind="click: $parent.clickDeleteTenantAppAvailability.bind($parent, $data)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
+                        viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                    </svg>
+                </span>
+            </div>
+        </div>
+        <!-- /ko -->
+        <label style="margin: 10px 0 0 0;">Customer Global Network(s)</label>
+        <div style="color: #E63717;" data-bind="text: networkAppAvailabilityValidation, visible: networkAppAvailabilityValidation">
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="button" style="padding: 7px 20px 8px;"
+                    data-bind="click: clickAddNetworkAppAvailability">
+                    + Add Network
+                </button>
+            </div>
+        </div>
+        <!-- ko foreach: networkAppAvailabilityList -->
+        <div class="row">
+            <div class="col-5" style="padding-right: 0;">
+                <input type="text" id="ResourceOwner" placeholder="Network ID" class="form-control form-control-default"
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+            </div>
+            <div class="col-5">
+                <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
+            </div>
+            <div class="col-2">
+                <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
+                    data-bind="click: $parent.clickDeleteNetworkAppAvailability.bind($parent, $data)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
+                        viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                    </svg>
+                </span>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: id == 0 -->
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-9">
+                <div class="form-group">
+                    <label for="externalDataGuid">External Data Application GUID</label>
+                    <input type="text" id="externalDataGuid" class="form-control form-control-default" maxlength="36"
+                        data-bind="textInput: externalDataGuid" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: externalDataGuidValidation, visible: externalDataGuidValidation"></div>
+                </div>
+            </div>
+            <div class="col-3" style="padding: 22px 10px 10px 0;">
+                <button type="button" class="button" style="padding: 7px 15px 8px;"
+                    data-bind="click: clickGenerateExternalDataGuid">
+                    Reset
+                </button>
+            </div>
+        </div>
+        <label style="margin-top: 10px;">API Scopes</label>
+        <div style="color: #E63717; margin: -8px 0 15px"
+            data-bind="text: authScopesValidation, visible: authScopesValidation"></div>
+        <div style="background-color: #f0f0f0; border-radius: 3px; padding-bottom: 15px; border: 1px solid #dfe0e1;">
+            <div style="background-color: #fafafa; border-bottom: 1px solid #dfe0e1;">
+                <div class="row" style="padding: 10px">
+                    <div class="col-7" style="padding-left: 35px;">API Endpoint</div>
+                    <div class="col-2" style="text-align: right;">Read</div>
+                    <div class="col-3 text-center">Write&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+            </div>
+            <!-- ko foreach: allScopeGroups -->
+            <div style="padding: 10px 30px 0px 30px; border-radius: 3px;">
+                <div style="margin-left: -10px; margin-bottom: 11px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="18px" width="18px"
+                        viewBox="0 0 24 24">
+                        <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"></path>
+                    </svg>
+                    <span data-bind="text: displayName"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style="color: #2270EE; cursor: pointer;" data-bind="click: $parent.clickSelectScopeGroup.bind($parent)">All</span>&nbsp;&nbsp;
+                    <span style="color: #2270EE; cursor: pointer;" data-bind="click: $parent.clickUnselectScopeGroup.bind($parent)">None</span>
+                </div>
+                <div style="background-color: white; border-radius: 3px;">
+                    <!-- ko foreach: scopes -->
+                    <div style="border-bottom: 1px solid #f0f0f0; padding: 7px 0 0 12px;" class="row">
+                        <div class="col-7">
+                            <label data-bind="text: displayName, attr: { for: name }"></label>
+                        </div>
+                        <div class="col-2" style="text-align: right;">
+                            <input type="checkbox"
+                                data-bind="checked: $parents[1].authScopes, value: name + ':r', attr: { id: name }" />
+                        </div>
+                        <div class="col-3 text-center">
+                            <input type="checkbox"
+                                data-bind="checked: $parents[1].authScopes, value: name + ':w', attr: { id: name }" />
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+        <!-- /ko -->
+    </fieldset>
+</div>
+<!-- ko if: id > 0 -->
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 10px; margin: 0 0 20px;">
+    <h3 style="margin-top: 20px;" data-bind="text: confirmDelete() ? 'Confirm Delete' : 'Delete Application'"></h3>
+    <div style="color: #444445; margin-bottom: 10px;"
+        data-bind="text: confirmDelete() ? 'Application will be deleted permanently. This action cannot be undone. Would you like to continue?' : 'Permanently delete this application.'">
+    </div>
+    <!-- ko if: confirmDelete -->
+    <button type="button" class="button" data-bind="click: clickCancelDelete">Cancel</button>
+    <button type="button" class="button" style="background-color: #E63717; border-color: #E63717; color: #fff;"
+        data-bind="click: clickDeletePermanently">Delete permanently</button>
+    <!-- /ko -->
+    <!-- ko ifnot: confirmDelete -->
+    <button type="button" class="button" style="padding: 7px 20px 8px;" data-bind="click: clickDelete">Delete</button>
+    <!-- /ko-->
+</div>
+<!-- /ko -->
+<div style="text-align: right;">
+    <button type="button" class="button" data-bind="click: clickCancel">Cancel</button>
+    <button type="button" class="button" style="background-color: #2270EE; color: #fff; border: 0; margin-right: 0px;"
+        data-bind="click: clickSave, enabled: saveButtonEnabled, text: id > 0 ? 'Save' : 'Create App'">
+        Save
+    </button>
+</div>
+<!-- /ko -->

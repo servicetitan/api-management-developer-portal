@@ -33,6 +33,8 @@ export class Api {
      */
     public description?: string;
 
+    public isBeta: boolean;
+
     /**
      * Version of API, e.g. "v1"
      */
