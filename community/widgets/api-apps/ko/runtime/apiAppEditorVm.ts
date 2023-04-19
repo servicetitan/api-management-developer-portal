@@ -2,6 +2,7 @@ import * as ko from "knockout";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { ApiAppsService } from "../../services/apiAppsService";
 import { ApiAppScopeGroupContract } from "../../services/apiAppScopeGroupContract";
+import { ApiAppScopesVersionContract } from "../../services/apiAppScopesVersionContract";
 import { ApiAppAvailabilityCreateOrUpdateContract } from "../../services/apiAppAvailabilityCreateOrUpdateContract";
 import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdateContract";
 
@@ -17,6 +18,8 @@ export class ApiAppEditorVm {
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
     public externalDataGuid: ko.Observable<string>;
+    public scopesVersions: Array<ApiAppScopesVersionContract>;
+    public editingAuthScopes: ko.Observable<boolean>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
@@ -54,6 +57,8 @@ export class ApiAppEditorVm {
         this.homepageUrl = ko.observable(apiApp.homepageUrl);
         const readScopes = apiApp.authScopes.filter(s => s.read);
         const writeScopes = apiApp.authScopes.filter(s => s.write);
+        this.scopesVersions = apiApp.scopesVersions;
+        this.editingAuthScopes = ko.observable(apiApp.id === 0);
         this.authScopes = ko.observableArray(
             readScopes.map(s => s.name + ":r").concat(
                 writeScopes.map(s => s.name + ":w"))
@@ -152,6 +157,10 @@ export class ApiAppEditorVm {
         );
         this.saveButtonEnabled = ko.pureComputed(() =>
             !this.validationActivated() || this.isValid());
+    }
+
+    public clickEditAuthScopes() {
+        this.editingAuthScopes(true);
     }
 
     public clickDeleteTenantAppAvailability(item: ApiAppAvailabilityCreateOrUpdateContract) {

@@ -63,6 +63,7 @@ export class ApiAppsRuntime {
             name: "",
             organizationName: "",
             homepageUrl: "",
+            scopesVersions: [],
             authScopes: [],
             applicationKey1: "",
             externalDataGuid: "",
