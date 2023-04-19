@@ -9,6 +9,7 @@ const packageJson = require("./package.json");
 
 const designerConfig = {
     mode: "development",
+    devtool: "nosources-source-map",
     target: "web",
     entry: {
         "editors/scripts/paperbits": ["./src/startup.design.ts"],

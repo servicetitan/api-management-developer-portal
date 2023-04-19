@@ -4,7 +4,7 @@ const { designerConfig, designerRuntimeConfig } = require("./webpack.designer.js
 
 const developmentConfig = {
     mode: "development",
-    devtool: "inline-source-map",
+    devtool: "nosources-source-map",
     devServer: {
         hot: true,
         historyApiFallback: true

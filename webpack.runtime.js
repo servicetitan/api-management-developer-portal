@@ -8,6 +8,7 @@ const packageJson = require("./package.json");
 const runtimeConfig = {
     mode: "development",
     target: "web",
+    devtool: "nosources-source-map",
     entry: {
         "scripts/theme": ["./src/startup.runtime.ts"]
     },

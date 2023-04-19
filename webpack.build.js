@@ -6,6 +6,7 @@ const { publisherConfig, publisherRuntimeConfig } = require("./webpack.publisher
 
 const productionConfig = {
     mode: "production",
+    devtool: "nosources-source-map",
     optimization: {
         minimizer: [
             new TerserPlugin({
