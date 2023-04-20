@@ -1,4 +1,5 @@
 import { ApiAppScopeSelectContract } from "./apiAppScopeSelectContract";
+import { ApiAppScopesVersionContract } from "./apiAppScopesVersionContract";
 import { ApiAppAvailabilityContract } from "./apiAppAvailabilityContract";
 
 export interface ApiAppContract {
@@ -7,6 +8,7 @@ export interface ApiAppContract {
     name: string;
     organizationName: string;
     homepageUrl: string;
+    scopesVersions: Array<ApiAppScopesVersionContract>;
     authScopes: Array<ApiAppScopeSelectContract>;
     applicationKey1: string;
     externalDataGuid: string;

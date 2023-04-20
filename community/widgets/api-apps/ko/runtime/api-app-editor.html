@@ -114,19 +114,6 @@
             </div>
         </div>
         <!-- /ko -->
-        <div class="row" style="margin-bottom: 19px;">
-            <div class="col-9">
-                <label style="margin-bottom: 10px;">API Scopes</label>
-                <div style="background: #f7f7f7;border-radius: 3px; border: 1px solid #dfe0e1; padding: 10px 10px 0">
-                    <!-- ko if: readScopeNames.length > 0 -->
-                    <div style="padding-bottom: 10px;" data-bind="text: 'Read ' + readScopeNames + ' data'"></div>
-                    <!-- /ko -->
-                    <!-- ko if: writeScopeNames.length > 0 -->
-                    <div style="padding-bottom: 10px;" data-bind="text: 'Write ' + writeScopeNames + ' data'"></div>
-                    <!-- /ko -->
-                </div>
-            </div>
-        </div>
         <!-- /ko -->
         <label style="margin-bottom: 0;">Tenant(s)</label>
         <div style="color: #E63717;" data-bind="text: tenantAppAvailabilityValidation, visible: tenantAppAvailabilityValidation">
@@ -210,6 +197,8 @@
                 </button>
             </div>
         </div>
+        <!-- /ko -->
+        <!-- ko if: editingAuthScopes -->
         <label style="margin-top: 10px;">API Scopes</label>
         <div style="color: #E63717; margin: -8px 0 15px"
             data-bind="text: authScopesValidation, visible: authScopesValidation"></div>
@@ -251,6 +240,30 @@
                 </div>
             </div>
             <!-- /ko -->
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: editingAuthScopes -->
+        <div class="row">
+            <div class="col-9">
+                <label style="margin: 10px 0;">API Scopes</label>
+                <div style="background: #f7f7f7;border-radius: 3px; border: 1px solid #dfe0e1; padding: 10px 10px 0">
+                    <div style="padding-bottom: 10px;" data-bind="text: 'Version ' + scopesVersions[0].version"></div>
+                    <!-- ko if: readScopeNames.length > 0 -->
+                    <div style="padding-bottom: 10px;" data-bind="text: 'Read ' + readScopeNames + ' data'"></div>
+                    <!-- /ko -->
+                    <!-- ko if: writeScopeNames.length > 0 -->
+                    <div style="padding-bottom: 10px;" data-bind="text: 'Write ' + writeScopeNames + ' data'"></div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="button" style="padding: 7px 20px 8px;"
+                    data-bind="click: clickEditAuthScopes">
+                    Change API Scopes
+                </button>
+            </div>
         </div>
         <!-- /ko -->
     </fieldset>
