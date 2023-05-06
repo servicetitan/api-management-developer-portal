@@ -208,10 +208,12 @@ export class OperationList {
 
         operationGroups.forEach(g => {
             g.items.forEach(i => i.urlTemplate = i.urlTemplate
-                .replace('/tenant/{tenant}/booking-provider/', '')
-                .replace('/tenant/{tenant}/gps-provider/', '')
-                .replace('/tenant/{tenant}/report-category/', '')
-                .replace('/tenant/', '')
+                .replace('/partner/{partner}/tenant/{tenantId}', '')
+                .replace('/partner/{partner}/tenant/{tenant}', '')
+                .replace('/partner/{partner}', '')
+                .replace('/vendor/{vendor}/supplier/{supplier}', '')
+                .replace('/vendor/{vendor}', '')
+                .replace('/application/{application}', '')
             );
             g.items = g.items
                 .filter(i => !OperationList.hiddenEndpoints.has(`${i.method} ${i.urlTemplate}`))
