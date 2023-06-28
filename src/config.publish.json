@@ -1,6 +1,6 @@
 {
     "environment": "publishing",
-    "managementApiUrl": "https://<service-name>.management.azure-api.net",
+    "managementApiUrl": "https://servicetitan-api-dev-partners.management.azure-api.net",
     "managementApiAccessToken": "SharedAccessSignature...",
     "useHipCaptcha": false
 }
