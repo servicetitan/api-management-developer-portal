@@ -1,8 +1,12 @@
-<!-- ko if: isEditing -->
+<!-- ko if: route() === 'list' -->
+    <!-- ko template: { name: 'apiAppList', data: $component } -->
+    <!-- /ko -->
+<!-- /ko -->
+<!-- ko if: route() === 'editor' -->
     <!-- ko template: { name: 'apiAppEditor', data: $component.apiAppEditor } -->
     <!-- /ko -->
 <!-- /ko -->
-<!-- ko ifnot: isEditing -->
-    <!-- ko template: { name: 'apiAppList', data: $component } -->
+<!-- ko if: route() === 'clients' -->
+    <!-- ko template: { name: 'apiAppClientList', data: $component.apiAppClientList } -->
     <!-- /ko -->
 <!-- /ko -->

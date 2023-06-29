@@ -37,12 +37,15 @@
             <span data-bind="text: organizationName" style="color: #737475;"></span>
         </div>
     </div>
-    <div class="col-5" style="color: #444445; display: flex; align-items: center; padding: 20px 0;"
-        data-bind="text: 'Access to ' + authScopes.map(s => s.displayName).join(', ') + (authScopes.length > 1 ? ' scopes' : ' scope')">
+    <div class="col-5" style="color: #444445; display: flex; flex-direction: column; justify-content: center; padding: 20px 0;">
+        <span data-bind="text: 'Version ' + scopesVersions[0].version" style="color: #737475;"></span>
+        <span data-bind="text: 'Access to ' + authScopes.map(s => s.displayName).join(', ') + (authScopes.length > 1 ? ' scopes' : ' scope')"></span>
     </div>
     <div class="col-3" style="display: flex; align-items: center; justify-content: flex-end;">
-        <button type="button" class="button" style="text-align: right; border: 0; background-color: #eee;"
+        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 9px 16px;"
             data-bind="click: $parent.clickEditApiApp">Edit</button>
+        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 9px 16px;"
+            data-bind="click: $parent.clickViewApiAppClients">View Connections</button>
     </div>
 </div>
 <!-- /ko -->
