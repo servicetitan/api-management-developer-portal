@@ -1,6 +1,7 @@
 import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
 import { ApiAppCreateOrUpdateContract } from "./apiAppCreateOrUpdateContract";
 import { ApiAppContract } from "./apiAppContract";
+import { ApiAppClientContract } from "./apiAppClientContract";
 import { ApiAppsPageContract } from "./apiAppsPageContract";
 import { IAuthenticator } from "../../../../src/authentication";
 
@@ -13,6 +14,15 @@ export class ApiAppsService {
     public async getApiAppsPage(): Promise<ApiAppsPageContract> {
         const request: HttpRequest = {
             url: "/c/apps",
+            method: "GET",
+            headers: []
+        }
+        return await this.makeRequest(request);
+    }
+
+    public async getApiAppClients(projectId: string, appId: number): Promise<ApiAppClientContract[]> {
+        const request: HttpRequest = {
+            url: `/c/project/${projectId}/apps/${appId}/clients`,
             method: "GET",
             headers: []
         }

@@ -12,13 +12,14 @@ export class ApiAppEditorVm {
     public id: number;
     public publicId: string;
     public applicationKey1: string;
-    public readScopeNames: string;
-    public writeScopeNames: string;
+    public readScopeNames: ko.PureComputed<string>;
+    public writeScopeNames: ko.PureComputed<string>;
     public name: ko.Observable<string>;
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
     public externalDataGuid: ko.Observable<string>;
     public scopesVersions: Array<ApiAppScopesVersionContract>;
+    public selectedScopesVersion: ko.Observable<ApiAppScopesVersionContract>;
     public editingAuthScopes: ko.Observable<boolean>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
@@ -58,13 +59,18 @@ export class ApiAppEditorVm {
         const readScopes = apiApp.authScopes.filter(s => s.read);
         const writeScopes = apiApp.authScopes.filter(s => s.write);
         this.scopesVersions = apiApp.scopesVersions;
+        this.selectedScopesVersion = ko.observable(apiApp.scopesVersions[0]);
         this.editingAuthScopes = ko.observable(apiApp.id === 0);
         this.authScopes = ko.observableArray(
             readScopes.map(s => s.name + ":r").concat(
                 writeScopes.map(s => s.name + ":w"))
         );
-        this.readScopeNames = readScopes.map(s => s.displayName).join(", ");
-        this.writeScopeNames = writeScopes.map(s => s.displayName).join(", ");
+        this.readScopeNames = ko.pureComputed(() =>
+            this.selectedScopesVersion().authScopes.filter(s => s.read).map(s => s.displayName).join(", ")
+        );
+        this.writeScopeNames = ko.pureComputed(() =>
+            this.selectedScopesVersion().authScopes.filter(s => s.write).map(s => s.displayName).join(", ")
+        );
         this.deleted = ko.observable(apiApp.deleted);
         this.tenantAppAvailabilityList = ko.observableArray(
             apiApp.tenantAppAvailabilityList.map(a => (
