@@ -33,7 +33,7 @@ else {
 }
 
 /* Storage where the website get published */
-const outputBlobStorage = new FileSystemBlobStorage("../public-api-developer-portal/src/PublicApi.DeveloperPortal/wwwroot");
+const outputBlobStorage = new FileSystemBlobStorage("../public-api-partners-dev-portal/src/PublicApi.PartnersDevPortal/wwwroot");
 
 /* Initializing dependency injection container */
 const injector = new InversifyInjector();
