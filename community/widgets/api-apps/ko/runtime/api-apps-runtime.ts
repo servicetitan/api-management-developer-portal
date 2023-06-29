@@ -2,12 +2,14 @@ import * as ko from "knockout";
 import template from "./api-apps-runtime.html";
 import apiAppListTemplate from "./api-app-list.html";
 import apiAppEditorTemplate from "./api-app-editor.html";
+import apiAppClientListTemplate from "./api-app-client-list.html";
 import apiAppErrorTemplate from "./api-app-error.html";
 import { Component, RuntimeComponent, OnMounted, OnDestroyed, Param } from "@paperbits/common/ko/decorators";
 import { widgetRuntimeSelector } from "../../constants";
 import { ApiAppsService } from "../../services/apiAppsService";
 import { ApiAppsPageContract } from "../../services/apiAppsPageContract";
 import { ApiAppEditorVm } from "./apiAppEditorVm"
+import { ApiAppClientListVm } from "./apiAppClientListVm";
 import { ApiAppContract } from "../../services/apiAppContract";
 
 @RuntimeComponent({
@@ -19,14 +21,16 @@ import { ApiAppContract } from "../../services/apiAppContract";
     childTemplates: {
         apiAppList: apiAppListTemplate,
         apiAppEditor: apiAppEditorTemplate,
+        apiAppClientList: apiAppClientListTemplate,
         apiAppError: apiAppErrorTemplate
     }
 })
 export class ApiAppsRuntime {
     public readonly isLoading: ko.Observable<boolean>;
-    public readonly isEditing: ko.Observable<boolean>;
+    public readonly route: ko.Observable<"list" | "editor" | "clients">;
     public readonly searchPattern: ko.Observable<string>;
     public readonly apiAppEditor: ko.Observable<ApiAppEditorVm>;
+    public readonly apiAppClientList: ko.Observable<ApiAppClientListVm>;
     public readonly errorMessage: ko.Observable<string>;
 
     private pageContract: ko.Observable<ApiAppsPageContract>;
@@ -35,9 +39,10 @@ export class ApiAppsRuntime {
         private readonly apiAppsService: ApiAppsService,
     ) {
         this.isLoading = ko.observable(false);
-        this.isEditing = ko.observable(false);
+        this.route = ko.observable("list");
         this.searchPattern = ko.observable("");
         this.apiAppEditor = ko.observable();
+        this.apiAppClientList = ko.observable();
         this.pageContract = ko.observable();
         this.errorMessage = ko.observable("");
     }
@@ -81,11 +86,23 @@ export class ApiAppsRuntime {
             apiApp,
             this.pageContract().projectId,
             this.pageContract().scopeGroups,
-            async () => { this.isEditing(false); await this.initialize(); }
+            async () => { this.route("list"); await this.initialize(); }
         );
 
         this.apiAppEditor(editor);
-        this.isEditing(true);
+        this.route("editor");
+    }
+
+    public clickViewApiAppClients(apiApp: ApiAppContract) {
+        const clientList = new ApiAppClientListVm(
+            this.apiAppsService,
+            apiApp,
+            this.pageContract().projectId,
+            async () => { this.route("list"); }
+        );
+
+        this.apiAppClientList(clientList);
+        this.route("clients");
     }
 
     @OnDestroyed()
