@@ -3,12 +3,10 @@ import * as path from "path";
 import { ISettingsProvider } from "@paperbits/common/configuration";
 import { InversifyInjector } from "@paperbits/common/injection";
 import { IPublisher } from "@paperbits/common/publishing";
-import { CoreModule } from "@paperbits/core/core.module";
 import { CorePublishModule } from "@paperbits/core/core.publish.module";
 import { FormsModule } from "@paperbits/forms/forms.module";
-import { ProseMirrorModule } from "@paperbits/prosemirror/prosemirror.module";
 import { StylePublishModule } from "@paperbits/styles/styles.publish.module";
-import { staticDataEnvironment } from "./../environmentConstants";
+import { staticDataEnvironment, mockStaticDataEnvironment } from "./../environmentConstants";
 import { ApimPublishModule } from "./apim.publish.module";
 import { FileSystemBlobStorage } from "./components/filesystemBlobStorage";
 import { StaticSettingsProvider } from "./components/staticSettingsProvider";
@@ -18,7 +16,7 @@ import { ApiAppsPublishModule } from "../community/widgets/api-apps/apiApps.publ
 /* Reading settings from configuration file */
 let settingsProvider: ISettingsProvider;
 
-if (process.env.NODE_ENV === staticDataEnvironment) {
+if (process.env.NODE_ENV === staticDataEnvironment || process.env.NODE_ENV === mockStaticDataEnvironment) {
     settingsProvider = new StaticSettingsProvider({
         environment: "publishing",
         managementApiUrl: "https://contoso.management.azure-api.net",
@@ -37,10 +35,8 @@ const outputBlobStorage = new FileSystemBlobStorage("../public-api-developer-por
 
 /* Initializing dependency injection container */
 const injector = new InversifyInjector();
-injector.bindModule(new CoreModule());
 injector.bindModule(new CorePublishModule());
 injector.bindModule(new StylePublishModule());
-injector.bindModule(new ProseMirrorModule());
 injector.bindModule(new FormsModule());
 injector.bindModule(new ApimPublishModule());
 injector.bindInstance("settingsProvider", settingsProvider);

@@ -72,6 +72,7 @@ export class OperationDetails {
         this.definitions = ko.observableArray<TypeDefinition>();
         this.defaultSchemaView = ko.observable("table");
         this.useCorsProxy = ko.observable();
+        this.includeAllHostnames = ko.observable();
         this.requestUrlSample = ko.computed(() => {
 
             const api = this.api();
@@ -131,6 +132,9 @@ export class OperationDetails {
     public useCorsProxy: ko.Observable<boolean>;
 
     @Param()
+    public includeAllHostnames: ko.Observable<boolean>;
+
+    @Param()
     public enableScrollTo: boolean;
 
     @Param()
@@ -143,6 +147,7 @@ export class OperationDetails {
     public async initialize(): Promise<void> {
         const apiName = this.routeHelper.getApiName();
         const operationName = this.routeHelper.getOperationName();
+        const graphName = this.routeHelper.getGraphName();
 
         this.selectedApiName(apiName);
         this.selectedOperationName(operationName);
@@ -154,11 +159,20 @@ export class OperationDetails {
         if (operationName) {
             await this.loadOperation(apiName, operationName);
         }
+
+        if (this.enableScrollTo && (operationName || graphName)) {
+            this.scrollToOperation();
+        }
     }
 
     private async onRouteChange(): Promise<void> {
         const apiName = this.routeHelper.getApiName();
         const operationName = this.routeHelper.getOperationName();
+        const graphName = this.routeHelper.getGraphName();
+
+        if (this.enableScrollTo && (operationName || graphName)) {
+            this.scrollToOperation();
+        }
 
         if (apiName && apiName !== this.selectedApiName()) {
             this.selectedApiName(apiName);
@@ -228,11 +242,6 @@ export class OperationDetails {
         this.tags(operationTags.map(tag => tag.name));
 
         this.working(false);
-
-        if (this.enableScrollTo) {
-            const headerElement = document.querySelector(".operation-header");
-            headerElement && headerElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
-        }
     }
 
     public async loadDefinitions(operation: Operation): Promise<void> {
@@ -356,7 +365,7 @@ export class OperationDetails {
 
                 const contentTypeObj = {}
                 Object.entries(valueObj).forEach(([key, val]) => {
-                    if (typeof val === 'object') return
+                    if (typeof val === "object") return
                     contentTypeObj[key] = val.toString();
                 })
 
@@ -372,7 +381,7 @@ export class OperationDetails {
     }
 
     public async loadGatewayInfo(apiName: string): Promise<void> {
-        const hostnames = await this.apiService.getApiHostnames(apiName);
+        const hostnames = await this.apiService.getApiHostnames(apiName, this.includeAllHostnames());
 
         if (hostnames.length !== 0) {
             this.sampleHostname(hostnames[0]);
@@ -417,6 +426,11 @@ export class OperationDetails {
         const operationName = this.operation().name;
 
         return this.routeHelper.getDefinitionAnchor(apiName, operationName, definition.name);
+    }
+
+    private scrollToOperation() {
+        const headerElement = document.getElementById("operation-name");
+        headerElement && headerElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
     }
 
     @OnDestroyed()

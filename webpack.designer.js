@@ -84,7 +84,8 @@ const designerConfig = {
         fallback: {
             buffer: require.resolve("buffer"),
             stream: require.resolve("stream-browserify"),
-            querystring: require.resolve("querystring-es3")
+            querystring: require.resolve("querystring-es3"),
+            crypto: false
         }
     }
 };

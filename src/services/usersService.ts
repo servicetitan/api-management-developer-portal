@@ -33,11 +33,11 @@ export class UsersService {
      * @param password {string} Password.
      */
     public async signInWithBasic(username: string, password: string): Promise<void> {
-        const credentials = `Basic ${btoa(`${username}:${password}`)}`;
+        const credentials = `Basic ${Buffer.from(`${username}:${password}`, "utf8").toString("base64")}`;
         const userId = await this.authenticate(credentials);
 
         if (userId) {
-            return; // successul authentication
+            return; // successful authentication
         }
 
         this.authenticator.clearAccessToken();
@@ -45,7 +45,7 @@ export class UsersService {
     }
 
     /**
-     * Authenticates user with specified credentilas and returns user identifier.
+     * Authenticates user with specified credentials and returns user identifier.
      * @param credentials {string} User credentials passed in "Authorization" header.
      * @returns {string} User identifier.
      */

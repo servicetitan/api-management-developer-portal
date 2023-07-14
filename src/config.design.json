@@ -3,5 +3,10 @@
     "managementApiUrl": "https://servicetitan-api-dev.management.azure-api.net",
     "managementApiAccessToken": "SharedAccessSignature ...",
     "backendUrl": "https://servicetitan-api-dev.developer.azure-api.net",
-    "useHipCaptcha": false
+    "useHipCaptcha": false,
+    "integration": {
+        "googleFonts": {
+            "apiKey": "<Google API Key>"
+        }
+    }
 }

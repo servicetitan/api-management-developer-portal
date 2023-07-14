@@ -9,7 +9,7 @@
 <div class="animation-fade-in">
     <div class="row flex flex-row">
         <div class="col-md-11  text-wrap">
-            <h2 class="operation-name">
+            <h2 id="operation-name">
                 <span data-bind="text: operation().name"></span>
             </h2>
         </div>
@@ -57,7 +57,7 @@
                 <div class="d-contents" role="rowgroup">
                     <!-- ko foreach: { data: operation().parameters, as: 'parameter' } -->
                     <div class="d-contents" role="row">
-                        <div role="cell" class="text-truncate text-monospace"
+                        <div role="cell" class="text-wrap text-monospace"
                             data-bind="text: parameter.name, attr: { title: parameter.name }"></div>
                         <div role="cell" class="text-truncate" data-bind="text: parameter.in"></div>
                         <div role="cell" class="text-truncate" data-bind="text: parameter.required"></div>
@@ -149,7 +149,7 @@
                         <div class="d-contents" role="rowgroup">
                             <!-- ko foreach: { data: representation.formParameters, as: 'parameter' } -->
                             <div class="d-contents" role="row">
-                                <div role="cell" class="text-truncate text-monospace"
+                                <div role="cell" class="text-wrap text-monospace"
                                     data-bind="text: parameter.name, attr: { title: parameter.name }"></div>
                                 <div role="cell" class="text-truncate" data-bind="text: parameter.in"></div>
                                 <div role="cell" class="text-truncate" data-bind="text: parameter.required"></div>
@@ -282,7 +282,7 @@
 <!-- ko if: operation -->
 <div class="animation-fade-in row flex flex-row">
     <div class="col-md-11 text-wrap">
-        <h2 class="operation-name">
+        <h2 id="operation-name">
             <span data-bind="text: operation().name"></span>
         </h2>
     </div>
@@ -323,7 +323,7 @@
 <div class="animation-fade-in">
     <div class="row flex flex-row">
         <div class="col-md-11 text-wrap">
-            <h2>GraphQL endpoint</h2>
+            <h2 id="operation-name">GraphQL endpoint</h2>
             <span class="monospace" data-bind="text: $component.requestUrlSample"></span>
         </div>
         <!-- ko if: $component.enableConsole -->
