@@ -5,6 +5,7 @@ import { ApiAppScopeGroupContract } from "../../services/apiAppScopeGroupContrac
 import { ApiAppScopesVersionContract } from "../../services/apiAppScopesVersionContract";
 import { ApiAppAvailabilityCreateOrUpdateContract } from "../../services/apiAppAvailabilityCreateOrUpdateContract";
 import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdateContract";
+import { SecretManagementOption } from "../../services/secretManagementOption";
 
 export class ApiAppEditorVm {
     private maxTenants: number = 2000;
@@ -25,6 +26,7 @@ export class ApiAppEditorVm {
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
     public networkAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
+    public secretManagementOption: ko.Observable<SecretManagementOption>;
     public validationActivated: ko.Observable<boolean>;
     public nameValidation: ko.PureComputed<string>;
     public organizationNameValidation: ko.PureComputed<string>;
@@ -82,6 +84,7 @@ export class ApiAppEditorVm {
                 { resourceOwner: a.resourceOwner, note: a.note }
             ))
         );
+        this.secretManagementOption = ko.observable(apiApp.secretManagementOption);
         this.isLoading = ko.observable(false);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
@@ -139,15 +142,15 @@ export class ApiAppEditorVm {
         });
         this.tenantAppAvailabilityValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            var tenantList = this.tenantAppAvailabilityList();
-            var networkList = this.networkAppAvailabilityList();
+            const tenantList = this.tenantAppAvailabilityList();
+            const networkList = this.networkAppAvailabilityList();
             if (tenantList.length == 0 && networkList.length == 0) return "Tenants list and networks list are empty";
             if (tenantList.length > this.maxTenants) return `Tenants list contains more than ${this.maxTenants} items`;
             return "";
         });
         this.networkAppAvailabilityValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            var list = this.networkAppAvailabilityList();
+            const list = this.networkAppAvailabilityList();
             if (list.length > this.maxNetworks) return `Networks list contains more than ${this.maxNetworks} items`;
             return "";
         });
@@ -221,6 +224,7 @@ export class ApiAppEditorVm {
             deleted: this.deleted(),
             tenantAppAvailabilityList: this.tenantAppAvailabilityList(),
             networkAppAvailabilityList: this.networkAppAvailabilityList(),
+            secretManagementOption: this.secretManagementOption(),
         }
 
         try {

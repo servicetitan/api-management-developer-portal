@@ -11,6 +11,7 @@ import { ApiAppsPageContract } from "../../services/apiAppsPageContract";
 import { ApiAppEditorVm } from "./apiAppEditorVm"
 import { ApiAppClientListVm } from "./apiAppClientListVm";
 import { ApiAppContract } from "../../services/apiAppContract";
+import { SecretManagementOption } from "../../services/secretManagementOption";
 
 @RuntimeComponent({
     selector: widgetRuntimeSelector
@@ -52,7 +53,7 @@ export class ApiAppsRuntime {
         this.isLoading(true);
         this.pageContract(null);
         try {
-            var page = await this.apiAppsService.getApiAppsPage();
+            const page = await this.apiAppsService.getApiAppsPage();
             this.pageContract(page);
         }
         catch (e) {
@@ -74,7 +75,8 @@ export class ApiAppsRuntime {
             externalDataGuid: "",
             deleted: false,
             tenantAppAvailabilityList: this.pageContract().defaultTenantAppAvailabilityList,
-            networkAppAvailabilityList: []
+            networkAppAvailabilityList: [],
+            secretManagementOption: SecretManagementOption.Developer,
         }
 
         this.clickEditApiApp(emptyApiApp);

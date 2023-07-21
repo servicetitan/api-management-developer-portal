@@ -1,4 +1,5 @@
 import { ApiAppAvailabilityCreateOrUpdateContract } from "./apiAppAvailabilityCreateOrUpdateContract";
+import { SecretManagementOption } from "./secretManagementOption";
 
 export interface ApiAppCreateOrUpdateContract {
     id: number;
@@ -10,4 +11,5 @@ export interface ApiAppCreateOrUpdateContract {
     deleted: boolean;
     tenantAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
     networkAppAvailabilityList: Array<ApiAppAvailabilityCreateOrUpdateContract>;
+    secretManagementOption: SecretManagementOption;
 }

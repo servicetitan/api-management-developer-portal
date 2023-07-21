@@ -278,6 +278,58 @@
         <!-- /ko -->
     </fieldset>
 </div>
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 30px; margin: 0 0 20px;">
+    <h3 style="margin-top: 20px;">Client Credentials Management</h3>
+    <div class="row">
+        <div class="col-9">
+            <div>
+                To access ServiceTitan APIs, your app must authenticate itself by supplying a client ID and client secret.
+                Who will be responsible for configuring these credentials within the app?
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-1" style="flex-basis: 30px; padding-right: 0;">
+            <input type="radio" name="secretManagementOption" id="secretManagementOption_1"
+                data-bind="checked: secretManagementOption, checkedValue: 1">
+        </div>
+        <div class="col-8">
+            <label for="secretManagementOption_1">I, the app developer, will configure the credentials on behalf of each tenant</label>
+            <div style="color: #888;">
+                Select this option if, for example, you will manually enter the credentials into a file or database that can't be managed by tenants.
+                After a tenant has connected your app, you can obtain the credentials by navigating to My Apps and clicking the View Connections button for the app.
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-1" style="flex-basis: 30px; padding-right: 0;">
+            <input type="radio" name="secretManagementOption" id="secretManagementOption_0"
+                data-bind="checked: secretManagementOption, checkedValue: 0">
+        </div>
+        <div class="col-8">
+            <label for="secretManagementOption_0">Tenants will configure the credentials themselves</label>
+            <div style="color: #888;">
+                Select this option if your app has a configuration screen where tenants can enter their own credentials.
+                To obtain the credentials, tenants must sign in to the main ServiceTitan application and navigate to Settings > Integrations > API Application Access.
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-9">
+            <div style="border: 1px solid #900; background-color: #FEE; padding: 10px; display: flex;">
+                <div style="flex: 0 0 19px;">⚠</div>
+                <div>
+                    <div><strong>Note</strong></div>
+                    <div style="margin-top: 10px;">
+                        You must keep client IDs and client secrets confidential.
+                        Never publish them with your source code, embed them within web pages, or distribute them via an app store.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- ko if: id > 0 -->
 <div
     style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 10px; margin: 0 0 20px;">

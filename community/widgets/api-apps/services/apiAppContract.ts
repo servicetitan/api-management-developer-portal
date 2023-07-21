@@ -1,6 +1,7 @@
 import { ApiAppScopeSelectContract } from "./apiAppScopeSelectContract";
 import { ApiAppScopesVersionContract } from "./apiAppScopesVersionContract";
 import { ApiAppAvailabilityContract } from "./apiAppAvailabilityContract";
+import { SecretManagementOption } from "./secretManagementOption";
 
 export interface ApiAppContract {
     id: number;
@@ -15,4 +16,5 @@ export interface ApiAppContract {
     deleted: boolean;
     tenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;
     networkAppAvailabilityList: Array<ApiAppAvailabilityContract>;
+    secretManagementOption: SecretManagementOption;
 }
