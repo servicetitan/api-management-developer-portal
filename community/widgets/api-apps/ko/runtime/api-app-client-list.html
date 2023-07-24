@@ -1,5 +1,5 @@
 <div style="margin-bottom: 20px;">
-    <a href="#" role="button" style="color: #141414; text-decoration: none;" data-bind="click: clickCancel">
+    <a href="#" role="button" style="color: #141414; text-decoration: none;" data-bind="click: clickBack">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="17px" width="17px" viewBox="0 0 24 24">
             <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path>
         </svg>
@@ -60,7 +60,11 @@
             </td>
             <td data-bind="text: clientId || 'Not available yet'"></td>
             <td>
-                <span data-bind="if: !clientSecrets.length">Not available yet</span>
+                <!-- ko ifnot: clientSecrets.length -->
+                <span data-bind="visible: !clientId || $parent.secretManagementOption === 0">Not available yet</span>
+                <button type="button" class="button" style="margin: 0; border: 0; padding: 6px 12px;"
+                    data-bind="visible: clientId && $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#2270EE' : '#F4F4F4', color: enabled ? '#FFF' : '#AAA' }, click: $parent.clickGenerateSecret">Generate</button>
+                <!-- /ko -->
                 <!-- ko foreach: clientSecrets -->
                 <div data-bind="text: `🗝 ${valuePrefix}...`"></div>
                 <!-- /ko -->
@@ -70,4 +74,37 @@
         </tr>
     </tbody>
 </table>
+<!-- /ko -->
+<!-- ko if: activeModal() === modalInstance.GenerateSecret -->
+<modal params="title: 'Generate Client Secret', close: clickCloseModal">
+    <div>Once a client secret is generated, it's visible only once. Would you like to continue?</div>
+    <div style="margin-top: 20px; text-align: right;">
+        <button type="button" class="button" data-bind="click: clickCloseModal">Cancel</button>
+        <button type="button" class="button" style="background-color: #2270EE; color: #FFF; border: 0; margin-right: 0;"
+            data-bind="click: clickConfirmGenerateSecret, disable: generatingSecret">Yes, Continue</button>
+    </div>
+</modal>
+<!-- /ko -->
+<!-- ko if: activeModal() === modalInstance.SecretValue -->
+<modal params="title: 'Client Secret', close: clickCloseModal">
+    <div><em>Note: This client secret is visible only once. If you lose it, you'll need to generate a new secret.</em></div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-auto" style="padding-top: 6px;">
+            <input type="text" id="secretValue" size="56" class="form-control form-control-default"
+                style="background: #f7f7f7; font-family: monospace;" disabled="disabled" data-bind="value: secretValue" />
+        </div>
+        <div class="col-auto">
+            <button type="button" class="button" style="padding: 6px 0px 7px; min-width: 90px; margin-right: 0;"
+                data-bind="copyToClipboard: secretValue">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="20px" width="20px"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z">
+                    </path>
+                </svg>
+                &nbsp;Copy
+            </button>
+        </div>
+    </div>
+</modal>
 <!-- /ko -->

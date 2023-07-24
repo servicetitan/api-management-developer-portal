@@ -1,0 +1,14 @@
+<div style="position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; display: flex; align-items: center; justify-content: center;">
+    <div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: #000; opacity: 0.25;"></div>
+    <div style="background: #FFF; padding: 5px 30px 20px;">
+        <div style="display: flex; align-items: center; margin-right: -12px;">
+            <h2 style="flex: 1;" data-bind="text: title"></h2>
+            <button aria-label="Close" style="width: 40px; height: 40px; border: 0; background-color: transparent; font-size: 20px;"
+                data-bind="visible: close, click: clickClose.bind($data, $parent)">✖</button>
+        </div>
+        <div style="margin-top: 20px;">
+            <!-- ko template: { nodes: $componentTemplateNodes, data: $parent } -->
+            <!-- /ko -->
+        </div>
+    </div>
+</div>

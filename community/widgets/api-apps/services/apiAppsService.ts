@@ -2,6 +2,7 @@ import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
 import { ApiAppCreateOrUpdateContract } from "./apiAppCreateOrUpdateContract";
 import { ApiAppContract } from "./apiAppContract";
 import { ApiAppClientContract } from "./apiAppClientContract";
+import { ApiAppClientSecretContract } from "./apiAppClientSecretContract";
 import { ApiAppsPageContract } from "./apiAppsPageContract";
 import { IAuthenticator } from "../../../../src/authentication";
 
@@ -42,6 +43,28 @@ export class ApiAppsService {
             body: JSON.stringify(apiApp)
         }
         await this.makeRequest(request);
+    }
+
+    public async getClientSecrets(
+        projectId: string, appId: number, clientId: string
+    ): Promise<ApiAppClientSecretContract[]> {
+        const request: HttpRequest = {
+            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets`,
+            method: "GET",
+            headers: []
+        }
+        return await this.makeRequest(request);
+    }
+
+    public async generateClientSecret(
+        projectId: string, appId: number, clientId: string
+    ): Promise<string> {
+        const request: HttpRequest = {
+            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets`,
+            method: "POST",
+            headers: []
+        }
+        return await this.makeRequest(request);
     }
 
     private async makeRequest<T>(httpRequest: HttpRequest): Promise<T> {
