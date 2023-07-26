@@ -82,11 +82,11 @@
 <!-- ko if: activeModal() === modalInstance.GenerateSecret -->
 <modal params="title: 'Generate Client Secret', close: clickCloseModal">
     <div>
-        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span style="display: inline-block; width: 6em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
         <span data-bind="text: selectedClient().resourceOwner"></span>
     </div>
     <div style="margin-top: 10px;">
-        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span style="display: inline-block; width: 6em;">Client ID:</span>
         <span data-bind="text: selectedClient().clientId"></span>
     </div>
     <div style="margin-top: 20px;">Once a client secret is generated, it's visible only once.</div>
@@ -101,11 +101,11 @@
 <!-- ko if: activeModal() === modalInstance.SecretValue -->
 <modal params="title: 'Client Secret', close: clickCloseModal">
     <div style="margin-top: 20px;">
-        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span style="display: inline-block; width: 6em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
         <span data-bind="text: selectedClient().resourceOwner"></span>
     </div>
     <div style="margin-top: 10px;">
-        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span style="display: inline-block; width: 6em;">Client ID:</span>
         <span data-bind="text: selectedClient().clientId"></span>
     </div>
     <div style="margin-top: 10px;">
@@ -135,11 +135,11 @@
 <!-- ko if: activeModal() === modalInstance.ManageSecrets -->
 <modal params="title: 'Manage Client Secrets', close: clickCloseModal">
     <div>
-        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span style="display: inline-block; width: 6em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
         <span data-bind="text: selectedClient().resourceOwner"></span>
     </div>
     <div style="margin-top: 10px;">
-        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span style="display: inline-block; width: 6em;">Client ID:</span>
         <span data-bind="text: selectedClient().clientId"></span>
     </div>
     <div style="margin-top: 10px;">Client Secrets</div>
