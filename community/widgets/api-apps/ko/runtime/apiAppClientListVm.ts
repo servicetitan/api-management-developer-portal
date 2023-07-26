@@ -1,6 +1,7 @@
 import * as ko from "knockout";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { ApiAppClientContract } from "../../services/apiAppClientContract";
+import { ApiAppClientSecretContract } from "../../services/apiAppClientSecretContract";
 import { ApiAppsService } from "../../services/apiAppsService";
 import { SecretManagementOption } from "../../services/secretManagementOption";
 import "./modal";
@@ -9,6 +10,8 @@ enum ModalInstance {
     None,
     GenerateSecret,
     SecretValue,
+    ManageSecrets,
+    DeactivateSecret,
 }
 
 export class ApiAppClientListVm {
@@ -25,6 +28,8 @@ export class ApiAppClientListVm {
     public selectedClient: ko.Observable<ApiAppClientContract | null>;
     public generatingSecret: ko.Observable<boolean>;
     public secretValue: ko.Observable<string>;
+    public selectedSecret: ko.Observable<ApiAppClientSecretContract | null>;
+    public deactivatingSecret: ko.Observable<boolean>;
 
     constructor(
         private apiAppsService: ApiAppsService,
@@ -43,6 +48,8 @@ export class ApiAppClientListVm {
         this.selectedClient = ko.observable(null);
         this.generatingSecret = ko.observable(false);
         this.secretValue = ko.observable("");
+        this.selectedSecret = ko.observable(null);
+        this.deactivatingSecret = ko.observable(false);
         this.initialize();
     }
 
@@ -60,12 +67,26 @@ export class ApiAppClientListVm {
     }
 
     public clickCloseModal() {
-        this.activeModal(ModalInstance.None);
-        this.selectedClient(null);
+        if ((this.activeModal() === ModalInstance.GenerateSecret && this.selectedClient().clientSecrets.length > 0) ||
+            this.activeModal() === ModalInstance.DeactivateSecret
+        ) {
+            this.activeModal(ModalInstance.ManageSecrets);
+        }
+        else {
+            this.activeModal(ModalInstance.None);
+            this.selectedClient(null);
+        }
     }
 
-    public clickGenerateSecret = (client: ApiAppClientContract) => {
+    public clickManageSecrets = (client: ApiAppClientContract) => {
         this.selectedClient(client);
+        this.activeModal(ModalInstance.ManageSecrets);
+    };
+
+    public clickGenerateSecret = (client: ApiAppClientContract | null) => {
+        if (client) {
+            this.selectedClient(client);
+        }
         this.activeModal(ModalInstance.GenerateSecret);
     };
 
@@ -73,13 +94,45 @@ export class ApiAppClientListVm {
         this.generatingSecret(true);
         try {
             const selectedClient = this.selectedClient();
-            this.secretValue(await this.apiAppsService.generateClientSecret(this.projectId, this.id, selectedClient.clientId));
-            const clientSecrets = await this.apiAppsService.getClientSecrets(this.projectId, this.id, selectedClient.clientId);
+            this.secretValue(await this.apiAppsService.generateClientSecret(
+                this.projectId, this.id, selectedClient.clientId));
+            const clientSecrets = await this.apiAppsService.getClientSecrets(
+                this.projectId, this.id, selectedClient.clientId);
             this.clients.replace(selectedClient, { ...selectedClient, clientSecrets });
             this.activeModal(ModalInstance.SecretValue);
         }
         finally {
             this.generatingSecret(false);
+        }
+    }
+
+    public clickDeactivateSecret = async (secret: ApiAppClientSecretContract) => {
+        this.selectedSecret(secret);
+        this.activeModal(ModalInstance.DeactivateSecret);
+    };
+
+    public async clickConfirmDeactivateSecret() {
+        this.deactivatingSecret(true);
+        try {
+            const selectedClient = this.selectedClient();
+            const selectedSecret = this.selectedSecret();
+            await this.apiAppsService.deactivateClientSecret(
+                this.projectId, this.id, selectedClient.clientId, selectedSecret.id);
+            const clientSecrets = await this.apiAppsService.getClientSecrets(
+                this.projectId, this.id, selectedClient.clientId);
+            const updatedClient = { ...selectedClient, clientSecrets };
+            this.clients.replace(selectedClient, updatedClient);
+            if (updatedClient.clientSecrets.length > 0) {
+                this.selectedClient(updatedClient);
+                this.activeModal(ModalInstance.ManageSecrets);
+            }
+            else {
+                this.activeModal(ModalInstance.None);
+                this.selectedClient(null);
+            }
+        }
+        finally {
+            this.deactivatingSecret(false);
         }
     }
 }

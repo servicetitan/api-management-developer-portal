@@ -54,30 +54,43 @@
     </thead>
     <tbody data-bind="foreach: clients">
         <tr>
-            <td>
+            <td style="vertical-align: top;">
                 <span data-bind="if: resourceOwnerTerm, attr: { title: resourceOwnerTerm }">🌐</span>
                 <span data-bind="text: resourceOwner"></span>
             </td>
-            <td data-bind="text: clientId || 'Not available yet'"></td>
-            <td>
+            <td style="vertical-align: top;" data-bind="text: clientId || 'Not available yet'"></td>
+            <td style="vertical-align: top;">
                 <!-- ko ifnot: clientSecrets.length -->
                 <span data-bind="visible: !clientId || $parent.secretManagementOption === 0">Not available yet</span>
                 <button type="button" class="button" style="margin: 0; border: 0; padding: 6px 12px;"
                     data-bind="visible: clientId && $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#2270EE' : '#F4F4F4', color: enabled ? '#FFF' : '#AAA' }, click: $parent.clickGenerateSecret">Generate</button>
                 <!-- /ko -->
+                <!-- ko if: clientSecrets.length -->
                 <!-- ko foreach: clientSecrets -->
                 <div data-bind="text: `🗝 ${valuePrefix}...`"></div>
                 <!-- /ko -->
+                <button type="button" class="button" style="margin: 4px 0 0; border: 0; padding: 6px 12px;"
+                    data-bind="visible: $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#EEE' : '#F4F4F4', color: enabled ? '#000' : '#AAA' }, click: $parent.clickManageSecrets">Manage</button>
+                <!-- /ko -->
             </td>
-            <td data-bind="text: currentScopesVersion || $parent.currentScopesVersion"></td>
-            <td data-bind="attr: { title: enabled ? 'Allowed' : 'Disallowed' }, style: { color: enabled ? '#18a761' : '#d1d7db', textAlign: 'center' }">⬤</td>
+            <td style="vertical-align: top;" data-bind="text: currentScopesVersion || $parent.currentScopesVersion"></td>
+            <td style="vertical-align: top;" data-bind="attr: { title: enabled ? 'Allowed' : 'Disallowed' }, style: { color: enabled ? '#18a761' : '#d1d7db', textAlign: 'center' }">⬤</td>
         </tr>
     </tbody>
 </table>
 <!-- /ko -->
 <!-- ko if: activeModal() === modalInstance.GenerateSecret -->
 <modal params="title: 'Generate Client Secret', close: clickCloseModal">
-    <div>Once a client secret is generated, it's visible only once. Would you like to continue?</div>
+    <div>
+        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span data-bind="text: selectedClient().resourceOwner"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span data-bind="text: selectedClient().clientId"></span>
+    </div>
+    <div style="margin-top: 20px;">Once a client secret is generated, it's visible only once.</div>
+    <div>Would you like to continue?</div>
     <div style="margin-top: 20px; text-align: right;">
         <button type="button" class="button" data-bind="click: clickCloseModal">Cancel</button>
         <button type="button" class="button" style="background-color: #2270EE; color: #FFF; border: 0; margin-right: 0;"
@@ -87,8 +100,18 @@
 <!-- /ko -->
 <!-- ko if: activeModal() === modalInstance.SecretValue -->
 <modal params="title: 'Client Secret', close: clickCloseModal">
-    <div><em>Note: This client secret is visible only once. If you lose it, you'll need to generate a new secret.</em></div>
-    <div class="row" style="margin-top: 20px;">
+    <div style="margin-top: 20px;">
+        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span data-bind="text: selectedClient().resourceOwner"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span data-bind="text: selectedClient().clientId"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <label for="secretValue" style="margin-bottom: 0;">Client Secret</label>
+    </div>
+    <div class="row">
         <div class="col-auto" style="padding-top: 6px;">
             <input type="text" id="secretValue" size="56" class="form-control form-control-default"
                 style="background: #f7f7f7; font-family: monospace;" disabled="disabled" data-bind="value: secretValue" />
@@ -105,6 +128,67 @@
                 &nbsp;Copy
             </button>
         </div>
+    </div>
+    <div>Note: This client secret is visible only once. If you lose it, you'll need to generate a new secret.</div>
+</modal>
+<!-- /ko -->
+<!-- ko if: activeModal() === modalInstance.ManageSecrets -->
+<modal params="title: 'Manage Client Secrets', close: clickCloseModal">
+    <div>
+        <span style="display: inline-block; width: 5em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span data-bind="text: selectedClient().resourceOwner"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span style="display: inline-block; width: 5em;">Client ID:</span>
+        <span data-bind="text: selectedClient().clientId"></span>
+    </div>
+    <div style="margin-top: 10px;">Client Secrets</div>
+    <!-- ko if: selectedClient().clientSecrets.length < 2 -->
+    <div style="margin-top: 10px; background-color: #f7f7f7; border-radius: 3px; border: 1px solid #dfe0e1; padding: 10px 15px; text-align: right;">
+        <button type="button" class="button" style="margin: 0;"
+            data-bind="click: clickGenerateSecret.bind($data, null)">Generate</button>
+    </div>
+    <!-- /ko -->
+    <!-- ko foreach: selectedClient().clientSecrets -->
+    <div style="margin-top: 10px; background-color: #f7f7f7; border-radius: 3px; border: 1px solid #dfe0e1; padding: 10px 15px; display: flex; gap: 30px; align-items: center;">
+        <span style="flex: 1;">
+            <span data-bind="text: `🗝 ${valuePrefix}...`"></span>
+            <span>generated on</span>
+            <span data-bind="text: new Date(createdOn).toLocaleDateString()"></span>
+            <span>at</span>
+            <span data-bind="text: new Date(createdOn).toLocaleTimeString()"></span>
+        </span>
+        <button type="button" class="button" style="margin: 0;"
+            data-bind="click: $parent.clickDeactivateSecret">Deactivate</button>
+    </div>
+    <!-- /ko -->
+    <div style="margin-top: 10px;">Note: Only two active secrets are allowed at a time.</div>
+    <div style="text-align: right;">
+        <button type="button" class="button" style="margin-right: 0;"
+            data-bind="click: clickCloseModal">Close</button>
+    </div>
+</modal>
+<!-- /ko -->
+<!-- ko if: activeModal() === modalInstance.DeactivateSecret -->
+<modal params="title: 'Deactivate Client Secret', close: clickCloseModal">
+    <div>
+        <span style="display: inline-block; width: 7em;" data-bind="text: `${selectedClient().resourceOwnerTerm || 'Tenant'} ID:`"></span>
+        <span data-bind="text: selectedClient().resourceOwner"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span style="display: inline-block; width: 7em;">Client ID:</span>
+        <span data-bind="text: selectedClient().clientId"></span>
+    </div>
+    <div style="margin-top: 10px;">
+        <span style="display: inline-block; width: 7em;">Client Secret:</span>
+        <span data-bind="text: `🗝 ${selectedSecret().valuePrefix}...`"></span>
+    </div>
+    <div style="margin-top: 20px;">If you deactivate this client secret, it will no longer be valid.</div>
+    <div>Are you sure you want to continue?</div>
+    <div style="margin-top: 20px; text-align: right;">
+        <button type="button" class="button" data-bind="click: clickCloseModal">Cancel</button>
+        <button type="button" class="button" style="background-color: #E13212; color: #FFF; border: 0; margin-right: 0;"
+            data-bind="click: clickConfirmDeactivateSecret, disable: deactivatingSecret">Yes, Deactivate</button>
     </div>
 </modal>
 <!-- /ko -->

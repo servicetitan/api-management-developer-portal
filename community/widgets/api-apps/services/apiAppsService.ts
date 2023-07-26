@@ -67,6 +67,17 @@ export class ApiAppsService {
         return await this.makeRequest(request);
     }
 
+    public async deactivateClientSecret(
+        projectId: string, appId: number, clientId: string, secretId: number
+    ): Promise<string> {
+        const request: HttpRequest = {
+            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets/${secretId}`,
+            method: "DELETE",
+            headers: []
+        }
+        return await this.makeRequest(request);
+    }
+
     private async makeRequest<T>(httpRequest: HttpRequest): Promise<T> {
         const authToken = await this.authenticator.getAccessToken();
         if (authToken) {
