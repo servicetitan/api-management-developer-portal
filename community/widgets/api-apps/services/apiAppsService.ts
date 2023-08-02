@@ -46,10 +46,10 @@ export class ApiAppsService {
     }
 
     public async getClientSecrets(
-        projectId: string, appId: number, clientId: string
+        projectId: string, appId: number, environmentId: string, clientId: string
     ): Promise<ApiAppClientSecretContract[]> {
         const request: HttpRequest = {
-            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets`,
+            url: `/c/project/${projectId}/apps/${appId}/environments/${environmentId}/clients/${clientId}/secrets`,
             method: "GET",
             headers: []
         }
@@ -57,10 +57,10 @@ export class ApiAppsService {
     }
 
     public async generateClientSecret(
-        projectId: string, appId: number, clientId: string
+        projectId: string, appId: number, environmentId: string, clientId: string
     ): Promise<string> {
         const request: HttpRequest = {
-            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets`,
+            url: `/c/project/${projectId}/apps/${appId}/environments/${environmentId}/clients/${clientId}/secrets`,
             method: "POST",
             headers: []
         }
@@ -68,10 +68,10 @@ export class ApiAppsService {
     }
 
     public async deactivateClientSecret(
-        projectId: string, appId: number, clientId: string, secretId: number
+        projectId: string, appId: number, environmentId: string, clientId: string, secretId: number
     ): Promise<string> {
         const request: HttpRequest = {
-            url: `/c/project/${projectId}/apps/${appId}/clients/${clientId}/secrets/${secretId}`,
+            url: `/c/project/${projectId}/apps/${appId}/environments/${environmentId}/clients/${clientId}/secrets/${secretId}`,
             method: "DELETE",
             headers: []
         }

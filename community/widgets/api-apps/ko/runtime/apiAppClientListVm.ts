@@ -95,9 +95,9 @@ export class ApiAppClientListVm {
         try {
             const selectedClient = this.selectedClient();
             this.secretValue(await this.apiAppsService.generateClientSecret(
-                this.projectId, this.id, selectedClient.clientId));
+                this.projectId, this.id, selectedClient.environmentId, selectedClient.clientId));
             const clientSecrets = await this.apiAppsService.getClientSecrets(
-                this.projectId, this.id, selectedClient.clientId);
+                this.projectId, this.id, selectedClient.environmentId, selectedClient.clientId);
             this.clients.replace(selectedClient, { ...selectedClient, clientSecrets });
             this.activeModal(ModalInstance.SecretValue);
         }
@@ -117,9 +117,9 @@ export class ApiAppClientListVm {
             const selectedClient = this.selectedClient();
             const selectedSecret = this.selectedSecret();
             await this.apiAppsService.deactivateClientSecret(
-                this.projectId, this.id, selectedClient.clientId, selectedSecret.id);
+                this.projectId, this.id, selectedClient.environmentId, selectedClient.clientId, selectedSecret.id);
             const clientSecrets = await this.apiAppsService.getClientSecrets(
-                this.projectId, this.id, selectedClient.clientId);
+                this.projectId, this.id, selectedClient.environmentId, selectedClient.clientId);
             const updatedClient = { ...selectedClient, clientSecrets };
             this.clients.replace(selectedClient, updatedClient);
             if (updatedClient.clientSecrets.length > 0) {
