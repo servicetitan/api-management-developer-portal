@@ -59,10 +59,11 @@
                 <span data-bind="text: resourceOwner"></span>
                 <span data-bind="text: environmentName && `(${environmentName})`"></span>
             </td>
-            <td style="vertical-align: top;" data-bind="text: clientId || 'Not available yet'"></td>
+            <td style="vertical-align: top;" data-bind="text: clientId || 'Not connected yet'"></td>
             <td style="vertical-align: top;">
                 <!-- ko ifnot: clientSecrets.length -->
-                <span data-bind="visible: !clientId || $parent.secretManagementOption === 0">Not available yet</span>
+                <span data-bind="visible: !clientId">Not connected yet</span>
+                <span data-bind="visible: clientId && $parent.secretManagementOption === 0">Not available yet</span>
                 <button type="button" class="button" style="margin: 0; border: 0; padding: 6px 12px;"
                     data-bind="visible: clientId && $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#2270EE' : '#F4F4F4', color: enabled ? '#FFF' : '#AAA' }, click: $parent.clickGenerateSecret">Generate</button>
                 <!-- /ko -->
