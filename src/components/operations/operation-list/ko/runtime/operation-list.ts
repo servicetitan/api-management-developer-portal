@@ -192,8 +192,8 @@ export class OperationList {
 
     private async loadOfOperationsByTag(): Promise<void> {
         this.searchRequest.skip = (this.pageNumber() - 1) * Constants.defaultPageSize;
-
-        const pageOfOperationsByTag = await this.apiService.getOperationsByTags(this.selectedApiName(), this.searchRequest);
+        const apiName = this.selectedApiName();
+        const pageOfOperationsByTag = await this.apiService.getOperationsByTags(apiName, this.searchRequest);
         const operationGroups = pageOfOperationsByTag.value;
 
         operationGroups.sort((a, b) => {
@@ -206,13 +206,22 @@ export class OperationList {
             }
         });
 
-        operationGroups.forEach(g => {
-            g.items.forEach(i => i.urlTemplate = i.urlTemplate
+        const adjustUrl = apiName.startsWith("tenant-")
+            ? (urlTemplate: string) => urlTemplate
                 .replace('/tenant/{tenant}/booking-provider/', '')
                 .replace('/tenant/{tenant}/gps-provider/', '')
                 .replace('/tenant/{tenant}/report-category/', '')
                 .replace('/tenant/', '')
-            );
+            : (urlTemplate: string) => urlTemplate
+                .replace('/partner/{partner}/tenant/{tenantId}', '')
+                .replace('/partner/{partner}/tenant/{tenant}', '')
+                .replace('/partner/{partner}', '')
+                .replace('/vendor/{vendor}/supplier/{supplier}', '')
+                .replace('/vendor/{vendor}', '')
+                .replace('/application/{application}', '');
+
+        operationGroups.forEach(g => {
+            g.items.forEach(i => i.urlTemplate = adjustUrl(i.urlTemplate));
             g.items = g.items
                 .filter(i => !OperationList.hiddenEndpoints.has(`${i.method} ${i.urlTemplate}`))
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
