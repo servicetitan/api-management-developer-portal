@@ -39,7 +39,7 @@
             <div style="margin: 15px 0 2px 0; font-weight:600;">Integration Environment</div>
             <!-- /ko -->
             <span class="text-monospace text-wrap"
-                data-bind="text: $component.requestUrlSample, attr: { 'data-method': operation().method }"></span>
+                data-bind="text: $component.requestUrlSample().replace('//partnerapis', '//' + $component.api().name.split('-')[0]), attr: { 'data-method': operation().method }"></span>
 
             <!-- ko if: operation().parameters.length > 0 -->
             <h4>Request parameters</h4>
