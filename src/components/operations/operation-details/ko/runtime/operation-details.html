@@ -30,12 +30,12 @@
         <h3>Request</h3>
 
         <div class="collapsible-container">
-            <!-- ko if: $component.requestUrlSample().includes("-integration.servicetitan.io") -->
+            <!-- ko if: $component.api().name.startsWith("tenant-") && $component.requestUrlSample().includes("-integration.servicetitan.io") -->
             <div style="margin: 15px 0 2px 0; font-weight:600;">Production Environment</div>
             <span class="text-monospace text-wrap"
                 data-bind="text: $component.requestUrlSample().replace('-integration.servicetitan.io', '.servicetitan.io'), attr: { 'data-method': operation().method }"></span>
             <!-- /ko -->
-            <!-- ko if: $component.requestUrlSample().includes("-integration.servicetitan.io") -->
+            <!-- ko if: $component.api().name.startsWith("tenant-") && $component.requestUrlSample().includes("-integration.servicetitan.io") -->
             <div style="margin: 15px 0 2px 0; font-weight:600;">Integration Environment</div>
             <!-- /ko -->
             <span class="text-monospace text-wrap"
