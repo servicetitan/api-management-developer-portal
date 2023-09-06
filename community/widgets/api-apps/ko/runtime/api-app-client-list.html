@@ -61,18 +61,21 @@
             </td>
             <td style="vertical-align: top;" data-bind="text: clientId || 'Not connected yet'"></td>
             <td style="vertical-align: top;">
-                <!-- ko ifnot: clientSecrets.length -->
                 <span data-bind="visible: !clientId">Not connected yet</span>
-                <span data-bind="visible: clientId && $parent.secretManagementOption === 0">Not available yet</span>
+                <span data-bind="visible: clientId && !enabled">Not available yet</span>
+                <!-- ko if: enabled -->
+                <!-- ko ifnot: clientSecrets.length -->
+                <span data-bind="visible: $parent.secretManagementOption === 0">Not available yet</span>
                 <button type="button" class="button" style="margin: 0; border: 0; padding: 6px 12px;"
-                    data-bind="visible: clientId && $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#2270EE' : '#F4F4F4', color: enabled ? '#FFF' : '#AAA' }, click: $parent.clickGenerateSecret">Generate</button>
+                    data-bind="visible: $parent.secretManagementOption === 1, style: { 'background-color': enabled ? '#2270EE' : '#F4F4F4', color: enabled ? '#FFF' : '#AAA' }, click: $parent.clickGenerateSecret">Generate</button>
                 <!-- /ko -->
                 <!-- ko if: clientSecrets.length -->
                 <!-- ko foreach: clientSecrets -->
                 <div data-bind="text: `🗝 ${valuePrefix}...`"></div>
                 <!-- /ko -->
                 <button type="button" class="button" style="margin: 4px 0 0; border: 0; padding: 6px 12px;"
-                    data-bind="visible: $parent.secretManagementOption === 1, enable: enabled, style: { 'background-color': enabled ? '#EEE' : '#F4F4F4', color: enabled ? '#000' : '#AAA' }, click: $parent.clickManageSecrets">Manage</button>
+                    data-bind="visible: $parent.secretManagementOption === 1, style: { 'background-color': enabled ? '#EEE' : '#F4F4F4', color: enabled ? '#000' : '#AAA' }, click: $parent.clickManageSecrets">Manage</button>
+                <!-- /ko -->
                 <!-- /ko -->
             </td>
             <td style="vertical-align: top;" data-bind="text: currentScopesVersion || $parent.currentScopesVersion"></td>
