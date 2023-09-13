@@ -285,7 +285,7 @@
         <div class="col-9">
             <div>
                 To access ServiceTitan APIs, your app must authenticate itself by supplying a client ID and client secret.
-                Who will be responsible for configuring these credentials within the app?
+                Who will configure these credentials within the app?
             </div>
         </div>
     </div>
@@ -297,8 +297,8 @@
         <div class="col-8">
             <label for="secretManagementOption_1">I, the app developer, will configure the credentials on behalf of each tenant</label>
             <div style="color: #888;">
-                Select this option if, for example, you will manually enter the credentials into a file or database that can't be managed by tenants.
-                After a tenant has connected your app, you can obtain the credentials by navigating to My Apps and clicking the View Connections button for the app.
+                Select this option if you will manually store the credentials in a file, database, or key vault that is inaccessible to tenants.
+                After a tenant connects your app, retrieve these credentials by going to “My Apps” and clicking “View Connections”.
             </div>
         </div>
     </div>
@@ -310,8 +310,8 @@
         <div class="col-8">
             <label for="secretManagementOption_0">Tenants will configure the credentials themselves</label>
             <div style="color: #888;">
-                Select this option if your app has a configuration screen where tenants can enter their own credentials.
-                To obtain the credentials, tenants must sign in to the main ServiceTitan application and navigate to Settings > Integrations > API Application Access.
+                Select this option if tenants will input the credentials through your app’s configuration screen.
+                Tenants can obtain these credentials by signing in to ServiceTitan and going to Settings > Integrations > API Application Access.
             </div>
         </div>
     </div>
