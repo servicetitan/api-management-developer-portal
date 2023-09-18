@@ -284,7 +284,7 @@
     <div class="row">
         <div class="col-9">
             <div>
-                To access ServiceTitan APIs, your app must authenticate itself by supplying a client ID and client secret.
+                To access ServiceTitan APIs, your app must supply a client ID and client secret.
                 Who will configure these credentials within the app?
             </div>
         </div>
@@ -297,8 +297,8 @@
         <div class="col-8">
             <label for="secretManagementOption_1">I, the app developer, will configure the credentials on behalf of each tenant</label>
             <div style="color: #888;">
-                Select this option if you will manually store the credentials in a file, database, or key vault that is inaccessible to tenants.
-                After a tenant connects your app, retrieve these credentials by going to “My Apps” and clicking “View Connections”.
+                Select this option if you will securely store the credentials in a file, database, or key vault.
+                After a tenant connects your app, you can view the client ID and generate the client secret by going to “My Apps” and clicking “View Connections”.
             </div>
         </div>
     </div>
