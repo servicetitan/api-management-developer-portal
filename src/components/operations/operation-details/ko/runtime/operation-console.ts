@@ -347,6 +347,7 @@ export class OperationConsole {
     public async updateRequestSummary(): Promise<void> {
         const template = templates[this.selectedLanguage()];
         const codeSample = await TemplatingService.render(template, { console: ko.toJS(this.consoleOperation), showSecrets: this.secretsRevealed });
+        this.requestError(null);
 
         this.codeSample(codeSample);
     }
@@ -368,6 +369,7 @@ export class OperationConsole {
 
         if (clientErrors.length > 0) {
             validationGroup.showAllMessages();
+            this.requestError("Required fields are missing or incomplete. Please review the request and ensure all required information is provided. Look for highlighted areas with error indicators.");
             return;
         }
 
@@ -536,9 +538,18 @@ export class OperationConsole {
                     : consoleOperation.name;
 
                 saveAs(blob, fileName);
-            }
-            else {
-                const responseBody = response.body.toString();
+            } else {
+                let responseBody: string;
+                if(this.useCorsProxy()) {
+                    const contentEncodingHeader = response.headers.find(x => x.name === KnownHttpHeaders.ContentEncoding.toLowerCase());
+                    if (contentEncodingHeader?.value === "gzip") {
+                        responseBody = await this.decompressBody(response.body);
+                    } else {
+                        responseBody = response.body.toString();
+                    }
+                } else {
+                    responseBody = response.body.toString();
+                }
 
                 if (responseContentType && Utils.isJsonContentType(responseContentType)) {
                     this.responseBody(Utils.formatJson(responseBody));
@@ -570,6 +581,31 @@ export class OperationConsole {
 
     private ws: WebsocketClient;
 
+    private async decompressBody(body: Buffer): Promise<string> {
+        const ds = new DecompressionStream("gzip");
+        const dsWriter = ds.writable.getWriter();
+        dsWriter.write(body);
+        dsWriter.close();
+        const output: Uint8Array[] = [];
+        const reader = ds.readable.getReader();
+        let totalSize = 0;
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            output.push(value);
+            totalSize += value.byteLength;
+        }
+        const concatenated = new Uint8Array(totalSize);
+        let offset = 0;
+        for (const array of output) {
+            concatenated.set(array, offset);
+            offset += array.byteLength;
+        }
+        const decoder = new TextDecoder("utf-8");
+        return decoder.decode(concatenated);
+    }
+
     public async wsConnect(): Promise<void> {
         const operation = this.consoleOperation();
         const templateParameters = operation.templateParameters();
@@ -581,6 +617,7 @@ export class OperationConsole {
         const clientErrors = validationGroup();
 
         if (clientErrors.length > 0) {
+            this.requestError("Required fields are missing or incomplete. Please review the request and ensure all required information is provided. Look for highlighted areas with error indicators.");
             validationGroup.showAllMessages();
             return;
         }
