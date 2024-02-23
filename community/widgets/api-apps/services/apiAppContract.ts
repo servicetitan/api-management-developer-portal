@@ -9,6 +9,11 @@ export interface ApiAppContract {
     name: string;
     organizationName: string;
     homepageUrl: string;
+    emailAddress: string;
+    isThirdPartyDeveloper: boolean | null;
+    isPublicApp: boolean | null;
+    isMarketplaceApp: boolean;
+    description: string;
     scopesVersions: Array<ApiAppScopesVersionContract>;
     authScopes: Array<ApiAppScopeSelectContract>;
     applicationKey1: string;

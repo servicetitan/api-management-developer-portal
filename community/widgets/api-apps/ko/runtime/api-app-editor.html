@@ -37,10 +37,76 @@
 <!-- /ko -->
 <!-- ko ifnot: isLoading -->
 <div
+    style="border: 1px solid #A9D1FF; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; background-color: #ECF4FD; padding: 20px 30px; margin: 0 0 20px;"
+    data-bind="visible: newMarketplaceFieldsBannerVisible">
+    <p style="margin-bottom: 5px; font-weight: 600;">Please fill out the following newly added fields:</p>
+    <ul style="margin: 0; padding: 0 30px;">
+        <li>Email Address</li>
+        <li>Are you a third-party developer?</li>
+        <li>Who will use this app?</li>
+        <li>Description</li>
+    </ul>
+</div>
+<div
+    style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px; margin: 0 0 20px;">
+    <fieldset class="form">
+        <div style="margin: 25px 0 20px">
+            <span style="font-size: 20px;font-weight: 400;">Developer Details</span>
+            &nbsp;&nbsp;&nbsp;
+            <span style="color: #888;">All fields are required</span>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <div class="form-group">
+                    <label for="organizationName">Organization</label>
+                    <input type="text" id="organizationName" class="form-control form-control-default" maxlength="120"
+                        data-bind="textInput: organizationName" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
+                </div>
+                <div class="form-group">
+                    <label for="homepageUrl">Homepage</label>
+                    <input type="url" id="homepageUrl" placeholder="https://my-app.com" maxlength="250"
+                        class="form-control form-control-default" data-bind="textInput: homepageUrl" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
+                </div>
+                <div class="form-group">
+                    <label for="emailAddress">Email Address</label>
+                    <div style="color: #888; margin: -8px 0 15px;">
+                        Who can ServiceTitan contact about this app if needed?
+                    </div>
+                    <input type="email" id="emailAddress" maxlength="100"
+                        class="form-control form-control-default" data-bind="textInput: emailAddress" />
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: emailAddressValidation, visible: emailAddressValidation"></div>
+                </div>
+                <div class="form-group">
+                    <fieldset>
+                        <legend style="font-size: inherit;">Are you a third-party developer?</legend>
+                        <div>
+                            <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_true"
+                                data-bind="checked: isThirdPartyDeveloper, checkedValue: true">
+                            <label for="isThirdPartyDeveloper_true">Yes</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_false"
+                                data-bind="checked: isThirdPartyDeveloper, checkedValue: false">
+                            <label for="isThirdPartyDeveloper_false">No, I’m a ServiceTitan customer</label>
+                        </div>
+                        <div style="color: #E63717;"
+                            data-bind="text: isThirdPartyDeveloperValidation, visible: isThirdPartyDeveloperValidation"></div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div
     style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 30px; margin: 0 0 20px;">
     <fieldset class="form">
         <div style="margin: 25px 0 20px">
-            <span style="font-size: 20px;font-weight: 400;">App details</span>
+            <span style="font-size: 20px;font-weight: 400;">App Details</span>
             &nbsp;&nbsp;&nbsp;
             <span style="color: #888;">All fields are required</span>
         </div>
@@ -54,18 +120,44 @@
                         data-bind="text: nameValidation, visible: nameValidation"></div>
                 </div>
                 <div class="form-group">
-                    <label for="organizationName">Organization</label>
-                    <input type="text" id="organizationName" class="form-control form-control-default" maxlength="120"
-                        data-bind="textInput: organizationName" />
-                    <div style="color: #E63717; margin-top: -15px;"
-                        data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
+                    <fieldset>
+                        <legend style="font-size: inherit;">Who will use this app?</legend>
+                        <div>
+                            <input type="radio" name="isPublicApp" id="isPublicApp_false"
+                                data-bind="checked: isPublicApp, checkedValue: false">
+                            <label for="isPublicApp_false">A single ServiceTitan customer (private app)</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="isPublicApp" id="isPublicApp_true"
+                                data-bind="checked: isPublicApp, checkedValue: true">
+                            <label for="isPublicApp_true">Multiple ServiceTitan customers (public app)</label>
+                        </div>
+                        <div style="padding-left: 16px"
+                            data-bind="style: { opacity: isPublicApp() ? undefined : 0.4 }">
+                            <input type="checkbox" id="isMarketplaceApp"
+                                data-bind="checked: isMarketplaceApp, enable: isPublicApp">
+                            <label for="isMarketplaceApp">
+                                I’m interested in making my public app available through
+                                <a href="https://marketplace.servicetitan.com/" target="marketplace.servicetitan.com">marketplace.servicetitan.com</a>
+                            </label>
+                        </div>
+                        <div style="color: #E63717;"
+                            data-bind="text: isPublicAppValidation, visible: isPublicAppValidation"></div>
+                    </fieldset>
                 </div>
                 <div class="form-group">
-                    <label for="homepageUrl">Homepage</label>
-                    <input type="text" id="homepageUrl" placeholder="https://my-app.com" maxlength="250"
-                        class="form-control form-control-default" data-bind="textInput: homepageUrl" />
+                    <label for="description">Description</label>
+                    <div style="color: #888; margin: -8px 0 15px;">
+                        Describe your app in 100 words and provide a use case to showcase how it benefits ServiceTitan customers.
+                    </div>
+                    <textarea id="description" maxlength="10000" rows="3" style="margin-bottom: 0;"
+                        class="form-control form-control-default" data-bind="textInput: description">
+                    </textarea>
+                    <div style="color: #888; text-align: right;">
+                        <span data-bind="text: description().trim().length"></span>/<span data-bind="text: descriptionMaxLength"></span>
+                    </div>
                     <div style="color: #E63717; margin-top: -15px;"
-                        data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
+                        data-bind="text: descriptionValidation, visible: descriptionValidation"></div>
                 </div>
             </div>
         </div>

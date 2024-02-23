@@ -8,6 +8,8 @@ import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdat
 import { SecretManagementOption } from "../../services/secretManagementOption";
 
 export class ApiAppEditorVm {
+    public emailAddressMaxLength: number = 100;
+    public descriptionMaxLength: number = 10000;
     private maxTenants: number = 2000;
     private maxNetworks: number = 15;
     public id: number;
@@ -18,6 +20,11 @@ export class ApiAppEditorVm {
     public name: ko.Observable<string>;
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
+    public emailAddress: ko.Observable<string>;
+    public isThirdPartyDeveloper: ko.Observable<boolean | null>;
+    public isPublicApp: ko.Observable<boolean | null>;
+    public isMarketplaceApp: ko.Observable<boolean>;
+    public description: ko.Observable<string>;
     public externalDataGuid: ko.Observable<string>;
     public scopesVersions: Array<ApiAppScopesVersionContract>;
     public selectedScopesVersion: ko.Observable<ApiAppScopesVersionContract>;
@@ -31,6 +38,10 @@ export class ApiAppEditorVm {
     public nameValidation: ko.PureComputed<string>;
     public organizationNameValidation: ko.PureComputed<string>;
     public homepageUrlValidation: ko.PureComputed<string>;
+    public emailAddressValidation: ko.PureComputed<string>;
+    public isThirdPartyDeveloperValidation: ko.PureComputed<string>;
+    public isPublicAppValidation: ko.PureComputed<string>;
+    public descriptionValidation: ko.PureComputed<string>;
     public externalDataGuidValidation: ko.PureComputed<string>;
     public authScopesValidation: ko.PureComputed<string>;
     public tenantAppAvailabilityValidation: ko.PureComputed<string>;
@@ -39,6 +50,7 @@ export class ApiAppEditorVm {
     public saveButtonEnabled: ko.PureComputed<boolean>;
     public errorMessage: ko.Observable<string>;
     public isLoading: ko.Observable<boolean>;
+    public newMarketplaceFieldsBannerVisible: boolean;
     public allScopeGroups: Array<ApiAppScopeGroupContract>;
     public confirmDelete: ko.Observable<boolean>;
     private close: () => Promise<void>;
@@ -58,6 +70,11 @@ export class ApiAppEditorVm {
         this.name = ko.observable(apiApp.name);
         this.organizationName = ko.observable(apiApp.organizationName);
         this.homepageUrl = ko.observable(apiApp.homepageUrl);
+        this.emailAddress = ko.observable(apiApp.emailAddress);
+        this.isThirdPartyDeveloper = ko.observable(apiApp.isThirdPartyDeveloper);
+        this.isPublicApp = ko.observable(apiApp.isPublicApp);
+        this.isMarketplaceApp = ko.observable(apiApp.isMarketplaceApp);
+        this.description = ko.observable(apiApp.description);
         const readScopes = apiApp.authScopes.filter(s => s.read);
         const writeScopes = apiApp.authScopes.filter(s => s.write);
         this.scopesVersions = apiApp.scopesVersions;
@@ -86,6 +103,8 @@ export class ApiAppEditorVm {
         );
         this.secretManagementOption = ko.observable(apiApp.secretManagementOption);
         this.isLoading = ko.observable(false);
+        this.newMarketplaceFieldsBannerVisible = apiApp.id > 0 &&
+            (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
         this.close = close;
@@ -104,27 +123,51 @@ export class ApiAppEditorVm {
 
         this.nameValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            const name = this.name();
+            const name = this.name().trim();
             if (name.length == 0) return "Application name is empty";
             if (name.length > 120) return "Application name is more than 120 chars";
             return "";
         });
         this.organizationNameValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            const name = this.organizationName();
+            const name = this.organizationName().trim();
             if (name.length == 0) return "Organization name is empty";
             if (name.length > 120) return "Organization name is more than 120 chars";
             return "";
         });
         this.homepageUrlValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
-            const url = this.homepageUrl();
+            const url = this.homepageUrl().trim();
             if (url.length == 0) return "Url is empty";
             try {
                 new URL(url);
             } catch (e) {
                 return "Url is not valid";
             }
+            return "";
+        });
+        this.emailAddressValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            const emailAddress = this.emailAddress().trim();
+            if (emailAddress.length == 0) return "Email address is empty";
+            if (emailAddress.length > this.emailAddressMaxLength) return `Email address is more than ${this.emailAddressMaxLength} chars`;
+            return /^\s*[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\s*$/.test(emailAddress)
+                ? ""
+                : "Email address is not valid";
+        })
+        this.isThirdPartyDeveloperValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            return this.isThirdPartyDeveloper() !== null ? "" : "Option is not selected";
+        });
+        this.isPublicAppValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            return this.isPublicApp() !== null ? "" : "Option is not selected";
+        });
+        this.descriptionValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            const description = this.description().trim();
+            if (description.length == 0) return "Description is empty";
+            if (description.length > this.descriptionMaxLength) return `Description is more than ${this.descriptionMaxLength} chars`;
             return "";
         });
         this.externalDataGuidValidation = ko.pureComputed(() => {
@@ -159,6 +202,10 @@ export class ApiAppEditorVm {
             this.nameValidation().length == 0 &&
             this.organizationNameValidation().length == 0 &&
             this.homepageUrlValidation().length == 0 &&
+            this.emailAddressValidation().length == 0 &&
+            this.isThirdPartyDeveloperValidation().length == 0 &&
+            this.isPublicAppValidation().length == 0 &&
+            this.descriptionValidation().length == 0 &&
             this.authScopesValidation().length == 0 &&
             this.tenantAppAvailabilityValidation().length == 0 &&
             this.networkAppAvailabilityValidation().length == 0 &&
@@ -216,9 +263,14 @@ export class ApiAppEditorVm {
         this.isLoading(true);
         const apiApp: ApiAppCreateOrUpdateContract = {
             id: this.id,
-            name: this.name(),
-            organizationName: this.organizationName(),
-            homepageUrl: this.homepageUrl(),
+            name: this.name().trim(),
+            organizationName: this.organizationName().trim(),
+            homepageUrl: this.homepageUrl().trim(),
+            emailAddress: this.emailAddress().trim(),
+            isThirdPartyDeveloper: this.isThirdPartyDeveloper(),
+            isPublicApp: this.isPublicApp(),
+            isMarketplaceApp: this.isMarketplaceApp(),
+            description: this.description().trim(),
             authScopes: this.authScopes(),
             externalDataGuid: this.externalDataGuid(),
             deleted: this.deleted(),
