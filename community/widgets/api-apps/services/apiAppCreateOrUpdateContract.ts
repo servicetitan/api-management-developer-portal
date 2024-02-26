@@ -11,6 +11,7 @@ export interface ApiAppCreateOrUpdateContract {
     isPublicApp: boolean;
     isMarketplaceApp: boolean;
     description: string;
+    appCategoryId: number;
     authScopes: Array<string>;
     externalDataGuid: string;
     deleted: boolean;

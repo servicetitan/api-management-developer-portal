@@ -45,6 +45,7 @@
         <li>Are you a third-party developer?</li>
         <li>Who will use this app?</li>
         <li>Description</li>
+        <li>App Category</li>
     </ul>
 </div>
 <div
@@ -158,6 +159,14 @@
                     </div>
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: descriptionValidation, visible: descriptionValidation"></div>
+                </div>
+                <div class="form-group">
+                    <label for="appCategory">App Category</label>
+                    <select id="appCategory" class="form-control form-control-default"
+                        data-bind="appCategories: appCategories, value: appCategoryId">
+                    </select>
+                    <div style="color: #E63717; margin-top: -15px;"
+                        data-bind="text: appCategoryIdValidation, visible: appCategoryIdValidation"></div>
                 </div>
             </div>
         </div>

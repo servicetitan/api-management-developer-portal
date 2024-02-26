@@ -14,6 +14,7 @@ export interface ApiAppContract {
     isPublicApp: boolean | null;
     isMarketplaceApp: boolean;
     description: string;
+    appCategoryId: number | null;
     scopesVersions: Array<ApiAppScopesVersionContract>;
     authScopes: Array<ApiAppScopeSelectContract>;
     applicationKey1: string;

@@ -1,6 +1,8 @@
 import * as ko from "knockout";
+import "../bindingHandlers/appCategories";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { ApiAppsService } from "../../services/apiAppsService";
+import { ApiAppCategoryContract } from "../../services/apiAppCategoryContract";
 import { ApiAppScopeGroupContract } from "../../services/apiAppScopeGroupContract";
 import { ApiAppScopesVersionContract } from "../../services/apiAppScopesVersionContract";
 import { ApiAppAvailabilityCreateOrUpdateContract } from "../../services/apiAppAvailabilityCreateOrUpdateContract";
@@ -25,6 +27,7 @@ export class ApiAppEditorVm {
     public isPublicApp: ko.Observable<boolean | null>;
     public isMarketplaceApp: ko.Observable<boolean>;
     public description: ko.Observable<string>;
+    public appCategoryId: ko.Observable<number | null>;
     public externalDataGuid: ko.Observable<string>;
     public scopesVersions: Array<ApiAppScopesVersionContract>;
     public selectedScopesVersion: ko.Observable<ApiAppScopesVersionContract>;
@@ -42,6 +45,7 @@ export class ApiAppEditorVm {
     public isThirdPartyDeveloperValidation: ko.PureComputed<string>;
     public isPublicAppValidation: ko.PureComputed<string>;
     public descriptionValidation: ko.PureComputed<string>;
+    public appCategoryIdValidation: ko.PureComputed<string>;
     public externalDataGuidValidation: ko.PureComputed<string>;
     public authScopesValidation: ko.PureComputed<string>;
     public tenantAppAvailabilityValidation: ko.PureComputed<string>;
@@ -60,6 +64,7 @@ export class ApiAppEditorVm {
         apiApp: ApiAppContract,
         private projectId: string,
         allScopeGroups: Array<ApiAppScopeGroupContract>,
+        public appCategories: Array<ApiAppCategoryContract>,
         close: () => Promise<void>
     ) {
         this.id = apiApp.id;
@@ -75,6 +80,7 @@ export class ApiAppEditorVm {
         this.isPublicApp = ko.observable(apiApp.isPublicApp);
         this.isMarketplaceApp = ko.observable(apiApp.isMarketplaceApp);
         this.description = ko.observable(apiApp.description);
+        this.appCategoryId = ko.observable(apiApp.appCategoryId);
         const readScopes = apiApp.authScopes.filter(s => s.read);
         const writeScopes = apiApp.authScopes.filter(s => s.write);
         this.scopesVersions = apiApp.scopesVersions;
@@ -104,7 +110,7 @@ export class ApiAppEditorVm {
         this.secretManagementOption = ko.observable(apiApp.secretManagementOption);
         this.isLoading = ko.observable(false);
         this.newMarketplaceFieldsBannerVisible = apiApp.id > 0 &&
-            (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description);
+            (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description || !apiApp.appCategoryId);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
         this.close = close;
@@ -170,6 +176,10 @@ export class ApiAppEditorVm {
             if (description.length > this.descriptionMaxLength) return `Description is more than ${this.descriptionMaxLength} chars`;
             return "";
         });
+        this.appCategoryIdValidation = ko.pureComputed(() => {
+            if (!this.validationActivated()) return "";
+            return this.appCategoryId() !== null ? "" : "Category is not selected";
+        });
         this.externalDataGuidValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
             const guid = this.externalDataGuid();
@@ -206,6 +216,7 @@ export class ApiAppEditorVm {
             this.isThirdPartyDeveloperValidation().length == 0 &&
             this.isPublicAppValidation().length == 0 &&
             this.descriptionValidation().length == 0 &&
+            this.appCategoryIdValidation().length == 0 &&
             this.authScopesValidation().length == 0 &&
             this.tenantAppAvailabilityValidation().length == 0 &&
             this.networkAppAvailabilityValidation().length == 0 &&
@@ -271,6 +282,7 @@ export class ApiAppEditorVm {
             isPublicApp: this.isPublicApp(),
             isMarketplaceApp: this.isMarketplaceApp(),
             description: this.description().trim(),
+            appCategoryId: this.appCategoryId(),
             authScopes: this.authScopes(),
             externalDataGuid: this.externalDataGuid(),
             deleted: this.deleted(),

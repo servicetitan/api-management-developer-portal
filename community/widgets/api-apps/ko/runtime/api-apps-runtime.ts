@@ -74,6 +74,7 @@ export class ApiAppsRuntime {
             isPublicApp: null,
             isMarketplaceApp: false,
             description: "",
+            appCategoryId: null,
             scopesVersions: [],
             authScopes: [],
             applicationKey1: "",
@@ -93,6 +94,7 @@ export class ApiAppsRuntime {
             apiApp,
             this.pageContract().projectId,
             this.pageContract().scopeGroups,
+            this.pageContract().appCategories,
             async () => { this.route("list"); await this.initialize(); }
         );
 
