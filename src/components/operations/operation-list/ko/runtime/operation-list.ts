@@ -25,8 +25,10 @@ export class OperationList {
     private static readonly hiddenEndpoints: Set<string> = new Set<string>([
         'PUT {tenant}/jobs/{id}/hold',
         'PUT {tenant}/jobs/{id}/complete',
+        'POST {tenant}/jobs/{id}/messages',
         'POST {tenant}/jobs/{job}/timesheets',
         'PUT {tenant}/jobs/{job}/timesheets/{id}',
+        'POST {tenant}/projects/{id}/messages',
     ]);
 
     public readonly selectedApiName: ko.Observable<string>;
