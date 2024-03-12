@@ -12,7 +12,7 @@ import { SecretManagementOption } from "../../services/secretManagementOption";
 export class ApiAppEditorVm {
     public emailAddressMaxLength: number = 100;
     public descriptionMaxLength: number = 10000;
-    private maxTenants: number = 2000;
+    private maxTenants: number = 4000;
     private maxNetworks: number = 15;
     public id: number;
     public publicId: string;
