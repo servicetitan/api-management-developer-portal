@@ -3,6 +3,7 @@ import template from "./api-apps-runtime.html";
 import apiAppListTemplate from "./api-app-list.html";
 import apiAppEditorTemplate from "./api-app-editor.html";
 import apiAppClientListTemplate from "./api-app-client-list.html";
+import apiAppApiUsageReportTemplate from "./api-app-api-usage-report.html";
 import apiAppErrorTemplate from "./api-app-error.html";
 import { Component, RuntimeComponent, OnMounted, OnDestroyed, Param } from "@paperbits/common/ko/decorators";
 import { widgetRuntimeSelector } from "../../constants";
@@ -10,6 +11,7 @@ import { ApiAppsService } from "../../services/apiAppsService";
 import { ApiAppsPageContract } from "../../services/apiAppsPageContract";
 import { ApiAppEditorVm } from "./apiAppEditorVm"
 import { ApiAppClientListVm } from "./apiAppClientListVm";
+import { ApiAppApiUsageReportVm } from "./apiAppApiUsageReportVm";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { SecretManagementOption } from "../../services/secretManagementOption";
 
@@ -23,15 +25,17 @@ import { SecretManagementOption } from "../../services/secretManagementOption";
         apiAppList: apiAppListTemplate,
         apiAppEditor: apiAppEditorTemplate,
         apiAppClientList: apiAppClientListTemplate,
+        apiAppApiUsageReport: apiAppApiUsageReportTemplate,
         apiAppError: apiAppErrorTemplate
     }
 })
 export class ApiAppsRuntime {
     public readonly isLoading: ko.Observable<boolean>;
-    public readonly route: ko.Observable<"list" | "editor" | "clients">;
+    public readonly route: ko.Observable<"list" | "editor" | "clients" | "api-usage-report">;
     public readonly searchPattern: ko.Observable<string>;
     public readonly apiAppEditor: ko.Observable<ApiAppEditorVm>;
     public readonly apiAppClientList: ko.Observable<ApiAppClientListVm>;
+    public readonly apiAppApiUsageReport: ko.Observable<ApiAppApiUsageReportVm>;
     public readonly errorMessage: ko.Observable<string>;
 
     private pageContract: ko.Observable<ApiAppsPageContract>;
@@ -44,6 +48,7 @@ export class ApiAppsRuntime {
         this.searchPattern = ko.observable("");
         this.apiAppEditor = ko.observable();
         this.apiAppClientList = ko.observable();
+        this.apiAppApiUsageReport = ko.observable();
         this.pageContract = ko.observable();
         this.errorMessage = ko.observable("");
     }
@@ -83,6 +88,8 @@ export class ApiAppsRuntime {
             tenantAppAvailabilityList: this.pageContract().defaultTenantAppAvailabilityList,
             networkAppAvailabilityList: [],
             secretManagementOption: SecretManagementOption.Developer,
+            createdOn: "",
+            apiUsageReportMinDate: "",
         }
 
         this.clickEditApiApp(emptyApiApp);
@@ -112,6 +119,18 @@ export class ApiAppsRuntime {
 
         this.apiAppClientList(clientList);
         this.route("clients");
+    }
+
+    public clickDownloadApiAppApiUsageReport(apiApp: ApiAppContract) {
+        const apiUsageReport = new ApiAppApiUsageReportVm(
+            this.apiAppsService,
+            apiApp,
+            this.pageContract().projectId,
+            async () => { this.route("list"); }
+        )
+
+        this.apiAppApiUsageReport(apiUsageReport);
+        this.route("api-usage-report");
     }
 
     @OnDestroyed()

@@ -23,4 +23,6 @@ export interface ApiAppContract {
     tenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;
     networkAppAvailabilityList: Array<ApiAppAvailabilityContract>;
     secretManagementOption: SecretManagementOption;
+    createdOn: string;
+    apiUsageReportMinDate: string;
 }
