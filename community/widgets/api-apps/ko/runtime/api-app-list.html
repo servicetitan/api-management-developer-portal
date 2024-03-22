@@ -42,12 +42,18 @@
         <span data-bind="text: 'Access to ' + authScopes.map(s => s.displayName).join(', ') + (authScopes.length > 1 ? ' scopes' : ' scope')"></span>
     </div>
     <div class="col-3" style="display: flex; align-items: center; justify-content: flex-end;">
-        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 9px 16px;"
-            data-bind="click: $parent.clickEditApiApp">Edit</button>
-        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 9px 16px;"
-            data-bind="click: $parent.clickViewApiAppClients">View Connections</button>
-        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 9px 16px;"
-            data-bind="click: $parent.clickDownloadApiAppApiUsageReport">API Usage Report</button>
+        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 8px;" title="Edit" aria-label="Edit"
+            data-bind="click: $parent.clickEditApiApp">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
+        </button>
+        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 8px;" title="App Connections" aria-label="App Connections"
+            data-bind="click: $parent.clickViewApiAppClients">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+        </button>
+        <button type="button" class="button" style="border: 0; background-color: #eee; padding: 8px;" title="API Usage Report" aria-label="API Usage Report"
+            data-bind="click: $parent.clickDownloadApiAppApiUsageReport">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M160-160v-320h160v320H160Zm240 0v-640h160v640H400Zm240 0v-440h160v440H640Z"/></svg>
+        </button>
     </div>
 </div>
 <!-- /ko -->
