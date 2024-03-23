@@ -69,8 +69,27 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <button type="button" class="button" style="padding: 7px 20px 8px;" data-bind="click: clickDownload">Download CSV File</button>
+                <button type="button" class="button" style="padding: 7px 20px 8px;"
+                    data-bind="click: clickDownload, hidden: isDownloading">
+                    Download CSV File
+                </button>
+                <!-- ko if: isDownloading -->
+                <spinner></spinner>
+                <!-- /ko -->
             </div>
         </div>
     </fieldset>
 </div>
+<!-- ko if: noDataModalVisible -->
+<modal params="title: 'No Data Available', close: clickCloseNoDataModal">
+    <p>
+        There were no successful API calls during the specified date range.
+    </p>
+    <p data-bind="visible: endDateParsed().getTime() + 24 * 60 * 60 * 1000 > Date.now()">
+        Note that data from the past 24 hours might not be fully available yet.
+    </p>
+    <div style="margin-top: 20px; text-align: right;">
+        <button type="button" class="button" data-bind="click: clickCloseNoDataModal">Close</button>
+    </div>
+</modal>
+<!-- /ko -->

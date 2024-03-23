@@ -1,10 +1,19 @@
 import { HttpClient, HttpRequest, HttpResponse } from "@paperbits/common/http";
+import { ApiAppApiUsageReportContract } from "./apiAppApiUsageReportContract";
 import { ApiAppCreateOrUpdateContract } from "./apiAppCreateOrUpdateContract";
 import { ApiAppContract } from "./apiAppContract";
 import { ApiAppClientContract } from "./apiAppClientContract";
 import { ApiAppClientSecretContract } from "./apiAppClientSecretContract";
 import { ApiAppsPageContract } from "./apiAppsPageContract";
 import { IAuthenticator } from "../../../../src/authentication";
+
+function formatYYYYMMDD(date: Date) {
+    return [
+        date.getFullYear().toString(),
+        ("0" + (date.getMonth() + 1).toString()).slice(-2),
+        ("0" + date.getDate().toString()).slice(-2),
+    ].join("-");
+}
 
 export class ApiAppsService {
     constructor(
@@ -76,6 +85,22 @@ export class ApiAppsService {
             headers: []
         }
         return await this.makeRequest(request);
+    }
+
+    public async getApiUsageReport(
+        projectId: string,
+        appId: number,
+        startDate: Date,
+        endDate: Date
+    ): Promise<ApiAppApiUsageReportContract> {
+        const request: HttpRequest = {
+            url: `/c/project/${projectId}/apps/${appId}/api-usage-report?startDate=${formatYYYYMMDD(
+                startDate
+            )}&endDate=${formatYYYYMMDD(endDate)}`,
+            method: "GET",
+            headers: []
+        }
+        return this.makeRequest(request);
     }
 
     private async makeRequest<T>(httpRequest: HttpRequest): Promise<T> {

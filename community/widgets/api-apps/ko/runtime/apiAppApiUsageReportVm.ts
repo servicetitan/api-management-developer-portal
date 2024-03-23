@@ -1,6 +1,7 @@
 import * as ko from "knockout";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { ApiAppsService } from "../../services/apiAppsService";
+import "./modal";
 
 // Attempts to parse a user-entered date in the format MM/DD/YYYY (with - and . also allowed as separators)
 function parseDate(value: string): Date {
@@ -28,6 +29,8 @@ export class ApiAppApiUsageReportVm {
     public endDateValidation: ko.PureComputed<string>;
     public validationActivated: ko.Observable<boolean>;
     public isValid: ko.PureComputed<boolean>;
+    public isDownloading: ko.Observable<boolean>;
+    public noDataModalVisible: ko.Observable<boolean>;
 
     constructor(
         private apiAppsService: ApiAppsService,
@@ -58,6 +61,8 @@ export class ApiAppApiUsageReportVm {
             if (isNaN(+endDate)) return "Enter a valid date (MM/DD/YYYY).";
             if (endDate < this.startDateParsed())
                 return "The End Date cannot be earlier than the Start Date.";
+            if (endDate > new Date())
+                return "The End Date cannot be later than today.";
             return "";
         });
         this.validationActivated = ko.observable(false);
@@ -65,6 +70,8 @@ export class ApiAppApiUsageReportVm {
             this.startDateValidation() === "" &&
             this.endDateValidation() === ""
         );
+        this.isDownloading = ko.observable(false);
+        this.noDataModalVisible = ko.observable(false);
     }
 
     public async clickBack() {
@@ -76,5 +83,75 @@ export class ApiAppApiUsageReportVm {
         if (!this.isValid()) {
             return;
         }
+
+        this.isDownloading(true);
+        try {
+            const report = await this.apiAppsService.getApiUsageReport(
+                this.projectId, this.id, this.startDateParsed(), this.endDateParsed());
+            const tenants = Object.entries(report.tenants);
+            if (tenants.length === 0) {
+                this.noDataModalVisible(true);
+                return;
+            }
+
+            const content = [
+                [
+                    "App ID",
+                    "Tenant Name",
+                    "Tenant ID",
+                    "API Name",
+                    "HTTP Method",
+                    "Endpoint Name",
+                    "Successful Calls",
+                ].join(","),
+                ...tenants
+                    .map(tenantEntry =>
+                        report.endpoints
+                            .map((endpoint, endpointIndex) => ({
+                                endpoint,
+                                successfulCallCount:
+                                    tenantEntry[1].successfulCallCounts[endpointIndex],
+                            }))
+                            .filter(({ successfulCallCount }) => successfulCallCount > 0)
+                            .map(({ endpoint, successfulCallCount }) =>
+                                [
+                                    this.publicId,
+                                    tenantEntry[1].name,
+                                    tenantEntry[0],
+                                    endpoint.apiName,
+                                    endpoint.httpMethod,
+                                    endpoint.endpointName,
+                                    successfulCallCount.toString(),
+                                ].join(",")
+                            )
+                    )
+                    .flat(1),
+                "",
+            ].join("\n");
+            const blob = new Blob([content], { type: "text/csv", endings: "native" });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.download =
+                [
+                    this.name.replace(/[^- .,0-9A-Z]/gi, "_"),
+                    this.publicId,
+                    report.firstBinDateTime.replace(/[-T:]/gi, "").slice(0, -2),
+                    report.lastBinDateTime.replace(/[-T:]/gi, "").slice(0, -2),
+                ].join("_") + ".csv";
+            document.body.appendChild(anchor);
+            anchor.click();
+            setTimeout(() => {
+                document.body.removeChild(anchor);
+                URL.revokeObjectURL(url);
+            }, 0);
+        }
+        finally {
+            this.isDownloading(false);
+        }
+    }
+
+    public clickCloseNoDataModal() {
+        this.noDataModalVisible(false);
     }
 }
