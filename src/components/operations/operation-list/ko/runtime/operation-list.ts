@@ -41,7 +41,7 @@ export class OperationList {
     public readonly pattern: ko.Observable<string>;
     public readonly tags: ko.Observable<Tag[]>;
     public readonly pageNumber: ko.Observable<number>;
-    public readonly totalPages: ko.Observable<number>;
+    public readonly nextPage: ko.Observable<boolean>;
     public readonly tagScope: ko.Computed<string>;
     public readonly showUrlPath: ko.Observable<boolean>;
     public readonly apiType: ko.Observable<string>;
@@ -67,10 +67,11 @@ export class OperationList {
         this.groupByTag = ko.observable(false);
         this.defaultGroupByTagToEnabled = ko.observable(false);
         this.groupTagsExpanded = ko.observable(new Set<string>());
+        this.defaultAllGroupTagsExpanded = ko.observable(false);
         this.pattern = ko.observable();
         this.tags = ko.observable([]);
         this.pageNumber = ko.observable(1);
-        this.totalPages = ko.observable(0);
+        this.nextPage = ko.observable();
 
         this.tagScope = ko.computed(() => this.selectedApiName() ? `apis/${this.selectedApiName()}` : "");
         this.apiType = ko.observable();
@@ -90,6 +91,9 @@ export class OperationList {
 
     @Param()
     public defaultGroupByTagToEnabled: ko.Observable<boolean>;
+
+    @Param()
+    public defaultAllGroupTagsExpanded: ko.Observable<boolean>;
 
     @Param()
     public detailsPageUrl: ko.Observable<string>;
@@ -122,6 +126,12 @@ export class OperationList {
 
         this.pageNumber
             .subscribe(this.loadOperations);
+
+        if (this.defaultAllGroupTagsExpanded()) {
+            const groups = new Set<string>()
+            this.operationGroups().map(g => {groups.add(g.tag)})
+            this.groupTagsExpanded(groups);
+        }
     }
 
     private async onRouteChange(): Promise<void> {
@@ -141,7 +151,6 @@ export class OperationList {
     }
 
     public async loadOperations(): Promise<void> {
-
         if (this.groupByTag()) {
             this.operationGroups([]);
             this.searchRequest = { pattern: this.pattern(), tags: this.tags(), grouping: "tag" };
@@ -193,8 +202,13 @@ export class OperationList {
     }
 
     private async loadOfOperationsByTag(): Promise<void> {
-        this.searchRequest.skip = (this.pageNumber() - 1) * Constants.defaultPageSize;
         const apiName = this.selectedApiName();
+        if (!apiName) {
+            return;
+        }
+
+        this.searchRequest.skip = (this.pageNumber() - 1) * Constants.defaultPageSize;
+
         const pageOfOperationsByTag = await this.apiService.getOperationsByTags(apiName, this.searchRequest);
         const operationGroups = pageOfOperationsByTag.value;
 
@@ -231,12 +245,11 @@ export class OperationList {
 
         this.operationGroups(operationGroups);
         this.groupTagsExpanded(new Set<string>(operationGroups.map(g => g.tag)));
-        this.totalPages(Math.ceil(pageOfOperationsByTag.count / Constants.defaultPageSize));
+        this.nextPage(!!pageOfOperationsByTag.nextLink);
     }
 
     private async loadPageOfOperations(): Promise<void> {
         const apiName = this.selectedApiName();
-
         if (!apiName) {
             return;
         }
@@ -245,7 +258,7 @@ export class OperationList {
         const pageOfOperations = await this.apiService.getOperations(`apis/${apiName}`, this.searchRequest);
 
         this.operations(pageOfOperations.value);
-        this.totalPages(Math.ceil(pageOfOperations.count / Constants.defaultPageSize));
+        this.nextPage(!!pageOfOperations.nextLink);
     }
 
     public selectOperation(operation: Operation): void {

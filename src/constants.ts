@@ -293,7 +293,7 @@ export enum GrantTypes {
     password = "password"
 }
 
-export const managementApiVersion = "2021-08-01";
+export const managementApiVersion = "2022-04-01-preview";
 
 /**
  * Header name to track developer portal type.
@@ -315,7 +315,7 @@ export const iframeAllows = "clipboard-read; clipboard-write; camera; microphone
 /**
  * List of allowed attributes for a sandboxed iframe.
  */
-export const iframeSandboxAllows = "allow-scripts allow-modals allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation allow-presentation allow-orientation-lock allow-pointer-lock";
+export const iframeSandboxAllows = "allow-scripts allow-modals allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation allow-pointer-lock";
 
 /**
  * List of downloadable content types
@@ -332,4 +332,10 @@ export const overrideConfigSessionKeyPrefix = OVERRIDE_PORT_KEY + "_";
 /**
  * Key under which is saved in session storage a boolean for dismissed Custom Widget override toasts
  */
-export const overrideToastSessionKeyPrefix = "MS_APIM_CW_override_toast_dismissed_"
+export const overrideToastSessionKeyPrefix = "MS_APIM_CW_override_toast_dismissed_";
+
+/**
+ * Styling constants
+ */
+export const mobileBreakpoint = 768;
+export const smallMobileBreakpoint = 400;
