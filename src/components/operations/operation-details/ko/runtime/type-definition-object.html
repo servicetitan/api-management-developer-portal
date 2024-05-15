@@ -56,7 +56,7 @@
                     data-bind="text: item, attr: { href: $component.getReferenceUrl(item), title: item }"></a>
                 <!-- /ko -->
                 <!-- ko foreach: { data: property.type.combination, as: 'item' } -->
-                <!-- ko if: $index() > 0 -->,
+                <!-- ko if: $index() > 0 -->,<br>
                 <!-- /ko -->
                 <!-- ko if: item.displayAs === 'reference' -->
                 <a class="text-monospace"
