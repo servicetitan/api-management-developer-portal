@@ -1,5 +1,6 @@
 import * as ko from "knockout";
 import "../bindingHandlers/appCategories";
+import "../bindingHandlers/readOnly";
 import { ApiAppContract } from "../../services/apiAppContract";
 import { ApiAppsService } from "../../services/apiAppsService";
 import { ApiAppCategoryContract } from "../../services/apiAppCategoryContract";
@@ -109,7 +110,7 @@ export class ApiAppEditorVm {
         );
         this.secretManagementOption = ko.observable(apiApp.secretManagementOption);
         this.isLoading = ko.observable(false);
-        this.newMarketplaceFieldsBannerVisible = apiApp.id > 0 &&
+        this.newMarketplaceFieldsBannerVisible = apiApp.id > 0 && !apiApp.deleted &&
             (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description || !apiApp.appCategoryId);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);

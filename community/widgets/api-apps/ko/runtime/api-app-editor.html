@@ -49,6 +49,11 @@
     </ul>
 </div>
 <div
+    style="border: 1px solid #A9D1FF; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; background-color: #ECF4FD; padding: 20px 30px; margin: 0 0 20px;"
+    data-bind="visible: deleted">
+    <p style="margin-bottom: 0; font-weight: 600;">This app has been deleted and cannot be modified.</p>
+</div>
+<div
     style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px; margin: 0 0 20px;">
     <fieldset class="form">
         <div style="margin: 25px 0 20px">
@@ -61,14 +66,14 @@
                 <div class="form-group">
                     <label for="organizationName">Organization</label>
                     <input type="text" id="organizationName" class="form-control form-control-default" maxlength="120"
-                        data-bind="textInput: organizationName" />
+                        data-bind="textInput: organizationName, readOnly: deleted" />
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: organizationNameValidation, visible: organizationNameValidation"></div>
                 </div>
                 <div class="form-group">
                     <label for="homepageUrl">Homepage</label>
                     <input type="url" id="homepageUrl" placeholder="https://my-app.com" maxlength="250"
-                        class="form-control form-control-default" data-bind="textInput: homepageUrl" />
+                        class="form-control form-control-default" data-bind="textInput: homepageUrl, readOnly: deleted" />
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: homepageUrlValidation, visible: homepageUrlValidation"></div>
                 </div>
@@ -78,7 +83,7 @@
                         Who can ServiceTitan contact about this app if needed?
                     </div>
                     <input type="email" id="emailAddress" maxlength="100"
-                        class="form-control form-control-default" data-bind="textInput: emailAddress" />
+                        class="form-control form-control-default" data-bind="textInput: emailAddress, readOnly: deleted" />
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: emailAddressValidation, visible: emailAddressValidation"></div>
                 </div>
@@ -87,12 +92,12 @@
                         <legend style="font-size: inherit;">Are you a third-party developer?</legend>
                         <div>
                             <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_true"
-                                data-bind="checked: isThirdPartyDeveloper, checkedValue: true">
+                                data-bind="checked: isThirdPartyDeveloper, checkedValue: true, disable: deleted">
                             <label for="isThirdPartyDeveloper_true">Yes</label>
                         </div>
                         <div>
                             <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_false"
-                                data-bind="checked: isThirdPartyDeveloper, checkedValue: false">
+                                data-bind="checked: isThirdPartyDeveloper, checkedValue: false, disable: deleted">
                             <label for="isThirdPartyDeveloper_false">No, I’m a ServiceTitan customer</label>
                         </div>
                         <div style="color: #E63717;"
@@ -116,7 +121,7 @@
                 <div class="form-group">
                     <label for="name">Application Name</label>
                     <input type="text" id="name" class="form-control form-control-default" maxlength="120"
-                        data-bind="textInput: name" />
+                        data-bind="textInput: name, readOnly: deleted" />
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: nameValidation, visible: nameValidation"></div>
                 </div>
@@ -125,18 +130,18 @@
                         <legend style="font-size: inherit;">Who will use this app?</legend>
                         <div>
                             <input type="radio" name="isPublicApp" id="isPublicApp_false"
-                                data-bind="checked: isPublicApp, checkedValue: false">
+                                data-bind="checked: isPublicApp, checkedValue: false, disable: deleted">
                             <label for="isPublicApp_false">A single ServiceTitan customer (private app)</label>
                         </div>
                         <div>
                             <input type="radio" name="isPublicApp" id="isPublicApp_true"
-                                data-bind="checked: isPublicApp, checkedValue: true">
+                                data-bind="checked: isPublicApp, checkedValue: true, disable: deleted">
                             <label for="isPublicApp_true">Multiple ServiceTitan customers (public app)</label>
                         </div>
                         <div style="padding-left: 16px"
                             data-bind="style: { opacity: isPublicApp() ? undefined : 0.4 }">
                             <input type="checkbox" id="isMarketplaceApp"
-                                data-bind="checked: isMarketplaceApp, enable: isPublicApp">
+                                data-bind="checked: isMarketplaceApp, enable: !deleted() && isPublicApp()">
                             <label for="isMarketplaceApp">
                                 I’m interested in making my public app available through
                                 <a href="https://marketplace.servicetitan.com/" target="marketplace.servicetitan.com">marketplace.servicetitan.com</a>
@@ -152,7 +157,7 @@
                         Describe your app in 100 words and provide a use case to showcase how it benefits ServiceTitan customers.
                     </div>
                     <textarea id="description" maxlength="10000" rows="3" style="margin-bottom: 0;"
-                        class="form-control form-control-default" data-bind="textInput: description">
+                        class="form-control form-control-default" data-bind="textInput: description, readOnly: deleted">
                     </textarea>
                     <div style="color: #888; text-align: right;">
                         <span data-bind="text: description().trim().length"></span>/<span data-bind="text: descriptionMaxLength"></span>
@@ -163,7 +168,7 @@
                 <div class="form-group">
                     <label for="appCategory">App Category</label>
                     <select id="appCategory" class="form-control form-control-default"
-                        data-bind="appCategories: appCategories, value: appCategoryId">
+                        data-bind="appCategories: appCategories, value: appCategoryId, disable: deleted">
                     </select>
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: appCategoryIdValidation, visible: appCategoryIdValidation"></div>
@@ -222,7 +227,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="button" class="button" style="padding: 7px 20px 8px;"
-                    data-bind="click: clickAddTenantAppAvailability">
+                    data-bind="click: clickAddTenantAppAvailability, disable: deleted">
                     + Add Tenant
                 </button>
             </div>
@@ -231,15 +236,15 @@
         <div class="row">
             <div class="col-5" style="padding-right: 0;">
                 <input type="text" id="ResourceOwner" placeholder="Tenant ID" class="form-control form-control-default"
-                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner, readOnly: $parent.deleted" />
             </div>
             <div class="col-5">
                 <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
-                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note, readOnly: $parent.deleted" />
             </div>
             <div class="col-2">
                 <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
-                    data-bind="click: $parent.clickDeleteTenantAppAvailability.bind($parent, $data)">
+                    data-bind="click: $parent.deleted() ? null : $parent.clickDeleteTenantAppAvailability.bind($parent, $data)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
                         viewBox="0 0 24 24">
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
@@ -254,7 +259,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="button" class="button" style="padding: 7px 20px 8px;"
-                    data-bind="click: clickAddNetworkAppAvailability">
+                    data-bind="click: clickAddNetworkAppAvailability, disable: deleted">
                     + Add Network
                 </button>
             </div>
@@ -263,15 +268,15 @@
         <div class="row">
             <div class="col-5" style="padding-right: 0;">
                 <input type="text" id="ResourceOwner" placeholder="Network ID" class="form-control form-control-default"
-                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner" />
+                    maxlength="120" style="margin-bottom: 10px;" data-bind="textInput: resourceOwner, readOnly: $parent.deleted" />
             </div>
             <div class="col-5">
                 <input type="text" id="Note" placeholder="Note" class="form-control form-control-default"
-                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note" />
+                    maxlength="4000" style="margin-bottom: 10px;" data-bind="textInput: note, readOnly: $parent.deleted" />
             </div>
             <div class="col-2">
                 <span style="font-size: 2em; cursor: pointer;margin-left: -20px;margin-left: -20px;color: #737475;"
-                    data-bind="click: $parent.clickDeleteNetworkAppAvailability.bind($parent, $data)">
+                    data-bind="click: $parent.deleted() ? null : $parent.clickDeleteNetworkAppAvailability.bind($parent, $data)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="25px" width="25px"
                         viewBox="0 0 24 24">
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
@@ -371,7 +376,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="button" class="button" style="padding: 7px 20px 8px;"
-                    data-bind="click: clickEditAuthScopes">
+                    data-bind="click: clickEditAuthScopes, disable: deleted">
                     Change API Scopes
                 </button>
             </div>
@@ -393,7 +398,7 @@
     <div class="row" style="margin-top: 10px;">
         <div class="col-1" style="flex-basis: 30px; padding-right: 0;">
             <input type="radio" name="secretManagementOption" id="secretManagementOption_1"
-                data-bind="checked: secretManagementOption, checkedValue: 1">
+                data-bind="checked: secretManagementOption, checkedValue: 1, disable: deleted">
         </div>
         <div class="col-8">
             <label for="secretManagementOption_1">I, the app developer, will configure the credentials on behalf of each tenant</label>
@@ -406,7 +411,7 @@
     <div class="row" style="margin-top: 10px;">
         <div class="col-1" style="flex-basis: 30px; padding-right: 0;">
             <input type="radio" name="secretManagementOption" id="secretManagementOption_0"
-                data-bind="checked: secretManagementOption, checkedValue: 0">
+                data-bind="checked: secretManagementOption, checkedValue: 0, disable: deleted">
         </div>
         <div class="col-8">
             <label for="secretManagementOption_0">Tenants will configure the credentials themselves</label>
@@ -431,7 +436,7 @@
         </div>
     </div>
 </div>
-<!-- ko if: id > 0 -->
+<!-- ko if: id > 0 && !deleted() -->
 <div
     style="border: 1px solid #DFE0E1; box-shadow: 0px 1px 2px rgba(20, 20, 20, 0.101961); border-radius: 6px; padding: 0 30px 10px; margin: 0 0 20px;">
     <h3 style="margin-top: 20px;" data-bind="text: confirmDelete() ? 'Confirm Delete' : 'Delete Application'"></h3>
@@ -449,9 +454,13 @@
 </div>
 <!-- /ko -->
 <div style="text-align: right;">
-    <button type="button" class="button" data-bind="click: clickCancel">Cancel</button>
     <button type="button" class="button" style="background-color: #2270EE; color: #fff; border: 0; margin-right: 0px;"
-        data-bind="click: clickSave, enabled: saveButtonEnabled, text: id > 0 ? 'Save' : 'Create App'">
+        data-bind="click: clickCancel, visible: deleted">
+        Back
+    </button>
+    <button type="button" class="button" data-bind="click: clickCancel, hidden: deleted">Cancel</button>
+    <button type="button" class="button" style="background-color: #2270EE; color: #fff; border: 0; margin-right: 0px;"
+        data-bind="click: clickSave, enabled: saveButtonEnabled, text: id > 0 ? 'Save' : 'Create App', hidden: deleted">
         Save
     </button>
 </div>

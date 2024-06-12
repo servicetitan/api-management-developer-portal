@@ -41,7 +41,9 @@ export class ApiAppClientListVm {
         this.publicId = apiApp.publicId;
         this.name = apiApp.name;
         this.currentScopesVersion = apiApp.scopesVersions[0].version;
-        this.secretManagementOption = apiApp.secretManagementOption;
+        this.secretManagementOption = apiApp.deleted
+            ? SecretManagementOption.ResourceOwner
+            : apiApp.secretManagementOption;
         this.clients = ko.observableArray();
         this.isLoading = ko.observable(true);
         this.activeModal = ko.observable(ModalInstance.None);

@@ -39,6 +39,8 @@ export class ApiAppsRuntime {
     public readonly errorMessage: ko.Observable<string>;
 
     private pageContract: ko.Observable<ApiAppsPageContract>;
+    private filteredApps: ko.PureComputed<ApiAppContract[]>;
+    private showingDeletedApps: ko.Observable<boolean>;
 
     constructor(
         private readonly apiAppsService: ApiAppsService,
@@ -50,6 +52,10 @@ export class ApiAppsRuntime {
         this.apiAppClientList = ko.observable();
         this.apiAppApiUsageReport = ko.observable();
         this.pageContract = ko.observable();
+        this.filteredApps = ko.pureComputed(function () {
+            return this.pageContract().apps.filter(app => app.deleted === this.showingDeletedApps());
+        }, this);
+        this.showingDeletedApps = ko.observable(false);
         this.errorMessage = ko.observable("");
     }
 
@@ -93,6 +99,14 @@ export class ApiAppsRuntime {
         }
 
         this.clickEditApiApp(emptyApiApp);
+    }
+
+    public clickShowCurrentApps() {
+        this.showingDeletedApps(false);
+    }
+
+    public clickShowDeletedApps() {
+        this.showingDeletedApps(true);
     }
 
     public clickEditApiApp(apiApp: ApiAppContract) {
