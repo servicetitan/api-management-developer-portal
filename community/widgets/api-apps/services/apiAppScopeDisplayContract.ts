@@ -3,4 +3,6 @@ export interface ApiAppScopeDisplayContract {
     displayName: string;
     hasRead: boolean;
     hasWrite: boolean;
+    canRead: boolean;
+    canWrite: boolean;
 }

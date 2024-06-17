@@ -324,8 +324,14 @@
                         <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"></path>
                     </svg>
                     <span data-bind="text: displayName"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <!-- ko if: $parent.enabledScopeGroups.has(name) -->
                     <span style="color: #2270EE; cursor: pointer;" data-bind="click: $parent.clickSelectScopeGroup.bind($parent)">All</span>&nbsp;&nbsp;
                     <span style="color: #2270EE; cursor: pointer;" data-bind="click: $parent.clickUnselectScopeGroup.bind($parent)">None</span>
+                    <!-- /ko -->
+                    <!-- ko if: !$parent.enabledScopeGroups.has(name) -->
+                    <span style="color: #999999; cursor: not-allowed;">All</span>&nbsp;&nbsp;
+                    <span style="color: #999999; cursor: not-allowed;">None</span>
+                    <!-- /ko -->
                 </div>
                 <div style="background-color: white; border-radius: 3px;">
                     <!-- ko foreach: scopes -->
@@ -335,11 +341,11 @@
                         </div>
                         <div class="col-2" style="text-align: right;">
                             <input type="checkbox"
-                                data-bind="checked: $parents[1].authScopes, value: name + ':r', attr: { id: name }" />
+                                data-bind="checked: $parents[1].authScopes, value: name + ':r', attr: { id: name }, enable: $parents[1].enabledAuthScopes.has(name + ':r')" />
                         </div>
                         <div class="col-3 text-center">
                             <input type="checkbox"
-                                data-bind="checked: $parents[1].authScopes, value: name + ':w', attr: { id: name }" />
+                                data-bind="checked: $parents[1].authScopes, value: name + ':w', attr: { id: name }, enable: $parents[1].enabledAuthScopes.has(name + ':w')" />
                         </div>
                     </div>
                     <!-- /ko -->

@@ -33,6 +33,8 @@ export class ApiAppEditorVm {
     public scopesVersions: Array<ApiAppScopesVersionContract>;
     public selectedScopesVersion: ko.Observable<ApiAppScopesVersionContract>;
     public editingAuthScopes: ko.Observable<boolean>;
+    public enabledAuthScopes: Set<string>;
+    public enabledScopeGroups: Set<string>;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
@@ -84,13 +86,22 @@ export class ApiAppEditorVm {
         this.appCategoryId = ko.observable(apiApp.appCategoryId);
         const readScopes = apiApp.authScopes.filter(s => s.read);
         const writeScopes = apiApp.authScopes.filter(s => s.write);
+        const currentAuthScopes = readScopes.map(s => s.name + ":r")
+            .concat(writeScopes.map(s => s.name + ":w"));
         this.scopesVersions = apiApp.scopesVersions;
         this.selectedScopesVersion = ko.observable(apiApp.scopesVersions[0]);
         this.editingAuthScopes = ko.observable(apiApp.id === 0);
-        this.authScopes = ko.observableArray(
-            readScopes.map(s => s.name + ":r").concat(
-                writeScopes.map(s => s.name + ":w"))
-        );
+        this.enabledAuthScopes = new Set<string>(allScopeGroups
+            .map(scopeGroup => scopeGroup.scopes
+                .map(scope => [
+                    ...scope.canRead ? [scope.name + ":r"] : [],
+                    ...scope.canWrite ? [scope.name + ":w"] : [],
+                ]))
+            .flat(2)
+            .concat(currentAuthScopes));
+        this.enabledScopeGroups = new Set<string>([...this.enabledAuthScopes]
+            .map(authScope => authScope.substring(0, authScope.indexOf(".", authScope.indexOf(".") + 1))));
+        this.authScopes = ko.observableArray(currentAuthScopes);
         this.readScopeNames = ko.pureComputed(() =>
             this.selectedScopesVersion().authScopes.filter(s => s.read).map(s => s.displayName).join(", ")
         );
@@ -307,7 +318,8 @@ export class ApiAppEditorVm {
         const addScopes =
             group.scopes.filter(s => s.hasRead).map(s => s.name + ":r").concat(
                 group.scopes.filter(s => s.hasWrite).map(s => s.name + ":w")
-            );
+            )
+            .filter(authScope => this.enabledAuthScopes.has(authScope));
         this.authScopes.remove(i => i.startsWith(group.name + "."));
         ko.utils.arrayPushAll(this.authScopes, addScopes);
     }
