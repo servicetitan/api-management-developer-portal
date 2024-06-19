@@ -35,6 +35,7 @@ export class ApiAppEditorVm {
     public editingAuthScopes: ko.Observable<boolean>;
     public enabledAuthScopes: Set<string>;
     public enabledScopeGroups: Set<string>;
+    public hasBlockedAuthScopes: boolean;
     public authScopes: ko.ObservableArray<string>;
     public deleted: ko.Observable<boolean>;
     public tenantAppAvailabilityList: ko.ObservableArray<ApiAppAvailabilityCreateOrUpdateContract>;
@@ -101,6 +102,10 @@ export class ApiAppEditorVm {
             .concat(currentAuthScopes));
         this.enabledScopeGroups = new Set<string>([...this.enabledAuthScopes]
             .map(authScope => authScope.substring(0, authScope.indexOf(".", authScope.indexOf(".") + 1))));
+        this.hasBlockedAuthScopes = allScopeGroups.some(scopeGroup =>
+            scopeGroup.scopes.some(scope =>
+                (scope.hasRead && !this.enabledAuthScopes.has(scope.name + ":r") ||
+                (scope.hasWrite && !this.enabledAuthScopes.has(scope.name + ":w")))));
         this.authScopes = ko.observableArray(currentAuthScopes);
         this.readScopeNames = ko.pureComputed(() =>
             this.selectedScopesVersion().authScopes.filter(s => s.read).map(s => s.displayName).join(", ")
