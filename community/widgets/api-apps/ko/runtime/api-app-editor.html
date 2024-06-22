@@ -476,3 +476,28 @@
     </button>
 </div>
 <!-- /ko -->
+<!-- ko if: confirmScopeRemoval -->
+<modal params="title: 'Confirm Permanent Scope Removal', close: clickCancelScopeRemoval">
+    <div style="width: 40em">
+        <div>
+            Due to restrictions in effect for your organization, the following scopes cannot be added back later once they are removed:
+        </div>
+        <div style="margin-top: 10px" data-bind="visible: removedExistingBlockedAuthScopes().some(entry => entry[0].slice(-1) === 'r')">
+            <b>Read:</b>
+            <span data-bind="text: removedExistingBlockedAuthScopes().filter(entry => entry[0].slice(-1) === 'r').map(entry => entry[1]).join(', ')"></span>
+        </div>
+        <div style="margin-top: 10px" data-bind="visible: removedExistingBlockedAuthScopes().some(entry => entry[0].slice(-1) === 'w')">
+            <b>Write:</b>
+            <span data-bind="text: removedExistingBlockedAuthScopes().filter(entry => entry[0].slice(-1) === 'w').map(entry => entry[1]).join(', ')"></span>
+        </div>
+        <div style="margin-top: 10px">
+            Do you want to continue?
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="button" data-bind="click: clickCancelScopeRemoval">Cancel</button>
+            <button type="button" class="button" style="background-color: #2270EE; color: #FFF; border: 0; margin-right: 0;"
+                data-bind="click: clickSave">Yes, Continue</button>
+        </div>
+    </div>
+</modal>
+<!-- /ko -->

@@ -9,6 +9,19 @@ import { ApiAppScopesVersionContract } from "../../services/apiAppScopesVersionC
 import { ApiAppAvailabilityCreateOrUpdateContract } from "../../services/apiAppAvailabilityCreateOrUpdateContract";
 import { ApiAppCreateOrUpdateContract } from "../../services/apiAppCreateOrUpdateContract";
 import { SecretManagementOption } from "../../services/secretManagementOption";
+import "./modal";
+
+declare global {
+    interface ReadonlySetLike<T> {
+        readonly size: number;
+        keys(): Iterator<T>;
+        has(value: T): boolean;
+    }
+
+    interface Set<T> {
+        union<U>(other: ReadonlySetLike<U>): Set<T | U>;
+    }
+}
 
 export class ApiAppEditorVm {
     public emailAddressMaxLength: number = 100;
@@ -34,6 +47,7 @@ export class ApiAppEditorVm {
     public selectedScopesVersion: ko.Observable<ApiAppScopesVersionContract>;
     public editingAuthScopes: ko.Observable<boolean>;
     public enabledAuthScopes: Set<string>;
+    public existingBlockedAuthScopes: Map<string, string>; // scope:[rw] => displayName
     public enabledScopeGroups: Set<string>;
     public hasBlockedAuthScopes: boolean;
     public authScopes: ko.ObservableArray<string>;
@@ -61,6 +75,8 @@ export class ApiAppEditorVm {
     public newMarketplaceFieldsBannerVisible: boolean;
     public allScopeGroups: Array<ApiAppScopeGroupContract>;
     public confirmDelete: ko.Observable<boolean>;
+    public confirmScopeRemoval: ko.Observable<boolean>;
+    public removedExistingBlockedAuthScopes: ko.Observable<[string, string][]>;
     private close: () => Promise<void>;
 
     constructor(
@@ -85,28 +101,32 @@ export class ApiAppEditorVm {
         this.isMarketplaceApp = ko.observable(apiApp.isMarketplaceApp);
         this.description = ko.observable(apiApp.description);
         this.appCategoryId = ko.observable(apiApp.appCategoryId);
-        const readScopes = apiApp.authScopes.filter(s => s.read);
-        const writeScopes = apiApp.authScopes.filter(s => s.write);
-        const currentAuthScopes = readScopes.map(s => s.name + ":r")
-            .concat(writeScopes.map(s => s.name + ":w"));
         this.scopesVersions = apiApp.scopesVersions;
         this.selectedScopesVersion = ko.observable(apiApp.scopesVersions[0]);
         this.editingAuthScopes = ko.observable(apiApp.id === 0);
+        const existingAuthScopes = new Map<string, string>(apiApp.authScopes
+            .map(scope => [
+                ...scope.read ? [[scope.name + ":r", scope.displayName]] as const : [],
+                ...scope.write ? [[scope.name + ":w", scope.displayName]] as const : []
+            ])
+            .flat());
         this.enabledAuthScopes = new Set<string>(allScopeGroups
             .map(scopeGroup => scopeGroup.scopes
                 .map(scope => [
                     ...scope.canRead ? [scope.name + ":r"] : [],
                     ...scope.canWrite ? [scope.name + ":w"] : [],
                 ]))
-            .flat(2)
-            .concat(currentAuthScopes));
+            .flat(2));
+        this.existingBlockedAuthScopes = new Map<string, string>([...existingAuthScopes]
+            .filter(entry => !this.enabledAuthScopes.has(entry[0])));
+        this.enabledAuthScopes = this.enabledAuthScopes.union(existingAuthScopes);
         this.enabledScopeGroups = new Set<string>([...this.enabledAuthScopes]
             .map(authScope => authScope.substring(0, authScope.indexOf(".", authScope.indexOf(".") + 1))));
         this.hasBlockedAuthScopes = allScopeGroups.some(scopeGroup =>
             scopeGroup.scopes.some(scope =>
                 (scope.hasRead && !this.enabledAuthScopes.has(scope.name + ":r") ||
                 (scope.hasWrite && !this.enabledAuthScopes.has(scope.name + ":w")))));
-        this.authScopes = ko.observableArray(currentAuthScopes);
+        this.authScopes = ko.observableArray([...existingAuthScopes.keys()]);
         this.readScopeNames = ko.pureComputed(() =>
             this.selectedScopesVersion().authScopes.filter(s => s.read).map(s => s.displayName).join(", ")
         );
@@ -130,6 +150,8 @@ export class ApiAppEditorVm {
             (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description || !apiApp.appCategoryId);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
+        this.confirmScopeRemoval = ko.observable(false);
+        this.removedExistingBlockedAuthScopes = ko.observableArray([]);
         this.close = close;
         this.errorMessage = ko.observable("");
         this.initValidation();
@@ -285,8 +307,20 @@ export class ApiAppEditorVm {
             this.validationActivated(true);
         }
         if (!this.isValid()) {
-            window.scroll({ top: 150, left: 0, behavior: 'smooth' });
+            window.scroll({ top: 150, left: 0, behavior: "smooth" });
             return;
+        }
+        if (this.confirmScopeRemoval()) {
+            this.confirmScopeRemoval(false);
+        } else {
+            const newAuthScopes = new Set<string>(this.authScopes());
+            const removedExistingBlockedAuthScopes = [...this.existingBlockedAuthScopes]
+                .filter(entry => !newAuthScopes.has(entry[0]));
+            if (removedExistingBlockedAuthScopes.length > 0) {
+                this.removedExistingBlockedAuthScopes(removedExistingBlockedAuthScopes);
+                this.confirmScopeRemoval(true);
+                return;
+            }
         }
         this.isLoading(true);
         const apiApp: ApiAppCreateOrUpdateContract = {
@@ -344,6 +378,10 @@ export class ApiAppEditorVm {
     public async clickDeletePermanently() {
         this.deleted(true);
         await this.clickSave();
+    }
+
+    public async clickCancelScopeRemoval() {
+        this.confirmScopeRemoval(false);
     }
 
     public async clickCancel() {
