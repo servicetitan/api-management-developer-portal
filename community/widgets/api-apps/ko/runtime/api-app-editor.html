@@ -480,7 +480,7 @@
 <modal params="title: 'Confirm Permanent Scope Removal', close: clickCancelScopeRemoval">
     <div style="width: 40em">
         <div>
-            Due to restrictions in effect for your organization, the following scopes cannot be added back later once they are removed:
+            Due to API scope restrictions in effect for your organization, the following scopes cannot be added back later once they are removed:
         </div>
         <div style="margin-top: 10px" data-bind="visible: removedExistingBlockedAuthScopes().some(entry => entry[0].slice(-1) === 'r')">
             <b>Read:</b>
