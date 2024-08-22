@@ -28,6 +28,7 @@ export class OperationList {
         'POST {tenant}/jobs/{id}/messages',
         'POST {tenant}/jobs/{job}/timesheets',
         'PUT {tenant}/jobs/{job}/timesheets/{id}',
+        'POST {tenant}/payments',
         'POST {tenant}/projects/{id}/messages',
     ]);
 
