@@ -58,7 +58,8 @@ export class ApiService {
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
         "tenant-telecom": "Calls endpoints.",
         "tenant-telecom-v2": "Calls endpoint.",
-        "tenant-telecom-v3": "Calls endpoint."
+        "tenant-telecom-v3": "Calls endpoint.",
+        "tenant-scheduling-pro-v2": "Schedulers, Scheduler Sessions endpoints."
       }
 
     private readonly betaApis: Set<string> = new Set<string>(["tenant-reporting-v2"]);
