@@ -53,6 +53,7 @@ export class ApiService {
         "tenant-pricebook-v2": "Categories, Discounts and Fees, Equipment, Materials, Pricebook Bulk Operations, Pricebook Images, Services endpoints.",
         "tenant-reporting-v2": "Dynamic Value Sets, Report Categories, Reports within the category endpoints.",
         "tenant-salestech-v2": "Estimates endpoint.",
+        "tenant-scheduling-pro-v2": "Schedulers, Scheduler Sessions endpoints.",
         "tenant-service-agreements-v2": "Service Agreements endpoints.",
         "tenant-settings-v2": "Business Units, Employees, Tag Types, Technicians, User Roles endpoints.",
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
