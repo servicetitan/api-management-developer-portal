@@ -10,7 +10,6 @@ export interface ApiAppContract {
     organizationName: string;
     homepageUrl: string;
     emailAddress: string;
-    isThirdPartyDeveloper: boolean | null;
     isPublicApp: boolean | null;
     isMarketplaceApp: boolean;
     description: string;

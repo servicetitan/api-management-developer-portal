@@ -42,8 +42,7 @@
     <p style="margin-bottom: 5px; font-weight: 600;">Please fill out the following newly added fields:</p>
     <ul style="margin: 0; padding: 0 30px;">
         <li>Email Address</li>
-        <li>Are you a third-party developer?</li>
-        <li>Who will use this app?</li>
+        <li data-bind="visible: isThirdPartyDeveloper">Who will use this app?</li>
         <li>Description</li>
         <li>App Category</li>
     </ul>
@@ -87,23 +86,6 @@
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: emailAddressValidation, visible: emailAddressValidation"></div>
                 </div>
-                <div class="form-group">
-                    <fieldset>
-                        <legend style="font-size: inherit;">Are you a third-party developer?</legend>
-                        <div>
-                            <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_true"
-                                data-bind="checked: isThirdPartyDeveloper, checkedValue: true, disable: deleted">
-                            <label for="isThirdPartyDeveloper_true">Yes</label>
-                        </div>
-                        <div>
-                            <input type="radio" name="isThirdPartyDeveloper" id="isThirdPartyDeveloper_false"
-                                data-bind="checked: isThirdPartyDeveloper, checkedValue: false, disable: deleted">
-                            <label for="isThirdPartyDeveloper_false">No, I’m a ServiceTitan customer</label>
-                        </div>
-                        <div style="color: #E63717;"
-                            data-bind="text: isThirdPartyDeveloperValidation, visible: isThirdPartyDeveloperValidation"></div>
-                    </fieldset>
-                </div>
             </div>
         </div>
     </fieldset>
@@ -125,7 +107,7 @@
                     <div style="color: #E63717; margin-top: -15px;"
                         data-bind="text: nameValidation, visible: nameValidation"></div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-bind="if: isThirdPartyDeveloper">
                     <fieldset>
                         <legend style="font-size: inherit;">Who will use this app?</legend>
                         <div>

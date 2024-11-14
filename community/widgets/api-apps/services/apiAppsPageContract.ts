@@ -5,6 +5,7 @@ import { ApiAppCategoryContract } from "./apiAppCategoryContract";
 
 export interface ApiAppsPageContract {
     projectId: string;
+    isThirdPartyDeveloper: boolean;
     apps: Array<ApiAppContract>;
     scopeGroups: Array<ApiAppScopeGroupContract>;
     defaultTenantAppAvailabilityList: Array<ApiAppAvailabilityContract>;

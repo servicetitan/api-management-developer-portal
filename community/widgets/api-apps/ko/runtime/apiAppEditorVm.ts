@@ -37,7 +37,6 @@ export class ApiAppEditorVm {
     public organizationName: ko.Observable<string>;
     public homepageUrl: ko.Observable<string>;
     public emailAddress: ko.Observable<string>;
-    public isThirdPartyDeveloper: ko.Observable<boolean | null>;
     public isPublicApp: ko.Observable<boolean | null>;
     public isMarketplaceApp: ko.Observable<boolean>;
     public description: ko.Observable<string>;
@@ -60,7 +59,6 @@ export class ApiAppEditorVm {
     public organizationNameValidation: ko.PureComputed<string>;
     public homepageUrlValidation: ko.PureComputed<string>;
     public emailAddressValidation: ko.PureComputed<string>;
-    public isThirdPartyDeveloperValidation: ko.PureComputed<string>;
     public isPublicAppValidation: ko.PureComputed<string>;
     public descriptionValidation: ko.PureComputed<string>;
     public appCategoryIdValidation: ko.PureComputed<string>;
@@ -83,6 +81,7 @@ export class ApiAppEditorVm {
         private apiAppsService: ApiAppsService,
         apiApp: ApiAppContract,
         private projectId: string,
+        public isThirdPartyDeveloper: boolean,
         allScopeGroups: Array<ApiAppScopeGroupContract>,
         public appCategories: Array<ApiAppCategoryContract>,
         close: () => Promise<void>
@@ -96,8 +95,7 @@ export class ApiAppEditorVm {
         this.organizationName = ko.observable(apiApp.organizationName);
         this.homepageUrl = ko.observable(apiApp.homepageUrl);
         this.emailAddress = ko.observable(apiApp.emailAddress);
-        this.isThirdPartyDeveloper = ko.observable(apiApp.isThirdPartyDeveloper);
-        this.isPublicApp = ko.observable(apiApp.isPublicApp);
+        this.isPublicApp = ko.observable(isThirdPartyDeveloper && apiApp.isPublicApp);
         this.isMarketplaceApp = ko.observable(apiApp.isMarketplaceApp);
         this.description = ko.observable(apiApp.description);
         this.appCategoryId = ko.observable(apiApp.appCategoryId);
@@ -147,7 +145,7 @@ export class ApiAppEditorVm {
         this.secretManagementOption = ko.observable(apiApp.secretManagementOption);
         this.isLoading = ko.observable(false);
         this.newMarketplaceFieldsBannerVisible = apiApp.id > 0 && !apiApp.deleted &&
-            (!apiApp.emailAddress || apiApp.isThirdPartyDeveloper === null || apiApp.isPublicApp === null || !apiApp.description || !apiApp.appCategoryId);
+            (!apiApp.emailAddress || apiApp.isPublicApp === null || !apiApp.description || !apiApp.appCategoryId);
         this.allScopeGroups = allScopeGroups;
         this.confirmDelete = ko.observable(false);
         this.confirmScopeRemoval = ko.observable(false);
@@ -200,10 +198,6 @@ export class ApiAppEditorVm {
                 ? ""
                 : "Email address is not valid";
         })
-        this.isThirdPartyDeveloperValidation = ko.pureComputed(() => {
-            if (!this.validationActivated()) return "";
-            return this.isThirdPartyDeveloper() !== null ? "" : "Option is not selected";
-        });
         this.isPublicAppValidation = ko.pureComputed(() => {
             if (!this.validationActivated()) return "";
             return this.isPublicApp() !== null ? "" : "Option is not selected";
@@ -252,7 +246,6 @@ export class ApiAppEditorVm {
             this.organizationNameValidation().length == 0 &&
             this.homepageUrlValidation().length == 0 &&
             this.emailAddressValidation().length == 0 &&
-            this.isThirdPartyDeveloperValidation().length == 0 &&
             this.isPublicAppValidation().length == 0 &&
             this.descriptionValidation().length == 0 &&
             this.appCategoryIdValidation().length == 0 &&
@@ -329,7 +322,6 @@ export class ApiAppEditorVm {
             organizationName: this.organizationName().trim(),
             homepageUrl: this.homepageUrl().trim(),
             emailAddress: this.emailAddress().trim(),
-            isThirdPartyDeveloper: this.isThirdPartyDeveloper(),
             isPublicApp: this.isPublicApp(),
             isMarketplaceApp: this.isMarketplaceApp(),
             description: this.description().trim(),

@@ -81,7 +81,6 @@ export class ApiAppsRuntime {
             organizationName: "",
             homepageUrl: "",
             emailAddress: "",
-            isThirdPartyDeveloper: null,
             isPublicApp: null,
             isMarketplaceApp: false,
             description: "",
@@ -114,6 +113,7 @@ export class ApiAppsRuntime {
             this.apiAppsService,
             apiApp,
             this.pageContract().projectId,
+            this.pageContract().isThirdPartyDeveloper,
             this.pageContract().scopeGroups,
             this.pageContract().appCategories,
             async () => { this.route("list"); await this.initialize(); }

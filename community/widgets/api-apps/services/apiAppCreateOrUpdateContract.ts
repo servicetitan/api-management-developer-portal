@@ -7,7 +7,6 @@ export interface ApiAppCreateOrUpdateContract {
     organizationName: string;
     homepageUrl: string;
     emailAddress: string;
-    isThirdPartyDeveloper: boolean;
     isPublicApp: boolean;
     isMarketplaceApp: boolean;
     description: string;
