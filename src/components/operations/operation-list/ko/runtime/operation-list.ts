@@ -28,6 +28,9 @@ export class OperationList {
         'POST {tenant}/jobs/{id}/messages',
         'POST {tenant}/jobs/{job}/timesheets',
         'PUT {tenant}/jobs/{job}/timesheets/{id}',
+        'GET {tenant}/optinouts/optouts',
+        'POST {tenant}/optinouts/optouts',
+        'POST {tenant}/optinouts/optouts/getlist',
         'POST {tenant}/payments',
         'POST {tenant}/projects/{id}/messages',
     ]);
@@ -225,10 +228,11 @@ export class OperationList {
 
         const adjustUrl = apiName.startsWith("tenant-")
             ? (urlTemplate: string) => urlTemplate
-                .replace('/tenant/{tenant}/booking-provider/', '')
-                .replace('/tenant/{tenant}/gps-provider/', '')
-                .replace('/tenant/{tenant}/report-category/', '')
-                .replace('/tenant/', '')
+                .replace(/^\/(v\d+\/)?tenant\/(\{tenant\}\/(booking-provider|gps-provider|report-category)\/)?/, "")
+                // Remove the initial "/".
+                // Remove the "v#/" path segment if present.
+                // Remove the "tenant/" path segment.
+                // Remove the "{tenant}/" path segment if followed by booking-provider/, etc.
             : (urlTemplate: string) => urlTemplate
                 .replace('/partner/{partner}/tenant/{tenantId}', '')
                 .replace('/partner/{partner}/tenant/{tenant}', '')
@@ -244,7 +248,7 @@ export class OperationList {
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
         });
 
-        this.operationGroups(operationGroups);
+        this.operationGroups(operationGroups.filter(g => g.items.length > 0));
         this.groupTagsExpanded(new Set<string>(operationGroups.map(g => g.tag)));
         this.nextPage(!!pageOfOperationsByTag.nextLink);
     }
