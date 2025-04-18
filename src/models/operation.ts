@@ -6,7 +6,7 @@ import { Utils } from "../utils";
 
 export class Operation {
     public readonly id: string;
-    public readonly name: string;
+    public name: string;
     public readonly displayName: string;
     public readonly description: string;
     public urlTemplate: string;

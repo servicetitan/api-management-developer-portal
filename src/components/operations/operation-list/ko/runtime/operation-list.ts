@@ -226,7 +226,9 @@ export class OperationList {
             }
         });
 
-        const adjustUrl = apiName.startsWith("tenant-")
+        const adjustUrl = apiName.endsWith("-webhooks")
+            ? (urlTemplate: string) => urlTemplate.replace(/^\//, "") // Remove the initial "/".
+            : apiName.startsWith("tenant-")
             ? (urlTemplate: string) => urlTemplate
                 .replace(/^\/(v\d+\/)?tenant\/(\{tenant\}\/(booking-provider|gps-provider|report-category)\/)?/, "")
                 // Remove the initial "/".

@@ -31,6 +31,7 @@
         <div class="form-inline">
             <div class="form-group">
                 <!-- ko if: api().type !== 'websocket' && api().type !== 'graphql' -->
+                <!-- ko ifnot: api().name.endsWith('-webhooks') -->
                 <select id="apiDefinitions" class="form-control" aria-label="API definitions"
                     data-bind="value: downloadSelected">
                     <option value="" disabled="disabled" selected="selected">API definition</option>
@@ -42,6 +43,7 @@
                     <option value="wsdl">WSDL</option>
                     <!-- /ko -->
                 </select>
+                <!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>

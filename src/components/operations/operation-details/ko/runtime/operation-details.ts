@@ -89,6 +89,9 @@ export class OperationDetails {
             if ((!this.api() || !this.operation()) && api?.type !== TypeOfApi.graphQL) {
                 return null;
             }
+            if (api.name.endsWith("-webhooks")) {
+                return "<your-callback-url>";
+            }
 
             const operation = this.operation();
 
@@ -242,6 +245,10 @@ export class OperationDetails {
         const operation = await this.apiService.getOperation(`apis/${apiName}/operations/${operationName}`);
 
         if (operation) {
+            if (apiName.endsWith("-webhooks")) {
+                operation.name = operation.urlTemplate.replace(/^\//, ""); // Remove the initial "/".
+            }
+
             await this.loadDefinitions(operation);
             if (this.showExamples()) this.parseResponseExamples(operation);
 
