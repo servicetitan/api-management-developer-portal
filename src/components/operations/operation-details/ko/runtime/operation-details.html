@@ -10,7 +10,7 @@
     <div class="row flex flex-row">
         <div class="col-md-11  text-wrap">
             <h2 id="operation-name">
-                <span data-bind="text: operation().name"></span>
+                <span data-bind="text: api().name.endsWith('-webhooks') ? operation().urlTemplate.replace(/^\//, '') : operation().name"></span>
             </h2>
         </div>
         <!-- ko if: $component.enableConsole -->
