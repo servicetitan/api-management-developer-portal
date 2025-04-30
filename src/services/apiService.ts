@@ -37,7 +37,9 @@ export class ApiService {
     private readonly customDescriptions: Record<string, string> = {
         "tenant-accounting-core-v2": "Inventory Adjustments, Inventory Bills, Inventory Receipts, Inventory Transfers, Invoices, Payments, Purchase Orders, Purchase Returns endpoints.",
         "tenant-accounting-v2": "Inventory Bills, Invoices, Journal Entries, Payment Terms, Payment Types, Payments, Tax Zones endpoints.",
+        "tenant-accounting-v2-webhooks": "Invoice Batched, Invoice Exported, Invoice Posted, Invoice Updated events.",
         "tenant-crm-v2": "Bookings, Bookings Provider Tags, Customers, Leads, Locations, Tags endpoints.",
+        "tenant-crm-v2-webhooks": "Booking Updated, Lead Created, Lead Updated events.",
         "tenant-customer-interactions-v2": "Technician Rating endpoint.",
         "tenant-dispatch-v2": "Appointment Assignments, Capacity, GPS Pings, Non-Job Appointments, Technician Shifts, Zones endpoints.",
         "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
@@ -45,6 +47,7 @@ export class ApiService {
         "tenant-inventory-v2": "Adjustments, Purchase Order Markups, Purchase Order Types, Purchase Orders, Receipts, Returns, Transfers, Trucks, Vendors, Warehouses endpoints.",
         "tenant-jbce-v2": "Call Reasons endpoint.",
         "tenant-jpm-v2": "Appointments, Job Cancel Reasons, Job Hold Reasons, Job Types, Jobs, Project Statuses, Project Sub-Statuses, Projects endpoints.",
+        "tenant-jpm-v2-webhooks": "Appointment Updated, Job Completed, Job Rescheduled, Job Scheduled, Job Updated events.",
         "tenant-marketing-ads-v2": "External Call Attributions, Web Booking Attributions, Web Lead Form Attributions endpoints.",
         "tenant-marketing-reputation-v2": "Marketing Reputation endpoints.",
         "tenant-marketing-v2": "Campaign Categories, Campaign Costs, Campaigns, Suppressions endpoints.",
@@ -59,7 +62,9 @@ export class ApiService {
         "tenant-task-management-v2": "Task Management Data, Tasks endpoints.",
         "tenant-telecom": "Calls endpoints.",
         "tenant-telecom-v2": "Calls endpoint.",
-        "tenant-telecom-v3": "Calls endpoint."
+        "tenant-telecom-v3": "Calls endpoint.",
+        "tenant-telecom-webhooks": "Call Completed, Call Updated events.",
+        "tenant-timesheets-v2": "Activity Categories, Activities endpoints.",
       }
 
     private readonly betaApis: Set<string> = new Set<string>(["tenant-reporting-v2"]);
