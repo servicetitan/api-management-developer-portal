@@ -42,6 +42,7 @@ export class ApiService {
         "tenant-crm-v2-webhooks": "Booking Updated, Lead Created, Lead Updated events.",
         "tenant-customer-interactions-v2": "Technician Rating endpoint.",
         "tenant-dispatch-v2": "Appointment Assignments, Capacity, GPS Pings, Non-Job Appointments, Technician Shifts, Zones endpoints.",
+        "tenant-dispatch-v2-webhooks": "Technician Dispatched, Zone Deleted, Zone Updated events.",
         "tenant-equipment-systems-v2": "Installed Equipment endpoint.",
         "tenant-forms-v2": "Form Submissions, Forms, Job Forms endpoints.",
         "tenant-inventory-v2": "Adjustments, Purchase Order Markups, Purchase Order Types, Purchase Orders, Receipts, Returns, Transfers, Trucks, Vendors, Warehouses endpoints.",

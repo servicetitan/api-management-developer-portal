@@ -33,6 +33,7 @@ export class OperationList {
         'POST {tenant}/optinouts/optouts/getlist',
         'POST {tenant}/payments',
         'POST {tenant}/projects/{id}/messages',
+        'POST tn.dis.technician-arrived',
     ]);
 
     public readonly selectedApiName: ko.Observable<string>;
