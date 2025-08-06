@@ -105,6 +105,10 @@
                 &nbsp;&nbsp;
                 <span class="tag-item" title="API may be updated anytime and may not become generally available. Additional request limits may be applied.">beta</span>
                 <!-- /ko -->
+                <!-- ko if: item.name.endsWith('-webhooks') -->
+                &nbsp;&nbsp;
+                <span class="tag-item" title="Webhooks may be updated anytime and may not become generally available.">beta</span>
+                <!-- /ko -->
             </div>
             <!-- ko if: $component.showApiType -->
             <div class="col-5" role="cell">
