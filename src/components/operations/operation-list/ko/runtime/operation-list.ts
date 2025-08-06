@@ -23,11 +23,17 @@ export class OperationList {
     private searchRequest: SearchQuery;
 
     private static readonly hiddenEndpoints: Set<string> = new Set<string>([
+        'GET {tenant}/export/opportunities',
+        'GET {tenant}/export/opportunities/followups',
         'PUT {tenant}/jobs/{id}/hold',
         'PUT {tenant}/jobs/{id}/complete',
         'POST {tenant}/jobs/{id}/messages',
         'POST {tenant}/jobs/{job}/timesheets',
         'PUT {tenant}/jobs/{job}/timesheets/{id}',
+        'GET {tenant}/opportunities',
+        'GET {tenant}/opportunities/{id}',
+        'GET {tenant}/opportunities/followups',
+        'GET {tenant}/opportunities/{id}/followups',
         'GET {tenant}/optinouts/optouts',
         'POST {tenant}/optinouts/optouts',
         'POST {tenant}/optinouts/optouts/getlist',
