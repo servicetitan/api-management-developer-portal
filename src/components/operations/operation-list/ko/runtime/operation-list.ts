@@ -251,7 +251,7 @@ export class OperationList {
                 .sort((a, b) => a.urlTemplate > b.urlTemplate ? 1 : -1);
         });
 
-        this.operationGroups(operationGroups.filter(g => g.items.length > 0));
+        this.operationGroups(operationGroups.filter(g => g.tag !== 'CustomerOnly' && g.items.length > 0));
         this.groupTagsExpanded(new Set<string>(operationGroups.map(g => g.tag)));
         this.nextPage(!!pageOfOperationsByTag.nextLink);
     }
