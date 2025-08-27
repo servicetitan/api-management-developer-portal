@@ -26,7 +26,6 @@ declare global {
 export class ApiAppEditorVm {
     public emailAddressMaxLength: number = 100;
     public descriptionMaxLength: number = 10000;
-    private maxTenants: number = 4000;
     private maxNetworks: number = 15;
     public id: number;
     public publicId: string;
@@ -231,7 +230,6 @@ export class ApiAppEditorVm {
             const tenantList = this.tenantAppAvailabilityList();
             const networkList = this.networkAppAvailabilityList();
             if (tenantList.length == 0 && networkList.length == 0) return "Tenants list and networks list are empty";
-            if (tenantList.length > this.maxTenants) return `Tenants list contains more than ${this.maxTenants} items`;
             return "";
         });
         this.networkAppAvailabilityValidation = ko.pureComputed(() => {
@@ -271,12 +269,7 @@ export class ApiAppEditorVm {
     }
 
     public clickAddTenantAppAvailability() {
-        if (this.tenantAppAvailabilityList().length >= this.maxTenants) {
-            this.validationActivated(true);
-        }
-        if (this.tenantAppAvailabilityList().length <= this.maxTenants) {
-            this.tenantAppAvailabilityList.unshift({ resourceOwner: "", note: "" });
-        }
+        this.tenantAppAvailabilityList.unshift({ resourceOwner: "", note: "" });
     }
 
     public clickAddNetworkAppAvailability() {
