@@ -23,6 +23,8 @@ export class OperationList {
     private searchRequest: SearchQuery;
 
     private static readonly hiddenEndpoints: Set<string> = new Set<string>([
+        'POST {tenant}/adcap/availability',
+        'POST {tenant}/adcap/availability/slots',
         'GET {tenant}/export/opportunities',
         'GET {tenant}/export/opportunities/followups',
         'PUT {tenant}/jobs/{id}/hold',
